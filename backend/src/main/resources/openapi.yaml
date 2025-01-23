@@ -1,0 +1,46 @@
+openapi: 3.0.3
+info:
+  title: TutorFlow API
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /lessons:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Lesson'
+                type: array
+          description: A list of lessons
+      summary: Get all lessons
+      x-accepts:
+      - application/json
+components:
+  schemas:
+    Lesson:
+      example:
+        student: student
+        description: description
+        id: 0
+        title: title
+      properties:
+        id:
+          description: The lesson ID
+          type: integer
+        title:
+          description: The lesson title
+          type: string
+        description:
+          description: A detailed description of the lesson
+          type: string
+        student:
+          description: The student assigned to the lesson
+          type: string
+      required:
+      - id
+      - title
+      type: object
