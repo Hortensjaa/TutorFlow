@@ -1,7 +1,8 @@
 {
   "id": 1,
-  "topic": "Mathematics",
-  "description": "Introduction to Algebra",
-  "student": "John Doe"
+  "topic": "Limits of sequence - introduction",
+  "description": "exercises 1, 2, 4 page 178 ",
+  "student": "John Doe",
+    "teacher": "Mr. Smith"
 }
 

@@ -25,9 +25,9 @@ public class Lesson {
     private List<File> files;
 
     @ManyToOne
-    @JoinColumn(name = "owner", referencedColumnName = "teacher_id")
+    @JoinColumn(name = "teacher", referencedColumnName = "teacher_id")
     @JsonBackReference
-    private Teacher owner;
+    private Teacher teacher;
 
     @ManyToOne
     @JoinColumn(name = "student", referencedColumnName = "student_id")

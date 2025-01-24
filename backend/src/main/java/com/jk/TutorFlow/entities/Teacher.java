@@ -19,7 +19,7 @@ public class Teacher {
     private String username;
     private String email;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "teacher")
     @JsonManagedReference
     private List<Lesson> lessons;
 

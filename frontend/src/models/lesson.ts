@@ -12,6 +12,7 @@ export interface Lesson {
     topic:       string;
     description: string;
     student:     string;
+    teacher:     string;
 }
 
 // Converts JSON strings to/from your types
@@ -184,5 +185,6 @@ const typeMap: any = {
         { json: "topic", js: "topic", typ: "" },
         { json: "description", js: "description", typ: "" },
         { json: "student", js: "student", typ: "" },
+        { json: "teacher", js: "teacher", typ: "" },
     ], false),
 };
