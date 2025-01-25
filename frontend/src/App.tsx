@@ -3,11 +3,12 @@ import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom
 
 import {pinkTheme} from "./themes/colorTheme.tsx";
 import {LessonsList} from "./components";
+import {mantineCssVariableResolver} from "./themes/varResolver.tsx";
 
 function App() {
 
   return (
-        <MantineProvider theme={pinkTheme} withNormalizeCSS>
+        <MantineProvider theme={pinkTheme} cssVariablesResolver={mantineCssVariableResolver} withNormalizeCSS>
             <Router>
                 <Routes>
                     <Route path="/dashboard" element={<LessonsList/>}/>

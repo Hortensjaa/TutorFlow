@@ -1,14 +1,16 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import { IconSearch } from '@tabler/icons-react';
 import {
     ScrollArea,
     Table,
     Text,
-    TextInput, useMantineTheme
+    TextInput,
+    useMantineTheme
 } from '@mantine/core';
 
-import {Lesson} from "../../models/lesson.ts";
-import {sortData, Th} from "./utils.tsx";
+import { Lesson } from "../../models/lesson.ts";
+import { sortData, Th } from "./utils.tsx";
+import { SideNavbar } from "../index.ts";
 
 
 export default function LessonsList() {
@@ -61,64 +63,71 @@ export default function LessonsList() {
     }
 
     useEffect(() => {
-        console.log(window.innerWidth)
-        console.log(theme.breakpoints.sm  *  16)
         loadData();
     }, []);
 
     return (
         <ScrollArea>
-            <TextInput
-                placeholder="Search by any field"
-                mb="md"
-                leftSection={<IconSearch/>}
-                value={search}
-                onChange={handleSearchChange}
-                style={{
-                    marginRight: parseFloat(theme.breakpoints.sm)  *  16 > window.innerWidth ? '10px' : '0',
-                    marginLeft: parseFloat(theme.breakpoints.sm) * 16> window.innerWidth ? '10px' : '0',
-                }}
-            />
-            <Table horizontalSpacing="md" verticalSpacing="xs" miw={300} layout="fixed">
-                <Table.Tbody>
-                    <Table.Tr>
-                        <Th
-                            sorted={sortBy === 'date'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('date')}
-                        >
-                            Date
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'topic'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('topic')}
-                        >
-                            Topic
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'student'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('student')}
-                        >
-                            Student
-                        </Th>
-                    </Table.Tr>
-                </Table.Tbody>
-                <Table.Tbody>
-                    {rows.length > 0 ? (
-                        rows
-                    ) : (
-                        <Table.Tr>
-                            <Table.Td colSpan={4}>
-                                <Text fw={500} ta="center">
-                                    Nothing found
-                                </Text>
-                            </Table.Td>
-                        </Table.Tr>
-                    )}
-                </Table.Tbody>
-            </Table>
+            <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+                {parseFloat(theme.breakpoints.sm) * 16 < window.innerWidth ? <SideNavbar /> : null}
+
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flex: 1,
+                    marginLeft: parseFloat(theme.breakpoints.sm) * 16 > window.innerWidth ? '10px' : '0',
+                    marginRight: parseFloat(theme.breakpoints.sm) * 16 > window.innerWidth ? '10px' : '0',
+                }}>
+                    <TextInput
+                        placeholder="Search by any field"
+                        mb="md"
+                        leftSection={<IconSearch />}
+                        value={search}
+                        onChange={handleSearchChange}
+                        style={{ marginBottom: '10px' }}
+                    />
+                    <Table horizontalSpacing="md" verticalSpacing="xs" miw={300} layout="fixed">
+                        <Table.Tbody>
+                            <Table.Tr>
+                                <Th
+                                    sorted={sortBy === 'date'}
+                                    reversed={reverseSortDirection}
+                                    onSort={() => setSorting('date')}
+                                >
+                                    Date
+                                </Th>
+                                <Th
+                                    sorted={sortBy === 'topic'}
+                                    reversed={reverseSortDirection}
+                                    onSort={() => setSorting('topic')}
+                                >
+                                    Topic
+                                </Th>
+                                <Th
+                                    sorted={sortBy === 'student'}
+                                    reversed={reverseSortDirection}
+                                    onSort={() => setSorting('student')}
+                                >
+                                    Student
+                                </Th>
+                            </Table.Tr>
+                        </Table.Tbody>
+                        <Table.Tbody>
+                            {rows.length > 0 ? (
+                                rows
+                            ) : (
+                                <Table.Tr>
+                                    <Table.Td colSpan={4}>
+                                        <Text fw={500} ta="center">
+                                            Nothing found
+                                        </Text>
+                                    </Table.Td>
+                                </Table.Tr>
+                            )}
+                        </Table.Tbody>
+                    </Table>
+                </div>
+            </div>
         </ScrollArea>
     );
 }
