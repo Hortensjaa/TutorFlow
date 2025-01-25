@@ -5,6 +5,8 @@ import com.jk.TutorFlow.entities.Lesson;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,6 +16,7 @@ public class LessonModel {
     private String description;
     private String student;
     private String teacher;
+    private Date date;
 
     @JsonProperty("id")
     public long getID() { return id; }
@@ -40,11 +43,17 @@ public class LessonModel {
     @JsonProperty("teacher")
     public void setTeacher(String value) { this.teacher = value; }
 
+    @JsonProperty("date")
+    public Date getDate() { return date; }
+    @JsonProperty("date")
+    public void setDate(Date value) { this.date = value; }
+
     public LessonModel(Lesson entity) {
         this.id = entity.getLesson_id();
         this.topic = entity.getTopic();
         this.description = entity.getDescription();
         this.student = entity.getStudent().getUsername();
         this.teacher = entity.getTeacher().getUsername();
+        this.date = entity.getDate();
     }
 }

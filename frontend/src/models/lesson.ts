@@ -10,6 +10,7 @@
 export interface Lesson {
     id:          number;
     topic:       string;
+    date:        Date;
     description: string;
     student:     string;
     teacher:     string;
@@ -183,6 +184,7 @@ const typeMap: any = {
     "Lesson": o([
         { json: "id", js: "id", typ: 0 },
         { json: "topic", js: "topic", typ: "" },
+        { json: "date", js: "date", typ: Date },
         { json: "description", js: "description", typ: "" },
         { json: "student", js: "student", typ: "" },
         { json: "teacher", js: "teacher", typ: "" },

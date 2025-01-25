@@ -1,9 +1,18 @@
 import {
+    Card,
+    Container,
     createTheme,
-    MantineColorsTuple
-} from '@mantine/core';
+    DEFAULT_THEME,
+    MantineColorsTuple,
+    Paper,
+    rem,
+    Select,
+    Table
+} from "@mantine/core";
+import type { MantineThemeOverride } from "@mantine/core";
 
-const myColor: MantineColorsTuple = [
+
+const palePink: MantineColorsTuple = [
     '#ffeaf3',
     '#fcd4e1',
     '#f4a7bf',
@@ -16,9 +25,35 @@ const myColor: MantineColorsTuple = [
     '#9f003e'
 ];
 
-export const pinkTheme = createTheme({
-    fontFamily: 'Open Sans, sans-serif',
+
+const deepOrange: MantineColorsTuple = [
+    "#fff4e1",
+    "#ffe8cc",
+    "#fed09b",
+    "#fdb766",
+    "#fca13a",
+    "#fc931d",
+    "#fc8c0c",
+    "#e17800",
+    "#c86a00",
+    "#af5a00"
+];
+
+export const pinkTheme: MantineThemeOverride = createTheme({
+    ...DEFAULT_THEME,
+    primaryColor: "pale-pink",
     colors: {
-        myColor
-    }
+        "pale-pink": palePink,
+        "deep-orange": deepOrange
+    },
+    components: {
+        Table: {
+            styles: (theme) => ({
+                th: {
+                    color: theme.colors[theme.primaryColor][5],
+                    backgroundColor: theme.colors[theme.primaryColor][0],
+                },
+            }),
+        },
+    },
 });

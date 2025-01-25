@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
 
+import java.sql.Date;
 import java.util.List;
 
 @Getter
@@ -19,6 +20,7 @@ public class Lesson {
     private Long lesson_id;
     private String topic;
     private String description;
+    private Date date;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
     @JsonManagedReference

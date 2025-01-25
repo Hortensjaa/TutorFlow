@@ -1,0 +1,9 @@
+body {
+    margin: 20px;
+}
+
+@media (max-width: 768px) {
+    body {
+        margin: 0; /* no left margin on mobile */
+    }
+}
