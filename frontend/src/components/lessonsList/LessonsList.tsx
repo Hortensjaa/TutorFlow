@@ -1,24 +1,45 @@
 import { useEffect, useState } from 'react';
-import { IconSearch } from '@tabler/icons-react';
+import {IconChevronDown, IconChevronUp, IconSearch, IconSelector} from '@tabler/icons-react';
 import {
+    Center,
+    Group,
     ScrollArea,
     Table,
     Text,
-    TextInput,
+    TextInput, UnstyledButton,
     useMantineTheme
 } from '@mantine/core';
 
 import { Lesson } from "../../models/lesson.ts";
-import { sortData, Th } from "./utils.tsx";
+import {sortData, ThProps} from "./utils.tsx";
 import { SideNavbar } from "../index.ts";
-import {TopNavbar} from "../navBar/TopNavbar.tsx";
+import { TopNavbar } from "../navBar/TopNavbar.tsx";
+import styles from './LessonsList.module.css';
 
+
+export function Th({ children, reversed, sorted, onSort }: ThProps) {
+    const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
+    return (
+        <Table.Th className={styles.header}>
+            <UnstyledButton onClick={onSort}>
+                <Group justify="space-between">
+                    <Text fw={500} fz="sm">
+                        {children}
+                    </Text>
+                    <Center>
+                        <Icon size={16} stroke={1.5} />
+                    </Center>
+                </Group>
+            </UnstyledButton>
+        </Table.Th>
+    );
+}
 
 export default function LessonsList() {
     const [search, setSearch] = useState('');
     const [sortedData, setSortedData] = useState<Lesson[]>([]);
-    const [sortBy, setSortBy] = useState<keyof Lesson | null>(null);
-    const [reverseSortDirection, setReverseSortDirection] = useState(false);
+    const [sortBy, setSortBy] = useState<keyof Lesson | null>("date");
+    const [reverseSortDirection, setReverseSortDirection] = useState(true);
     const theme = useMantineTheme();
 
     const setSorting = (field: keyof Lesson) => {
@@ -38,9 +59,7 @@ export default function LessonsList() {
         <Table.Tr key={row.id}>
             <Table.Td>{row.date}</Table.Td>
             <Table.Td>
-                <Text fw={500}>
-                    {row.topic}
-                </Text>
+                <Text fw={500}>{row.topic}</Text>
             </Table.Td>
             <Table.Td>{row.student}</Table.Td>
         </Table.Tr>
@@ -48,20 +67,23 @@ export default function LessonsList() {
 
     const loadData = () => {
         console.log("starting fetching data");
-        fetch("/api/lessons",
-            { method: 'GET', redirect: "follow", credentials: 'include' })
-            .then(response => {
+        fetch("/api/lessons", {
+            method: 'GET',
+            redirect: "follow",
+            credentials: 'include',
+        })
+            .then((response) => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
             })
-            .then(data => {
+            .then((data) => {
                 console.log('Fetched Data:', data);
-                setSortedData(data);
+                setSortedData(sortData(data, { sortBy, reversed: true, search }));
             })
-            .catch(error => console.error('Fetch error:', error));
-    }
+            .catch((error) => console.error('Fetch error:', error));
+    };
 
     useEffect(() => {
         loadData();
@@ -69,25 +91,18 @@ export default function LessonsList() {
 
     return (
         <ScrollArea>
-            <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+            <div className={styles.container}>
                 {parseFloat(theme.breakpoints.sm) * 16 < window.innerWidth ? <SideNavbar /> : null}
 
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                }}>
-                    {parseFloat(theme.breakpoints.sm) * 16 < window.innerWidth ? null : <TopNavbar/>}
+                <div className={styles.content}>
+                    {parseFloat(theme.breakpoints.sm) * 16 < window.innerWidth ? null : <TopNavbar />}
                     <TextInput
                         placeholder="Search by any field"
                         mb="md"
                         leftSection={<IconSearch />}
                         value={search}
                         onChange={handleSearchChange}
-                        style={{
-                            marginBottom: '10px',
-                            marginLeft: parseFloat(theme.breakpoints.sm) * 16 > window.innerWidth ? '10px' : '0',
-                            marginRight: parseFloat(theme.breakpoints.sm) * 16 > window.innerWidth ? '10px' : '0',}}
+                        className={styles.searchInput}
                     />
                     <Table horizontalSpacing="md" verticalSpacing="xs" miw={300} layout="fixed">
                         <Table.Tbody>

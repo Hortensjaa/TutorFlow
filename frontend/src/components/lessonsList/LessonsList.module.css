@@ -1,0 +1,30 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.searchInput {
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border: light-dark(var(--mantine-primary-color-2), var(--mantine-primary-color-5)) 1px solid;
+}
+
+@media (max-width: 768px) {
+    .searchInput {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+.header {
+    background-color: light-dark(var(--mantine-primary-color-0), var(--mantine-primary-color-9));
+    color: light-dark(var(--mantine-primary-color-5), var(--mantine-primary-color-2));
+}

@@ -46,14 +46,4 @@ export const pinkTheme: MantineThemeOverride = createTheme({
         "pale-pink": palePink,
         "deep-orange": deepOrange
     },
-    components: {
-        Table: {
-            styles: (theme) => ({
-                th: {
-                    color: theme.colors[theme.primaryColor][5],
-                    backgroundColor: theme.colors[theme.primaryColor][0],
-                },
-            }),
-        },
-    },
 });

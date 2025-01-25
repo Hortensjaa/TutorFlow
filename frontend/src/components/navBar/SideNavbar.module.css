@@ -47,8 +47,8 @@
     &[data-active] {
         &,
         &:hover {
-            background-color: var(--mantine-primary-color-0);
-            color: var(--mantine-primary-color-5);
+            background-color: light-dark(var(--mantine-primary-color-0), var(--mantine-primary-color-9));
+            color: light-dark(var(--mantine-primary-color-5), var(--mantine-primary-color-2));
 
             .linkIcon {
                 color: var(--mantine-primary-color-4);
