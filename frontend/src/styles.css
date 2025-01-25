@@ -4,6 +4,6 @@ body {
 
 @media (max-width: 768px) {
     body {
-        margin: 0; /* no left margin on mobile */
+        margin: 0;
     }
 }

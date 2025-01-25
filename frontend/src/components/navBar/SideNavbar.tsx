@@ -7,20 +7,8 @@ import {
 } from '@tabler/icons-react';
 import {Code, Group, Text} from '@mantine/core';
 import classes from './SideNavbar.module.css';
+import {menuItems, menuItem} from "./menuItems.ts";
 
-
-interface menuItem {
-    link: string,
-    label: string,
-    icon: any
-}
-
-const data: menuItem[] = [
-    { link: '', label: 'Notifications', icon: IconBellRinging },
-    { link: '', label: 'Lessons', icon: IconSchool },
-    { link: '', label: 'Schedule', icon: IconCalendarEvent },
-    { link: '', label: 'Settings', icon: IconSettings },
-];
 
 function NotificationCircle({ count }: { count: number }) {
     if (count <= 0) return null;
@@ -35,7 +23,7 @@ export default function SideNavbar() {
     const [active, setActive] = useState('Lessons');
     const [notificationsCount, setNotificationsCount] = useState(3);
 
-    const links = data.map((item: menuItem) => (
+    const links = menuItems.map((item: menuItem) => (
         <a
             className={classes.link}
             data-active={item.label === active || undefined}
@@ -77,11 +65,6 @@ export default function SideNavbar() {
             </div>
 
             <div className={classes.footer}>
-                <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
-                    <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
-                    <span>Change account</span>
-                </a>
-
                 <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
                     <IconLogout className={classes.linkIcon} stroke={1.5} />
                     <span>Logout</span>

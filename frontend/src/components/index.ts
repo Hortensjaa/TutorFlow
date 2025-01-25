@@ -1,5 +1,5 @@
-import LessonsList from './lessonsList/lessonsList.tsx';
-import SideNavbar from './computer/sideNavbar.tsx';
+import LessonsList from './lessonsList/LessonsList.tsx';
+import SideNavbar from './navBar/SideNavbar.tsx';
 
 export {
     LessonsList, SideNavbar

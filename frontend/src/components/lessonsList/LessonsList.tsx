@@ -11,6 +11,7 @@ import {
 import { Lesson } from "../../models/lesson.ts";
 import { sortData, Th } from "./utils.tsx";
 import { SideNavbar } from "../index.ts";
+import {TopNavbar} from "../navBar/TopNavbar.tsx";
 
 
 export default function LessonsList() {
@@ -75,16 +76,18 @@ export default function LessonsList() {
                     display: 'flex',
                     flexDirection: 'column',
                     flex: 1,
-                    marginLeft: parseFloat(theme.breakpoints.sm) * 16 > window.innerWidth ? '10px' : '0',
-                    marginRight: parseFloat(theme.breakpoints.sm) * 16 > window.innerWidth ? '10px' : '0',
                 }}>
+                    {parseFloat(theme.breakpoints.sm) * 16 < window.innerWidth ? null : <TopNavbar/>}
                     <TextInput
                         placeholder="Search by any field"
                         mb="md"
                         leftSection={<IconSearch />}
                         value={search}
                         onChange={handleSearchChange}
-                        style={{ marginBottom: '10px' }}
+                        style={{
+                            marginBottom: '10px',
+                            marginLeft: parseFloat(theme.breakpoints.sm) * 16 > window.innerWidth ? '10px' : '0',
+                            marginRight: parseFloat(theme.breakpoints.sm) * 16 > window.innerWidth ? '10px' : '0',}}
                     />
                     <Table horizontalSpacing="md" verticalSpacing="xs" miw={300} layout="fixed">
                         <Table.Tbody>
