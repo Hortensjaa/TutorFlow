@@ -1,10 +1,5 @@
 import { useState } from 'react';
-import {
-    IconSettings,
-    IconCalendarEvent,
-    IconBellRinging,
-    IconSchool, IconSwitchHorizontal, IconLogout
-} from '@tabler/icons-react';
+import {IconLogout} from '@tabler/icons-react';
 import {Code, Group, Text} from '@mantine/core';
 import classes from './SideNavbar.module.css';
 import {menuItems, menuItem} from "./menuItems.ts";
