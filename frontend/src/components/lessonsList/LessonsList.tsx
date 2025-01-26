@@ -37,8 +37,9 @@ export function Th({ children, reversed, sorted, onSort }: ThProps) {
 
 export default function LessonsList() {
     const [search, setSearch] = useState('');
+    const [originalData, setOriginalData] = useState<Lesson[]>([]); // Store the original data
     const [sortedData, setSortedData] = useState<Lesson[]>([]);
-    const [sortBy, setSortBy] = useState<keyof Lesson | null>("date");
+    const [sortBy, setSortBy] = useState<keyof Lesson | null>('date');
     const [reverseSortDirection, setReverseSortDirection] = useState(true);
     const theme = useMantineTheme();
 
@@ -46,30 +47,20 @@ export default function LessonsList() {
         const reversed = field === sortBy ? !reverseSortDirection : false;
         setReverseSortDirection(reversed);
         setSortBy(field);
-        setSortedData(sortData(sortedData, { sortBy: field, reversed, search }));
+        setSortedData(sortData(originalData, { sortBy: field, reversed, search })); // Use originalData
     };
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.currentTarget;
         setSearch(value);
-        setSortedData(sortData(sortedData, { sortBy, reversed: reverseSortDirection, search: value }));
+        setSortedData(sortData(originalData, { sortBy, reversed: reverseSortDirection, search: value })); // Use originalData
     };
 
-    const rows = sortedData.map((row: Lesson) => (
-        <Table.Tr key={row.id}>
-            <Table.Td>{row.date}</Table.Td>
-            <Table.Td>
-                <Text fw={500}>{row.topic}</Text>
-            </Table.Td>
-            <Table.Td>{row.student}</Table.Td>
-        </Table.Tr>
-    ));
-
     const loadData = () => {
-        console.log("starting fetching data");
-        fetch("/api/lessons", {
+        console.log('starting fetching data');
+        fetch('/api/lessons', {
             method: 'GET',
-            redirect: "follow",
+            redirect: 'follow',
             credentials: 'include',
         })
             .then((response) => {
@@ -80,7 +71,8 @@ export default function LessonsList() {
             })
             .then((data) => {
                 console.log('Fetched Data:', data);
-                setSortedData(sortData(data, { sortBy, reversed: true, search }));
+                setOriginalData(data); // Store data in originalData
+                setSortedData(sortData(data, { sortBy, reversed: true, search })); // Initialize sortedData
             })
             .catch((error) => console.error('Fetch error:', error));
     };
@@ -88,6 +80,16 @@ export default function LessonsList() {
     useEffect(() => {
         loadData();
     }, []);
+
+    const rows = sortedData.map((row: Lesson) => (
+        <Table.Tr key={row.id}>
+            <Table.Td>{row.date}</Table.Td>
+            <Table.Td>
+                <Text fw={500}>{row.topic}</Text>
+            </Table.Td>
+            <Table.Td>{row.student}</Table.Td>
+        </Table.Tr>
+    ));
 
     return (
         <ScrollArea>
@@ -149,3 +151,4 @@ export default function LessonsList() {
         </ScrollArea>
     );
 }
+
