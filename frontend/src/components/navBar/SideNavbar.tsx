@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import {IconLogout} from '@tabler/icons-react';
-import {Code, Group, Text} from '@mantine/core';
+import {Code, Group, Text, UnstyledButton} from '@mantine/core';
 import classes from './SideNavbar.module.css';
 import {menuItems, menuItem} from "./menuItems.ts";
+import {useNavigate} from "react-router-dom";
 
 
 function NotificationCircle({ count }: { count: number }) {
@@ -15,6 +16,7 @@ function NotificationCircle({ count }: { count: number }) {
 }
 
 export default function SideNavbar() {
+    const navigate = useNavigate();
     const [active, setActive] = useState('Lessons');
     const [notificationsCount, setNotificationsCount] = useState(3);
 
@@ -46,6 +48,7 @@ export default function SideNavbar() {
         <nav className={classes.navbar}>
             <div className={classes.navbarMain}>
             <Group className={classes.header} justify="space-between">
+                <UnstyledButton onClick={() => navigate('/')}>
                     <Text
                         size="xl"
                         fw={900}
@@ -54,7 +57,8 @@ export default function SideNavbar() {
                     >
                         Tutor Flow
                     </Text>
-                    <Code fw={700}>v1.0.0</Code>
+                </UnstyledButton>
+                <Code fw={700}>v1.0.0</Code>
                 </Group>
                 {links}
             </div>

@@ -8,20 +8,24 @@ import {
     IconBooks,
     IconArrowBigRight
 } from '@tabler/icons-react';
+import { useMediaQuery } from '@mantine/hooks';
 import { motion } from 'framer-motion';
+import {Navigate, useNavigate} from "react-router-dom";
 
 interface elemProps {
     id: number, color: number, text: string, icon: any
 }
 
 const Element = (item: elemProps) => {
+    const isMobile = useMediaQuery('(max-width: 768px)');
+
     return (
         <Grid.Col span={4}>
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1 + item.id/4, duration: 0.5 }}
-                style={{ textAlign: 'center', margin: '0 50px' }}
+                style={{ textAlign: 'center', margin: isMobile? '0 0' : '0 50px' }}
             >
                 <item.icon size={64} color={`var(--mantine-primary-color-${item.color})`} />
                 <Title order={4} style={{
@@ -35,6 +39,9 @@ const Element = (item: elemProps) => {
 }
 
 export default function HomePage() {
+    const navigate = useNavigate();
+    const isMobile = useMediaQuery('(max-width: 768px)');
+
     return (
         <Container size="lg" py="xl" h="100vh"
                    style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -53,10 +60,10 @@ export default function HomePage() {
                     <Box
                         style={{width: "100%", display: "flex" ,justifyContent: 'center', alignItems: "center"}}>
                         <Box style={{width: "100%", maxWidth: "900px"}}>
-                            <Title order={1} size={"90px"} align="left" mb="md">
+                            <Title order={1} size={isMobile ? "50px" : "90px"} align="left" mb="md">
                                 Welcome to{' '}
                             </Title>
-                            <Title order={1} size={"110px"} align="right" mb="md">
+                            <Title order={1} size={isMobile ? "60px" : "110px"} align="right" mb="md">
                                 <Text
                                     span
                                     variant="gradient"
@@ -72,7 +79,7 @@ export default function HomePage() {
                         Organize your teaching process, track your students' progress, and manage lessons with ease.
                     </Text>
                 </motion.div>
-                <Grid mt={"lg"} w={"75vw"}>
+                <Grid mt={"lg"} w={isMobile ? "90vw" : "75vw"}>
                     <Element id={1} color={3} text={"Find inspiration"} icon={IconSparkles} />
                     <Element id={3} color={5} text={"Plan lessons"} icon={IconBook} />
                     <Element id={5} color={7} text={"Stay on schedule"} icon={IconCalendarEvent} />
@@ -91,9 +98,10 @@ export default function HomePage() {
                             w="50vw"
                             radius={"100px"}
                             variant={"gradient"}
-                            leftSection={<IconArrowBigRight style={{margin: '0 10px'}}/>}
-                            rightSection={<IconArrowBigRight style={{margin: '0 10px'}}/>}
+                            leftSection={isMobile ? null : <IconArrowBigRight style={{margin: '0 10px'}}/>}
+                            rightSection={isMobile ? null : <IconArrowBigRight style={{margin: '0 10px'}}/>}
                             gradient={{ from: 'var(--mantine-primary-color-7)', to: 'var(--mantine-primary-color-9)', deg: 135 }}
+                            onClick={() => navigate('/dashboard')}
                         >
                             GET STARTED
                         </Button>
