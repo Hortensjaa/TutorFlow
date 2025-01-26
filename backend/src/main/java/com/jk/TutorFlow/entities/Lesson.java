@@ -7,7 +7,7 @@ import lombok.Setter;
 import jakarta.persistence.*;
 
 import java.sql.Date;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,16 +24,16 @@ public class Lesson {
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<File> files;
+    private Set<File> files;
 
     @ManyToOne
-    @JoinColumn(name = "teacher", referencedColumnName = "teacher_id")
+    @JoinColumn(name = "teacher", referencedColumnName = "user_id")
     @JsonBackReference
-    private Teacher teacher;
+    private User teacher;
 
     @ManyToOne
-    @JoinColumn(name = "student", referencedColumnName = "student_id")
+    @JoinColumn(name = "student", referencedColumnName = "user_id")
     @JsonBackReference
-    private Student student;
+    private User student;
 
 }
