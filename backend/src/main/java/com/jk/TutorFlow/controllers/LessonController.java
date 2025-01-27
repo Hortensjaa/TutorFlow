@@ -31,9 +31,10 @@ public class LessonController {
         return new ResponseEntity<>(lessons, HttpStatus.OK);
     }
 
+
     @GetMapping("/api/lesson/{id}")
     public ResponseEntity<LessonModel> getLesson(@PathVariable String id) {
-        Optional<Lesson> lesson = lessonService.getLesson(id);
+        Optional<Lesson> lesson = lessonService.getLesson(Long.valueOf(id));
         return lesson.map(
                         value -> new ResponseEntity<>(new LessonModel(value), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));

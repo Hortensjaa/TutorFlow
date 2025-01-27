@@ -17,7 +17,7 @@ public class LessonService {
         return lessonRepository.findAll();
     }
 
-    public Optional<Lesson> getLesson(String id) {
+    public Optional<Lesson> getLesson(Long id) {
         return lessonRepository.findById(id);
     }
 }

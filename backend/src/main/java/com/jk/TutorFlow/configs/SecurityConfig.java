@@ -18,20 +18,25 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    String frontedUrl = "http://localhost:5173";
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
-                    registry.anyRequest().permitAll();
+                    registry.requestMatchers( "/login").permitAll();
+                    registry.anyRequest().authenticated();
                 })
+                .oauth2Login(form -> form.defaultSuccessUrl("/api/success", true))
+                .logout(logout -> logout.logoutSuccessUrl(frontedUrl))
                 .build();
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of(frontedUrl));
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
