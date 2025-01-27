@@ -33,4 +33,5 @@ build/
 .vscode/
 .env
 !**/src/main/**/DataSourceConfig.java
+!**/src/main/resources/application.properties
 src/main/resources/application.properties
