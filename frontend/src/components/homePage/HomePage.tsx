@@ -1,4 +1,4 @@
-import {Box, Button, Container, Grid, Group, Text, Title} from '@mantine/core';
+import {Box, Button, Container, Dialog, Grid, Group, Text, Title} from '@mantine/core';
 import {
     IconBook,
     IconUsers,
@@ -8,9 +8,10 @@ import {
     IconBooks,
     IconArrowBigRight
 } from '@tabler/icons-react';
-import { useMediaQuery } from '@mantine/hooks';
+import {useDisclosure, useMediaQuery} from '@mantine/hooks';
 import { motion } from 'framer-motion';
-import {Navigate, useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Login from "./Login.tsx";
 
 interface elemProps {
     id: number, color: number, text: string, icon: any
@@ -41,10 +42,22 @@ const Element = (item: elemProps) => {
 export default function HomePage() {
     const navigate = useNavigate();
     const isMobile = useMediaQuery('(max-width: 768px)');
+    const [opened, { toggle, close }] = useDisclosure(false);
 
     return (
         <Container size="lg" py="xl" h="100vh"
                    style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+
+            <Dialog
+                position={{ top: 20, right: 20 }}
+                opened={opened}
+                withCloseButton
+                onClose={close}
+                size="lg" radius="md"
+            >
+                <Login/>
+            </Dialog>
+
             <Box
                 sx={{
                     textAlign: 'center',
@@ -101,7 +114,7 @@ export default function HomePage() {
                             leftSection={isMobile ? null : <IconArrowBigRight style={{margin: '0 10px'}}/>}
                             rightSection={isMobile ? null : <IconArrowBigRight style={{margin: '0 10px'}}/>}
                             gradient={{ from: 'var(--mantine-primary-color-7)', to: 'var(--mantine-primary-color-9)', deg: 135 }}
-                            onClick={() => navigate('/dashboard')}
+                            onClick={isMobile ? () => navigate('/login') : toggle}
                         >
                             GET STARTED
                         </Button>
