@@ -1,7 +1,9 @@
 package com.jk.TutorFlow.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.*;
 
@@ -12,6 +14,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -29,5 +32,11 @@ public class User {
     private Set<Lesson> attended_lessons;
 
     @ManyToMany(mappedBy = "users")
+    @Nullable
     Set<Role> roles;
+
+    public User(String name, String email) {
+        this.username = name;
+        this.email = email;
+    }
 }

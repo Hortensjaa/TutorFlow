@@ -13,12 +13,13 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+import com.jk.TutorFlow.Consts;
+
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    String frontedUrl = "http://localhost:5173";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -28,15 +29,15 @@ public class SecurityConfig {
                     registry.requestMatchers( "/login").permitAll();
                     registry.anyRequest().authenticated();
                 })
-                .oauth2Login(form -> form.defaultSuccessUrl("/api/success", true))
-                .logout(logout -> logout.logoutSuccessUrl(frontedUrl))
+                .oauth2Login(form -> form.defaultSuccessUrl("/api/add_user", true))
+                .logout(logout -> logout.logoutSuccessUrl(Consts.frontendUrl))
                 .build();
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(frontedUrl));
+        configuration.setAllowedOrigins(List.of(Consts.frontendUrl));
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
