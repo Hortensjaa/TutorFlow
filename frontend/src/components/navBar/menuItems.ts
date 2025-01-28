@@ -8,7 +8,7 @@ export interface menuItem {
 
 export const menuItems: menuItem[] = [
     { link: '', label: 'Notifications', icon: IconBellRinging },
-    { link: '', label: 'Lessons', icon: IconSchool },
+    { link: '/dashboard', label: 'Lessons', icon: IconSchool },
     { link: '', label: 'Schedule', icon: IconCalendarEvent },
-    { link: '', label: 'Settings', icon: IconSettings },
+    { link: '/profile', label: 'Settings', icon: IconSettings },
 ];

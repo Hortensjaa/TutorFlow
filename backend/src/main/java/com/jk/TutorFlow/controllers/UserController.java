@@ -1,6 +1,7 @@
 package com.jk.TutorFlow.controllers;
 
 import com.jk.TutorFlow.entities.User;
+import com.jk.TutorFlow.models.UserModel;
 import com.jk.TutorFlow.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,14 +30,21 @@ public class UserController {
         User existingUser = userService.getUserByEmail(user.getEmail());
         if (existingUser == null) {
             userService.addUser(user);
-            return new RedirectView(Consts.frontendUrl + "/profile/edit/" + user.getUser_id());
+            return new RedirectView(Consts.frontendUrl + "/profile/edit/");
         }
-        return new RedirectView(Consts.frontendUrl + "/profile/" + existingUser.getUser_id());
+        return new RedirectView(Consts.frontendUrl + "/profile/");
     }
 
     @GetMapping("/api/user/{id}")
     public User getUserById(@PathVariable String id) {
         return userService.getUserById(Long.valueOf(id));
+    }
+
+    @GetMapping("/api/user/active")
+    public UserModel getActiveUser(@AuthenticationPrincipal OAuth2User principal) {
+        User userData = extractData(principal);
+        User entity = userService.getUserByEmail(userData.getEmail());
+        return new UserModel(entity);
     }
 
     @PostMapping("/api/user/add_role")
@@ -52,6 +60,7 @@ public class UserController {
             assert email != null;
             name = email.substring(0, email.indexOf('@'));
         }
-        return new User(name, email);
+        String avatarUrl = principal.getAttribute("picture");
+        return new User(name, email, avatarUrl);
     }
 }

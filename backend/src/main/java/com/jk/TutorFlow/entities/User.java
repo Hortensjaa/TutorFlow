@@ -1,6 +1,7 @@
 package com.jk.TutorFlow.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +23,9 @@ public class User {
     private String username;
     private String email;
 
+    @Nullable
+    private String avatar_url;
+
     @OneToMany(mappedBy = "teacher")
     @JsonManagedReference
     private Set<Lesson> taught_lessons;
@@ -34,9 +38,10 @@ public class User {
     @JsonManagedReference
     Set<Role> roles;
 
-    public User(String name, String email) {
+    public User(String name, String email, @org.jetbrains.annotations.Nullable String avatar_url) {
         this.username = name;
         this.email = email;
+        this.avatar_url = avatar_url;
         this.roles = new HashSet<>();
     }
 

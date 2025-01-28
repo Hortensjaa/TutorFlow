@@ -1,0 +1,8 @@
+{
+  "id": 2,
+  "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg",
+  "username": "Bret",
+  "email": "email@mail.com",
+  "teacher": true,
+  "student": false
+}
