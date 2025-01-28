@@ -29,7 +29,7 @@ public class SecurityConfig {
                     registry.requestMatchers( "/login").permitAll();
                     registry.anyRequest().authenticated();
                 })
-                .oauth2Login(form -> form.defaultSuccessUrl("/api/add_user", true))
+                .oauth2Login(form -> form.defaultSuccessUrl("/api/user/add_user", true))
                 .logout(logout -> logout.logoutSuccessUrl(Consts.frontendUrl))
                 .build();
     }

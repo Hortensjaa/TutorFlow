@@ -1,6 +1,7 @@
 package com.jk.TutorFlow.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class Role {
             name = "user_roles",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JsonBackReference
     private Set<User> users;
 }
 

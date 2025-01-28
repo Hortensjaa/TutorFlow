@@ -1,13 +1,12 @@
 package com.jk.TutorFlow.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.*;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -32,11 +31,20 @@ public class User {
     private Set<Lesson> attended_lessons;
 
     @ManyToMany(mappedBy = "users")
-    @Nullable
+    @JsonManagedReference
     Set<Role> roles;
 
     public User(String name, String email) {
         this.username = name;
         this.email = email;
+        this.roles = new HashSet<>();
+    }
+
+    public void addRole(Role role) {
+        if (this.roles == null) {
+            this.roles = new HashSet<>();
+        }
+        this.roles.add(role);
+        role.getUsers().add(this);
     }
 }

@@ -1,6 +1,8 @@
 package com.jk.TutorFlow.services;
 
+import com.jk.TutorFlow.entities.Role;
 import com.jk.TutorFlow.entities.User;
+import com.jk.TutorFlow.repositories.RoleRepository;
 import com.jk.TutorFlow.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,21 +12,31 @@ import java.util.List;
 @Service
 public class UserService {
     @Autowired
-    private UserRepository userRepo ;
+    private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     public void addUser(User user) {
-        userRepo.save(user);
+        userRepository.save(user);
     }
 
     public List<User> getAllUsers() {
-        return userRepo.findAll();
+        return userRepository.findAll();
     }
 
     public User getUserById(Long id) {
-        return userRepo.findById(id).orElse(null);
+        return userRepository.findById(id).orElse(null);
     }
 
     public User getUserByEmail(String email) {
-        return userRepo.findByEmail(email);
+        return userRepository.findByEmail(email);
+    }
+
+    public void addRoleToUser(Long userId, Long roleId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Role role = roleRepository.findById(roleId).orElseThrow(() -> new RuntimeException("Role not found"));
+        user.addRole(role);
+
+        userRepository.save(user);
     }
 }
