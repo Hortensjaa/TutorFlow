@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import {IconLogout} from '@tabler/icons-react';
 import {Code, Group, Text, UnstyledButton} from '@mantine/core';
 import classes from './SideNavbar.module.css';
 import {menuItems, menuItem} from "./menuItems.ts";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 
 function NotificationCircle({ count }: { count: number }) {
@@ -17,17 +17,17 @@ function NotificationCircle({ count }: { count: number }) {
 
 export default function SideNavbar() {
     const navigate = useNavigate();
-    const [active, setActive] = useState('Lessons');
-    const [notificationsCount, setNotificationsCount] = useState(3);
+    const [active, setActive] = useState(useLocation().pathname);
 
     const links = menuItems.map((item: menuItem) => (
         <a
             className={classes.link}
-            data-active={item.label === active || undefined}
+            data-active={item.link === active || undefined}
             href={item.link}
             key={item.label}
             onClick={(event) => {
                 event.preventDefault();
+                navigate(item.link);
                 setActive(item.label);
             }}
         >
@@ -35,11 +35,6 @@ export default function SideNavbar() {
                 <item.icon className={classes.linkIcon} stroke={1.5} />
                 <span>{item.label}</span>
             </div>
-            {item.label === 'Notifications' && (
-                <div style={{ position: 'relative', marginLeft: 'auto' }}>
-                    <NotificationCircle count={notificationsCount} />
-                </div>
-            )}
         </a>
     ));
 
@@ -48,7 +43,7 @@ export default function SideNavbar() {
         <nav className={classes.navbar}>
             <div className={classes.navbarMain}>
             <Group className={classes.header} justify="space-between">
-                <UnstyledButton onClick={() => navigate('/')}>
+                <UnstyledButton onClick={() => navigate('/#logout')}>
                     <Text
                         size="xl"
                         fw={900}

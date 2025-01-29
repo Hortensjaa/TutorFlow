@@ -1,14 +1,15 @@
-import {IconBellRinging, IconCalendarEvent, IconSchool, IconSettings} from "@tabler/icons-react";
+import {IconSchool, IconSettings, IconUser} from "@tabler/icons-react";
 
 export interface menuItem {
     link: string,
     label: string,
-    icon: any
+    icon: any,
 }
 
 export const menuItems: menuItem[] = [
-    { link: '', label: 'Notifications', icon: IconBellRinging },
-    { link: '/dashboard', label: 'Lessons', icon: IconSchool },
-    { link: '', label: 'Schedule', icon: IconCalendarEvent },
-    { link: '/profile', label: 'Settings', icon: IconSettings },
+    { link: '/profile', label: 'Profile', icon: IconUser},
+    { link: '/dashboard', label: 'Lessons', icon: IconSchool},
+    { link: '/profile/edit', label: 'Settings', icon: IconSettings},
+    // { link: '', label: 'Notifications', icon: IconBellRinging},
+    // { link: '', label: 'Schedule', icon: IconCalendarEvent},
 ];

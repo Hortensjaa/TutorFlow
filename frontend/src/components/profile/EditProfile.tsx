@@ -36,7 +36,11 @@ const EditProfile = () => {
         <ScrollArea>
             <div className={styles.container}>
                 {!isMobile ? <SideNavbar /> : null}
-                {loading && (<Loader type="bars" />)}
+                {loading && (
+                    <div className={styles.loading}>
+                        <Loader type="bars" />
+                    </div>
+                )}
                 {!loading && (
                     <div className={styles.content}>
                         {isMobile ? <TopNavbar/> : null}

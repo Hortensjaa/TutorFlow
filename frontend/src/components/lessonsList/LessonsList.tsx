@@ -10,7 +10,7 @@ import {
     useMantineTheme
 } from '@mantine/core';
 
-import { Lesson } from "../../models/lesson.ts";
+import { Lesson } from "../../models";
 import {sortData, ThProps} from "./utils.tsx";
 import { SideNavbar } from "../index.ts";
 import { TopNavbar } from "../navBar/TopNavbar.tsx";
