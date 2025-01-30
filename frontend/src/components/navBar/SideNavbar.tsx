@@ -28,7 +28,6 @@ export default function SideNavbar() {
             onClick={(event) => {
                 event.preventDefault();
                 navigate(item.link);
-                setActive(item.label);
             }}
         >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

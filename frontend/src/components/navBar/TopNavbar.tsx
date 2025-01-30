@@ -3,22 +3,22 @@ import {Container, Group, Text, UnstyledButton} from '@mantine/core';
 import classes from './TopNavbar.module.css';
 import {menuItem, menuItems} from "./menuItems.ts";
 import {IconLogout} from "@tabler/icons-react";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 
 export function TopNavbar() {
     const navigate = useNavigate();
-    const [active, setActive] = useState("Lessons");
+    const [active, setActive] = useState(useLocation().pathname);
 
     const items = menuItems.map((link: menuItem) => (
         <a
             key={link.label}
             href={link.link}
             className={classes.link}
-            data-active={active === link.label || undefined}
+            data-active={active === link.link || undefined}
             onClick={(event) => {
                 event.preventDefault();
-                setActive(link.label);
+                navigate(link.link);
             }}
         >
             <link.icon stroke={1.5} />

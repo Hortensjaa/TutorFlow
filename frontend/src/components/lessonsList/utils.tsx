@@ -1,5 +1,5 @@
 import {ReactNode} from 'react';
-import {Lesson} from "../../models/lesson.ts";
+import {Lesson} from "../../models";
 
 
 export interface ThProps {

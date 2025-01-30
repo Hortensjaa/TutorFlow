@@ -35,7 +35,7 @@ const EditProfile = () => {
     return (
         <ScrollArea>
             <div className={styles.container}>
-                {!isMobile ? <SideNavbar /> : null}
+                {!isMobile ? <SideNavbar /> : <TopNavbar/>}
                 {loading && (
                     <div className={styles.loading}>
                         <Loader type="bars" />
@@ -43,7 +43,6 @@ const EditProfile = () => {
                 )}
                 {!loading && (
                     <div className={styles.content}>
-                        {isMobile ? <TopNavbar/> : null}
                         <Title order={1} className={styles.title}>Profile settings</Title>
 
                         <Divider my="md" label="Personal data" labelPosition="center"/>
