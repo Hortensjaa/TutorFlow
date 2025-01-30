@@ -13,6 +13,33 @@
     width: 100vw
 }
 
+.titlebox {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+.tableheader {
+    background-color: light-dark(var(--mantine-primary-color-0), var(--mantine-primary-color-9));
+    color: light-dark(var(--mantine-primary-color-5), var(--mantine-primary-color-2));
+}
+
+.textContainer {
+    margin-bottom: 16px;
+}
+
+.label {
+    margin-bottom: 4px;
+    font-size: 18px;
+    color: var(--mantine-color-gray-9);
+}
+
+.value {
+    font-size: 16px;
+    color: var(--mantine-color-gray-7);
+}
+
 .content {
     display: flex;
     flex-direction: column;
@@ -27,8 +54,8 @@
 }
 
 .title {
-    color: #343a40; /* Darker text for the title */
-    margin-bottom: 20px; /* Space below title */
+    color: #343a40;
+    margin-bottom: 20px;
 }
 
 .text-input {
@@ -41,10 +68,13 @@
 
 @media (max-width: 768px) {
     .container {
+        padding: 0;
         flex-direction: column;
     }
 
     .content {
+        margin-top: 0;
+        padding: 0 10px;
         width: 100%;
     }
 }

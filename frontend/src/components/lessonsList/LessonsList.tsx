@@ -58,7 +58,7 @@ export default function LessonsList() {
 
     const loadData = () => {
         console.log('starting fetching data');
-        fetch('/api/lessons', {
+        fetch('/api/lessons/all', {
             method: 'GET',
             redirect: 'follow',
             credentials: 'include',
@@ -87,6 +87,7 @@ export default function LessonsList() {
             <Table.Td>
                 <Text fw={500}>{row.topic}</Text>
             </Table.Td>
+            <Table.Td>{row.teacher}</Table.Td>
             <Table.Td>{row.student}</Table.Td>
         </Table.Tr>
     ));
@@ -129,6 +130,13 @@ export default function LessonsList() {
                                     onSort={() => setSorting('student')}
                                 >
                                     Student
+                                </Th>
+                                <Th
+                                    sorted={sortBy === 'teacher'}
+                                    reversed={reverseSortDirection}
+                                    onSort={() => setSorting('teacher')}
+                                >
+                                    Teacher
                                 </Th>
                             </Table.Tr>
                         </Table.Tbody>
