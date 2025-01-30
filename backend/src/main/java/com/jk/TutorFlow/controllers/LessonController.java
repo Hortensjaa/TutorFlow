@@ -4,6 +4,7 @@ import com.jk.TutorFlow.entities.Lesson;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.LessonModel;
 import com.jk.TutorFlow.services.LessonService;
+import com.jk.TutorFlow.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,6 +28,8 @@ import java.util.stream.Stream;
 public class LessonController {
     @Autowired
     private LessonService lessonService;
+    @Autowired
+    private UserService userService;
 
     private List<LessonModel> getTaughtLessonsHelper(Long teacherId) {
         return lessonService.getLessonsByTeacherId(teacherId)
@@ -37,35 +41,53 @@ public class LessonController {
                 .stream().map(LessonModel::new).collect(Collectors.toList());
     }
 
-    @GetMapping("/api/lessons/teacher")
-    public ResponseEntity<List<LessonModel>> getTaughtLessons(@AuthenticationPrincipal OAuth2User principal) {
-        String user_id = principal.getAttribute("sub");
-        if (user_id == null) {
+    private List<LessonModel> getAllLessonsHelper(Long user_id) {
+        if (!userService.isTeacher(user_id)) {
+            return getAttendedLessonsHelper(user_id);
+        }
+        if (!userService.isStudent(user_id)) {
+            return getTaughtLessonsHelper(user_id);
+        }
+        return lessonService.getLessonsByUserId(user_id).stream().map(LessonModel::new).collect(Collectors.toList());
+    }
+
+    private User getUser(@AuthenticationPrincipal OAuth2User principal) {
+        String user_email = principal.getAttribute("email");
+        if (user_email == null) {
             throw new AccessDeniedException("User not authenticated");
         }
-        return new ResponseEntity<>(getTaughtLessonsHelper(Long.valueOf(user_id)), HttpStatus.OK);
+        User user = userService.getUserByEmail(user_email);
+        if (user == null) {
+            throw new AccessDeniedException("User not found");
+        }
+        return user;
+    }
+
+    @GetMapping("/api/lessons/teacher")
+    public ResponseEntity<List<LessonModel>> getTaughtLessons(@AuthenticationPrincipal OAuth2User principal) {
+        User user = getUser(principal);
+        return new ResponseEntity<>(getTaughtLessonsHelper(user.getUser_id()), HttpStatus.OK);
     }
 
     @GetMapping("/api/lessons/student")
     public ResponseEntity<List<LessonModel>> getAttendedLessons(@AuthenticationPrincipal OAuth2User principal) {
-        String user_id = principal.getAttribute("sub");
-        if (user_id == null) {
-            throw new AccessDeniedException("User not authenticated");
-        }
-        return new ResponseEntity<>(getAttendedLessonsHelper(Long.valueOf(user_id)), HttpStatus.OK);
+        User user = getUser(principal);
+        return new ResponseEntity<>(getAttendedLessonsHelper(user.getUser_id()), HttpStatus.OK);
     }
 
-    @GetMapping("/api/lessons/")
+    @GetMapping("/api/lessons/all")
     public ResponseEntity<List<LessonModel>> getAllLessons(@AuthenticationPrincipal OAuth2User principal) {
-        String user_id = principal.getAttribute("sub");
-        if (user_id == null) {
-            throw new AccessDeniedException("User not authenticated");
-        }
-        List<LessonModel> lessons = Stream.concat(
-                getTaughtLessonsHelper(Long.valueOf(user_id)).stream(),
-                getAttendedLessonsHelper(Long.valueOf(user_id)).stream()
-        ).toList().stream().sorted((l1, l2) -> l2.getDate().compareTo(l1.getDate())).collect(Collectors.toList());
-        return new ResponseEntity<>(lessons, HttpStatus.OK);
+        User user = getUser(principal);
+        return new ResponseEntity<>(getAllLessonsHelper(user.getUser_id()), HttpStatus.OK);
+    }
+
+    @GetMapping("/api/lessons/latest")
+    public ResponseEntity<List<LessonModel>> getLatestLessons(@AuthenticationPrincipal OAuth2User principal) {
+        User user = getUser(principal);
+        return new ResponseEntity<>(
+                lessonService.getLatestLessons(user.getUser_id())
+                        .stream().map(LessonModel::new).collect(Collectors.toList()),
+                HttpStatus.OK);
     }
 
 

@@ -1,6 +1,7 @@
 package com.jk.TutorFlow.models;
 
 import com.fasterxml.jackson.annotation.*;
+import com.jk.TutorFlow.Consts;
 import com.jk.TutorFlow.entities.User;
 
 public class UserModel {
@@ -46,7 +47,7 @@ public class UserModel {
         this.avatar = entity.getAvatar_url();
         this.username = entity.getUsername();
         this.email = entity.getEmail();
-        this.teacher = entity.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_TEACHER"));
-        this.student = entity.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_STUDENT"));
+        this.teacher = entity.getRoles().stream().anyMatch(role -> role.getName().equals(Consts.teacherRole));
+        this.student = entity.getRoles().stream().anyMatch(role -> role.getName().equals(Consts.studentRole));
     }
 }

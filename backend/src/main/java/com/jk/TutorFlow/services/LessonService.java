@@ -25,4 +25,12 @@ public class LessonService {
     public Set<Lesson> getLessonsByStudentId(Long studentId) {
         return lessonRepository.findAllByStudentId(studentId);
     }
+
+    public Set<Lesson> getLessonsByUserId(Long userId) {
+        return lessonRepository.findAllByUserId(userId);
+    }
+
+    public Set<Lesson> getLatestLessons(Long userId) {
+        return lessonRepository.findLatest(userId);
+    }
 }

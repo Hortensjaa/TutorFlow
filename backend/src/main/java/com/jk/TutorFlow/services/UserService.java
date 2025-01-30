@@ -1,5 +1,6 @@
 package com.jk.TutorFlow.services;
 
+import com.jk.TutorFlow.Consts;
 import com.jk.TutorFlow.entities.Role;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.repositories.RoleRepository;
@@ -33,5 +34,15 @@ public class UserService {
         user.addRole(role);
 
         userRepository.save(user);
+    }
+
+    public Boolean isTeacher(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getRoles().stream().anyMatch(role -> role.getName().equals(Consts.teacherRole));
+    }
+
+    public Boolean isStudent(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getRoles().stream().anyMatch(role -> role.getName().equals(Consts.studentRole));
     }
 }
