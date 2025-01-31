@@ -15,6 +15,7 @@ export function filterData(data: Lesson[], search: string) {
         item.topic.toLowerCase().includes(query)
         || item.description.toLowerCase().includes(query)
         || item.student.toLowerCase().includes(query)
+        || item.teacher.toLowerCase().includes(query)
     );
 }
 

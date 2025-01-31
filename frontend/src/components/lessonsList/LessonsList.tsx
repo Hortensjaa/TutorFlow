@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {IconChevronDown, IconChevronUp, IconSearch, IconSelector} from '@tabler/icons-react';
 import {
+    Button,
     Center,
     Group,
     ScrollArea,
@@ -107,6 +108,7 @@ export default function LessonsList() {
                         onChange={handleSearchChange}
                         className={styles.searchInput}
                     />
+                    { rows.length !== 0 ? (
                     <Table horizontalSpacing="md" verticalSpacing="xs" miw={300} layout="fixed">
                         <Table.Tbody>
                             <Table.Tr>
@@ -141,19 +143,13 @@ export default function LessonsList() {
                             </Table.Tr>
                         </Table.Tbody>
                         <Table.Tbody>
-                            {rows.length > 0 ? (
-                                rows
-                            ) : (
-                                <Table.Tr>
-                                    <Table.Td colSpan={4}>
-                                        <Text fw={500} ta="center">
-                                            Nothing found
-                                        </Text>
-                                    </Table.Td>
-                                </Table.Tr>
-                            )}
+                            {rows}
                         </Table.Tbody>
-                    </Table>
+                    </Table>) : (
+                        <div className={styles.buttoncontainer}>
+                            <Button w={"50vw"}>Add your first lesson!</Button>
+                        </div>
+                    )}
                 </div>
             </div>
         </ScrollArea>

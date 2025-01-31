@@ -9,12 +9,11 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+    padding: 20px;
 }
 
 .searchInput {
     margin-bottom: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
     border: light-dark(var(--mantine-primary-color-2), var(--mantine-primary-color-5)) 1px solid;
 }
 
@@ -28,4 +27,10 @@
 .header {
     background-color: light-dark(var(--mantine-primary-color-0), var(--mantine-primary-color-9));
     color: light-dark(var(--mantine-primary-color-5), var(--mantine-primary-color-2));
+}
+
+.buttoncontainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
