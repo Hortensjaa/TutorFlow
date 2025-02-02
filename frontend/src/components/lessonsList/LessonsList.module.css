@@ -19,8 +19,12 @@
 
 @media (max-width: 768px) {
     .searchInput {
-        margin-left: 0;
-        margin-right: 0;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    .content {
+        padding: 0;
     }
 }
 

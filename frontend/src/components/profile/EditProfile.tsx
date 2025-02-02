@@ -52,7 +52,7 @@ const EditProfile = () => {
 
     return (
         <ScrollArea>
-            <div className={styles.container}>
+            <div className={"container"}>
                 {!isMobile ? <SideNavbar /> : <TopNavbar/>}
                 {loading && (
                     <div className={styles.loading}>
@@ -60,7 +60,7 @@ const EditProfile = () => {
                     </div>
                 )}
                 {!loading && (
-                    <div className={styles.content}>
+                    <div className={"content"}>
                         <Title order={1} className={styles.title}>Profile settings</Title>
 
                         <Divider my="md" label="Personal data" labelPosition="center"/>
@@ -106,8 +106,8 @@ const EditProfile = () => {
                             </HoverCard.Dropdown>
                         </HoverCard>
 
-                        <div className={styles.buttonContainer}>
-                            <Button onClick={saveUser} className={styles.wideButton}>
+                        <div className="buttonContainer">
+                            <Button onClick={saveUser} className="wideButton">
                                 Save
                             </Button>
                         </div>

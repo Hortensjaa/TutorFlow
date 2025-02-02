@@ -1,10 +1,14 @@
 import {useEffect, useState} from "react";
 import {Lesson} from "../../models";
 import {useNavigate, useParams} from "react-router-dom";
-import {Button, Card, Container, Group, Title, Text} from "@mantine/core";
+import {Button, Container, Group, Title, Text} from "@mantine/core";
+import {SideNavbar} from "../index.ts";
+import {TopNavbar} from "../navBar/TopNavbar.tsx";
+import {useMediaQuery} from "@mantine/hooks";
 
 
 const LessonView = () => {
+    const isMobile = useMediaQuery('(max-width: 768px)');
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [lesson, setLesson] = useState<Lesson | null>(null);
@@ -38,8 +42,9 @@ const LessonView = () => {
     }
 
     return (
-        <Container size="sm" mt="xl">
-            <Card shadow="sm" padding="lg">
+        <div className={"container"}>
+            {!isMobile ? <SideNavbar /> : <TopNavbar/>}
+            <Container className={"content"}>
                 <Title order={2} mb="md">
                     Lesson Details
                 </Title>
@@ -69,11 +74,13 @@ const LessonView = () => {
                     <Text>{lesson.teacher}</Text>
                 </Group>
 
-                <Button onClick={handleDelete} variant={"outline"}>
-                    Delete Lesson
-                </Button>
-            </Card>
-        </Container>
+                <div className="buttonContainer">
+                    <Button onClick={handleDelete} variant={"outline"} className="wideButton">
+                        Delete Lesson
+                    </Button>
+                </div>
+            </Container>
+        </div>
     );
 };
 

@@ -5,14 +5,16 @@ import {
     Select,
     Textarea,
     Button,
-    Box,
-    Group,
 } from '@mantine/core';
 import {Lesson, User} from '../../models';
 import {DateInput} from "@mantine/dates";
 import {useNavigate} from "react-router-dom";
+import {SideNavbar} from "../index.ts";
+import {TopNavbar} from "../navBar/TopNavbar.tsx";
+import {useMediaQuery} from "@mantine/hooks";
 
 const AddLesson = () => {
+    const isMobile = useMediaQuery('(max-width: 768px)');
     const navigate = useNavigate()
     const [students, setStudents] = useState<{ value: string; label: string }[]>([]);
 
@@ -63,38 +65,43 @@ const AddLesson = () => {
     };
 
     return (
-        <Box maw={400} mx="auto">
-            <form onSubmit={form.onSubmit(handleSubmit)}>
-                <TextInput
-                    label="Topic"
-                    placeholder="Enter lesson topic"
-                    {...form.getInputProps('topic')}
-                />
+        <div className={"container"}>
+            {!isMobile ? <SideNavbar /> : <TopNavbar/>}
+            <div className="content">
+                <form onSubmit={form.onSubmit(handleSubmit)}>
+                    <TextInput
+                        label="Topic"
+                        placeholder="Enter lesson topic"
+                        {...form.getInputProps('topic')}
+                    />
 
-                <DateInput
-                    label="Date"
-                    placeholder="Select lesson date"
-                    {...form.getInputProps('date')}
-                />
+                    <DateInput
+                        label="Date"
+                        placeholder="Select lesson date"
+                        {...form.getInputProps('date')}
+                    />
 
-                <Textarea
-                    label="Description"
-                    placeholder="Enter lesson description"
-                    {...form.getInputProps('description')}
-                />
+                    <Textarea
+                        label="Description"
+                        placeholder="Enter lesson description"
+                        {...form.getInputProps('description')}
+                    />
 
-                <Select
-                    label="Student"
-                    placeholder="Select a student"
-                    data={students}
-                    {...form.getInputProps('student')}
-                />
+                    <Select
+                        label="Student"
+                        placeholder="Select a student"
+                        data={students}
+                        {...form.getInputProps('student')}
+                    />
 
-                <Group justify="flex-end" mt="md">
-                    <Button type="submit">Add Lesson</Button>
-                </Group>
-            </form>
-        </Box>
+                    <div className="buttonContainer">
+                        <Button type="submit" className="wideButton">
+                            Add Lesson
+                        </Button>
+                    </div>
+                </form>
+            </div>
+        </div>
     );
 };
 

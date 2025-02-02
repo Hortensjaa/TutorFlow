@@ -59,7 +59,7 @@ const Profile = () => {
 
     return (
         <ScrollArea>
-            <div className={styles.container}>
+            <div className="container">
                 {!isMobile ? <SideNavbar /> : <TopNavbar/>}
                 {loading && (
                     <div className={styles.loading}>
@@ -67,7 +67,7 @@ const Profile = () => {
                     </div>
                 )}
                 {!loading && (
-                    <div className={styles.content}>
+                    <div className="content">
                         <Box className={styles.titlebox}>
                             <Title order={1} className={styles.title}>Profile</Title>
                             <Box>
