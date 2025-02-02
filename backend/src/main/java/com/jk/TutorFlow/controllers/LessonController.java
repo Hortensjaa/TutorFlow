@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -90,7 +91,7 @@ public class LessonController {
         return lessonService.addLesson(model, teacher_id);
     }
 
-    @GetMapping("/api/lesson/{id}")
+    @GetMapping("/api/lessons/{id}")
     public ResponseEntity<LessonModel> getLesson(@PathVariable String id) {
         Optional<Lesson> lesson = lessonService.getLesson(Long.valueOf(id));
         return lesson.map(
@@ -98,5 +99,14 @@ public class LessonController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-
+    @DeleteMapping("/api/lessons/{id}/delete")
+    public void deleteLesson(@AuthenticationPrincipal OAuth2User principal, @PathVariable String id) {
+        User user = getUser(principal);
+        Lesson lesson = lessonService.getLesson(Long.valueOf(id))
+                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+        if (!Objects.equals(lesson.getTeacher().getUser_id(), user.getUser_id())) {
+            throw new AccessDeniedException("User is not a teacher");
+        }
+        lessonService.deleteLesson(Long.valueOf(id));
+    }
 }

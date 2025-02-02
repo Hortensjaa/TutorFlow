@@ -85,13 +85,13 @@ export default function LessonsList() {
     }, []);
 
     const rows = sortedData.map((row: Lesson) => (
-        <Table.Tr key={row.id}>
+        <Table.Tr key={row.id} onClick={() => navigate(`/lesson/${row.id}`)}>
             <Table.Td>{row.date}</Table.Td>
             <Table.Td>
                 <Text fw={500}>{row.topic}</Text>
             </Table.Td>
-            <Table.Td>{row.teacher}</Table.Td>
             <Table.Td>{row.student}</Table.Td>
+            <Table.Td>{row.teacher}</Table.Td>
         </Table.Tr>
     ));
 

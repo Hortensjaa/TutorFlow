@@ -38,6 +38,12 @@ public class LessonService {
         return lessonRepository.findLatest(userId);
     }
 
+    public void deleteLesson(Long id) {
+        Lesson lesson = lessonRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+        lessonRepository.delete(lesson);
+    }
+
     public Lesson addLesson(LessonModel model, Long teacher_id) {
         Lesson lesson = new Lesson(model);
         User teacher = userRepository.findById(teacher_id)

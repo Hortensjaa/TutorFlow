@@ -10,6 +10,7 @@ export const UserProvider = ({ children }) => {
         const response = await fetch('/api/user/active', {
             method: 'GET',
             credentials: 'include',
+            redirect: "follow"
         });
 
         if (response.redirected) {
