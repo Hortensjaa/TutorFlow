@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Date;
 import java.util.Set;
@@ -29,11 +32,13 @@ public class Lesson {
     @ManyToOne
     @JoinColumn(name = "teacher", referencedColumnName = "user_id")
     @JsonBackReference
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User teacher;
 
     @ManyToOne
     @JoinColumn(name = "student", referencedColumnName = "user_id")
     @JsonBackReference
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User student;
 
 }

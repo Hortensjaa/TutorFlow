@@ -20,6 +20,22 @@ export const UserProvider = ({ children }) => {
         setUser(data);
     };
 
+    const saveUser = async (newModel: User) => {
+        const response = await fetch('/api/user/', {
+            method: 'PUT',
+            credentials: 'include',
+            redirect: 'follow',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newModel),
+        });
+
+        if (response.redirected) {
+            document.location = response.url;
+        }
+    };
+
     function setName(newName: String) {
         if (user) {
             setUser({name: newName, ...user});
@@ -46,7 +62,7 @@ export const UserProvider = ({ children }) => {
 
     const value = {
         state: user,
-        actions: { setUser, loadUser, setName, setAvatar, setTeacher, setStudent },
+        actions: { setUser, loadUser, setName, setAvatar, setTeacher, setStudent, saveUser },
     };
 
 

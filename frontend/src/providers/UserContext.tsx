@@ -7,6 +7,7 @@ interface UserContext {
     actions: {
         setUser: (value: (((prevState: (User | null)) => (User | null)) | User | null)) => void;
         loadUser: () => void;
+        saveUser: (newModel: User) => void;
         setName: (name: string) => void;
         setAvatar: (avatarUrl: string) => void;
         setTeacher: (role: boolean) => void;
@@ -19,6 +20,7 @@ export const UserContext = createContext<UserContext>({
     actions: {
         setUser: () => {},
         loadUser: () => {},
+        saveUser: (newModel: User) => {},
         setName: () => {},
         setAvatar: () => {},
         setTeacher: () => {},

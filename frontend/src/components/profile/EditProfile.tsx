@@ -5,10 +5,12 @@ import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
+import {useNavigate} from "react-router-dom";
 
 
 const EditProfile = () => {
     const { state: thisUser, actions } = useContext(UserContext)
+    const navigation = useNavigate();
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [loading, setLoading] = useState<boolean>(true);
     const [username, setUsername] = useState<string>("");
@@ -30,6 +32,22 @@ const EditProfile = () => {
             setStudent(thisUser.student || false);
         }
     }, [thisUser]);
+
+    const saveUser = async () => {
+        console.log(thisUser)
+        if (thisUser) {
+            actions.setName(username);
+            actions.setTeacher(teacher);
+            actions.setStudent(student);
+            await actions.saveUser({
+                ...thisUser,
+                username: username,
+                teacher: teacher,
+                student: student
+            })
+        }
+        navigation("/profile")
+    }
 
 
     return (
@@ -89,7 +107,7 @@ const EditProfile = () => {
                         </HoverCard>
 
                         <div className={styles.buttonContainer}>
-                            <Button onClick={() => {}} className={styles.wideButton}>
+                            <Button onClick={saveUser} className={styles.wideButton}>
                                 Save
                             </Button>
                         </div>

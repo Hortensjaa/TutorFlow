@@ -3,7 +3,12 @@ package com.jk.TutorFlow.models;
 import com.fasterxml.jackson.annotation.*;
 import com.jk.TutorFlow.Consts;
 import com.jk.TutorFlow.entities.User;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserModel {
     private long id;
     private String avatar;
