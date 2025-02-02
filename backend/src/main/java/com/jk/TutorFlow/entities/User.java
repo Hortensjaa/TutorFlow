@@ -1,6 +1,7 @@
 package com.jk.TutorFlow.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jk.TutorFlow.models.UserModel;
 import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,13 @@ public class User {
         this.email = email;
         this.avatar_url = avatar_url;
         this.roles = new HashSet<>();
+    }
+
+    public User(UserModel model) {
+        this.user_id = model.getID();
+        this.avatar_url = model.getAvatar();
+        this.email = model.getEmail();
+        this.username = model.getUsername();
     }
 
     public void addRole(Role role) {

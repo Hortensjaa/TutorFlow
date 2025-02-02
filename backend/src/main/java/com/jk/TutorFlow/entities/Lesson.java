@@ -2,10 +2,11 @@ package com.jk.TutorFlow.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jk.TutorFlow.models.LessonModel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -16,6 +17,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "lessons")
+@NoArgsConstructor
 public class Lesson {
 
     @Id
@@ -41,4 +43,10 @@ public class Lesson {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User student;
 
+
+    public Lesson(LessonModel model) {
+        this.topic = model.getTopic();
+        this.description = model.getDescription();
+        this.date = Date.valueOf(model.getDate());
+    }
 }

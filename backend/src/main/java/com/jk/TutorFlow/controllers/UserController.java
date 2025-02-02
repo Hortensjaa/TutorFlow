@@ -12,8 +12,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.jk.TutorFlow.Consts;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 
 @RestController
@@ -62,6 +62,11 @@ public class UserController {
             return userService.updateUser(user);
         }
         throw new AccessDeniedException("Email doesn't match");
+    }
+
+    @GetMapping("/api/user/students")
+    public List<UserModel> getAllStudents() {
+        return userService.getAllStudents().stream().map(UserModel::new).toList();
     }
 
     private User extractData(@AuthenticationPrincipal OAuth2User principal) {

@@ -13,6 +13,7 @@ export interface Lesson {
     date:        Date;
     description: string;
     student:     string;
+    student_id:  number;
     teacher:     string;
 }
 
@@ -187,6 +188,7 @@ const typeMap: any = {
         { json: "date", js: "date", typ: Date },
         { json: "description", js: "description", typ: "" },
         { json: "student", js: "student", typ: "" },
+        { json: "student_id", js: "student_id", typ: 0 },
         { json: "teacher", js: "teacher", typ: "" },
     ], false),
 };

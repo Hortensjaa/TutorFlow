@@ -9,6 +9,8 @@ import com.jk.TutorFlow.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class UserService {
@@ -27,6 +29,10 @@ public class UserService {
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
+    }
+
+    public List<User> getAllStudents() {
+        return userRepository.findByRoleName(Consts.studentRole);
     }
 
     public void addRoleToUser(Long userId, Long roleId) {
@@ -54,8 +60,7 @@ public class UserService {
     }
 
     public User updateUser(UserModel model) {
-        User user = new User(model.getUsername(), model.getEmail(), model.getAvatar());
-        user.setUser_id(model.getID());
+        User user = new User(model);
         User res = userRepository.save(user);
         if (model.getStudent()) {
             addRoleToUser(res.getUser_id(), 2L);

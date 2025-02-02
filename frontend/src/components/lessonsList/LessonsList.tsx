@@ -16,6 +16,7 @@ import {sortData, ThProps} from "./utils.tsx";
 import { SideNavbar } from "../index.ts";
 import { TopNavbar } from "../navBar/TopNavbar.tsx";
 import styles from './LessonsList.module.css';
+import {useNavigate} from "react-router-dom";
 
 
 export function Th({ children, reversed, sorted, onSort }: ThProps) {
@@ -37,6 +38,7 @@ export function Th({ children, reversed, sorted, onSort }: ThProps) {
 }
 
 export default function LessonsList() {
+    const navigate = useNavigate();
     const [search, setSearch] = useState('');
     const [originalData, setOriginalData] = useState<Lesson[]>([]);
     const [sortedData, setSortedData] = useState<Lesson[]>([]);
@@ -147,7 +149,9 @@ export default function LessonsList() {
                         </Table.Tbody>
                     </Table>) : (
                         <div className={styles.buttoncontainer}>
-                            <Button w={"50vw"}>Add your first lesson!</Button>
+                            <Button w={"50vw"} onClick={() => navigate("/lesson/add")}>
+                                Add your first lesson!
+                            </Button>
                         </div>
                     )}
                 </div>

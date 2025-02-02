@@ -11,20 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
 public class LessonController {
     @Autowired
     private LessonService lessonService;
@@ -90,6 +84,11 @@ public class LessonController {
                 HttpStatus.OK);
     }
 
+    @PostMapping("api/lessons/add")
+    public Lesson addLesson(@AuthenticationPrincipal OAuth2User principal, @RequestBody LessonModel model) {
+        Long teacher_id = userService.getUserByEmail(principal.getAttribute("email")).getUser_id();
+        return lessonService.addLesson(model, teacher_id);
+    }
 
     @GetMapping("/api/lesson/{id}")
     public ResponseEntity<LessonModel> getLesson(@PathVariable String id) {

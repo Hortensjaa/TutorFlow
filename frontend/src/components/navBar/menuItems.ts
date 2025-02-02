@@ -1,4 +1,4 @@
-import {IconSchool, IconSettings, IconUser} from "@tabler/icons-react";
+import {IconSchool, IconSettings, IconUser, IconPlus} from "@tabler/icons-react";
 
 export interface menuItem {
     link: string,
@@ -8,6 +8,7 @@ export interface menuItem {
 
 export const menuItems: menuItem[] = [
     { link: '/profile', label: 'Profile', icon: IconUser},
+    { link: '/lesson/add', label: 'Add lesson', icon: IconPlus},
     { link: '/dashboard', label: 'Lessons', icon: IconSchool},
     { link: '/profile/edit', label: 'Settings', icon: IconSettings},
     // { link: '', label: 'Notifications', icon: IconBellRinging},

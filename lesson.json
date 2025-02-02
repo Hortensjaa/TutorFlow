@@ -4,6 +4,7 @@
   "date": "2024-01-25",
   "description": "exercises 1, 2, 4 page 178 ",
   "student": "John Doe",
+  "student_id": 123,
   "teacher": "Mr. Smith"
 }
 

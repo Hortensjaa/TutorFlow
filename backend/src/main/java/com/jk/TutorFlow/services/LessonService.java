@@ -1,11 +1,13 @@
 package com.jk.TutorFlow.services;
 
 import com.jk.TutorFlow.entities.Lesson;
+import com.jk.TutorFlow.entities.User;
+import com.jk.TutorFlow.models.LessonModel;
 import com.jk.TutorFlow.repositories.LessonRepository;
+import com.jk.TutorFlow.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,6 +15,8 @@ import java.util.Set;
 public class LessonService {
     @Autowired
     private LessonRepository lessonRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public Optional<Lesson> getLesson(Long id) {
         return lessonRepository.findById(id);
@@ -32,5 +36,17 @@ public class LessonService {
 
     public Set<Lesson> getLatestLessons(Long userId) {
         return lessonRepository.findLatest(userId);
+    }
+
+    public Lesson addLesson(LessonModel model, Long teacher_id) {
+        Lesson lesson = new Lesson(model);
+        User teacher = userRepository.findById(teacher_id)
+                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+        User student = userRepository.findById(model.getStudentID())
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+        lesson.setTeacher(teacher);
+        lesson.setStudent(student);
+        lessonRepository.save(lesson);
+        return lesson;
     }
 }
