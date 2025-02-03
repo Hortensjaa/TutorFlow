@@ -55,7 +55,7 @@ const EditProfile = () => {
             <div className={"container"}>
                 {!isMobile ? <SideNavbar /> : <TopNavbar/>}
                 {loading && (
-                    <div className={styles.loading}>
+                    <div className={"loading"}>
                         <Loader type="bars" />
                     </div>
                 )}

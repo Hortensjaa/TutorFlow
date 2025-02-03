@@ -44,7 +44,7 @@ const Profile = () => {
             })
     }, [])
 
-    const rows = latestLessons ? latestLessons.map((element: Lesson) => (
+    const lessonRows = latestLessons ? latestLessons.map((element: Lesson) => (
         <Table.Tr key={element.id}>
             <Table.Td>{element.date}</Table.Td>
             <Table.Td>{element.topic}</Table.Td>
@@ -62,7 +62,7 @@ const Profile = () => {
             <div className="container">
                 {!isMobile ? <SideNavbar /> : <TopNavbar/>}
                 {loading && (
-                    <div className={styles.loading}>
+                    <div className={"loading"}>
                         <Loader type="bars" />
                     </div>
                 )}
@@ -109,10 +109,12 @@ const Profile = () => {
                                     <Table.Th className={styles.tableheader}>Student</Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
-                            <Table.Tbody>{rows}</Table.Tbody>
+                            <Table.Tbody>
+                                {lessonRows}
+                            </Table.Tbody>
                         </Table>
 
-                        <Divider my="md" label="Coming lessons" labelPosition="center"/>
+                        <Divider my="md" label="My students" labelPosition="center"/>
                         <Code>Not available yet</Code>
                     </div>
                 )}

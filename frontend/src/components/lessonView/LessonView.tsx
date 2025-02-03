@@ -10,14 +10,24 @@ import {useMediaQuery} from "@mantine/hooks";
 const LessonView = () => {
     const isMobile = useMediaQuery('(max-width: 768px)');
     const { id } = useParams<{ id: string }>();
+    const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();
     const [lesson, setLesson] = useState<Lesson | null>(null);
 
     useEffect(() => {
-        fetch(`/api/lessons/${id}`)
-            .then((response) => response.json())
-            .then((data) => setLesson(data))
-            .catch((error) => console.error('Error fetching lesson:', error));
+        const fetchLesson = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(`/api/lessons/${id}`);
+                const data = await response.json();
+                setLesson(data);
+            } catch (error) {
+                console.error('Error fetching lesson:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchLesson();
     }, [id]);
 
     const handleDelete = () => {

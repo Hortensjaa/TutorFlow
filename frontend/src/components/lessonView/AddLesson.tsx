@@ -4,26 +4,36 @@ import {
     TextInput,
     Select,
     Textarea,
-    Button,
+    Button, Loader,
 } from '@mantine/core';
-import {Lesson, User} from '../../models';
+import {Lesson} from '../../models';
 import {DateInput} from "@mantine/dates";
 import {useNavigate} from "react-router-dom";
 import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
+import styles from "./LessonView.module.css";
 
 const AddLesson = () => {
     const isMobile = useMediaQuery('(max-width: 768px)');
     const navigate = useNavigate()
+    const [loading, setLoading] = useState<boolean>(true);
     const [students, setStudents] = useState<{ value: string; label: string }[]>([]);
 
     useEffect(() => {
-        fetch('/api/user/students')
-            .then((response) => response.json())
-            .then((data) =>
-                setStudents(data.map((student: User) => ({ value: student.id.toString(), label: student.username })))
-            );
+        const fetchStudents = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch('/api/user/students');
+                const data = await response.json();
+                setStudents(data.map((student) => ({ value: student.id.toString(), label: student.username })));
+            } catch (error) {
+                console.error('Error fetching students:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchStudents();
     }, []);
 
 
@@ -67,8 +77,14 @@ const AddLesson = () => {
     return (
         <div className={"container"}>
             {!isMobile ? <SideNavbar /> : <TopNavbar/>}
+            {loading && (
+                <div className={"loading"}>
+                    <Loader type="bars" />
+                </div>
+            )}
+            {!loading && (
             <div className="content">
-                <form onSubmit={form.onSubmit(handleSubmit)}>
+                <form onSubmit={form.onSubmit(handleSubmit)} className={styles.formlesson}>
                     <TextInput
                         label="Topic"
                         placeholder="Enter lesson topic"
@@ -101,6 +117,7 @@ const AddLesson = () => {
                     </div>
                 </form>
             </div>
+            )}
         </div>
     );
 };

@@ -1,8 +1,8 @@
 .header {
     height: 40px;
     margin-bottom: 10px;
-    background-color: var(--mantine-primary-color-3);
-    box-shadow: dimgrey 0px 0px 10px 0px;
+    background-color: light-dark(var(--mantine-primary-color-3), var(--mantine-primary-color-8));
+    box-shadow: light-dark(dimgrey, var(--mantine-primary-color-9)) 0px 0px 10px 0px;
 }
 
 .inner {
