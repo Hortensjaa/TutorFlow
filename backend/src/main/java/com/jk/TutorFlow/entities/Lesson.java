@@ -38,10 +38,10 @@ public class Lesson {
     private User teacher;
 
     @ManyToOne
-    @JoinColumn(name = "student", referencedColumnName = "user_id")
+    @JoinColumn(name = "student", referencedColumnName = "student_id")
     @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private User student;
+    private Student student;
 
 
     public Lesson(LessonModel model) {

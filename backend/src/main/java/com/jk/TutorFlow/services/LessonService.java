@@ -1,9 +1,11 @@
 package com.jk.TutorFlow.services;
 
 import com.jk.TutorFlow.entities.Lesson;
+import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.LessonModel;
 import com.jk.TutorFlow.repositories.LessonRepository;
+import com.jk.TutorFlow.repositories.StudentRepository;
 import com.jk.TutorFlow.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ public class LessonService {
     private LessonRepository lessonRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private StudentRepository studentRepository;
 
     public Optional<Lesson> getLesson(Long id) {
         return lessonRepository.findById(id);
@@ -48,7 +52,7 @@ public class LessonService {
         Lesson lesson = new Lesson(model);
         User teacher = userRepository.findById(teacher_id)
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
-        User student = userRepository.findById(model.getStudentID())
+        Student student = studentRepository.findById(model.getStudentID())
                 .orElseThrow(() -> new RuntimeException("Student not found"));
         lesson.setTeacher(teacher);
         lesson.setStudent(student);

@@ -6,7 +6,7 @@ import {
     Textarea,
     Button, Loader,
 } from '@mantine/core';
-import {Lesson} from '../../models';
+import {Lesson, Student} from '../../models';
 import {DateInput} from "@mantine/dates";
 import {useNavigate} from "react-router-dom";
 import {SideNavbar} from "../index.ts";
@@ -27,7 +27,7 @@ const AddLesson = () => {
                 const response = await fetch('/api/user/students',
                     {method: "GET", credentials: "include", redirect: "follow"} );
                 const data = await response.json();
-                setStudents(data.map((student) => ({ value: student.id.toString(), label: student.username })));
+                setStudents(data.map((student: Student) => ({ value: student.id.toString(), label: student.name })));
             } catch (error) {
                 console.error('Error fetching students:', error);
             } finally {

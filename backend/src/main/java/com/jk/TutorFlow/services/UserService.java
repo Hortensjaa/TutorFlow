@@ -1,16 +1,13 @@
 package com.jk.TutorFlow.services;
 
-import com.jk.TutorFlow.Consts;
-import com.jk.TutorFlow.entities.Role;
+import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.UserModel;
-import com.jk.TutorFlow.repositories.RoleRepository;
+import com.jk.TutorFlow.repositories.StudentRepository;
 import com.jk.TutorFlow.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 
@@ -19,11 +16,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private RoleRepository roleRepository;
+    private StudentRepository studentRepository;
 
-    public User addUser(User user) {
+    public void addUser(User user) {
         userRepository.save(user);
-        return user;
     }
 
     public User getUserById(Long id) {
@@ -34,52 +30,22 @@ public class UserService {
         return userRepository.findByEmail(email).orElse(null);
     }
 
-    public List<User> getAllStudents() {
-        return userRepository.findByRoleName(Consts.studentRole);
-    }
-
-    public Set<User> getStudents(Long teacherId) {
+    public Set<Student> getStudents(Long teacherId) {
         return userRepository.findStudentsByTeacherId(teacherId);
     }
 
-    public void addRoleToUser(Long userId, Long roleId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Role role = roleRepository.findById(roleId).orElseThrow(() -> new RuntimeException("Role not found"));
-        user.addRole(role);
-        userRepository.save(user);
-    }
-
-    public void deleteRoleFromUser(Long userId, Long roleId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Role role = roleRepository.findById(roleId).orElseThrow(() -> new RuntimeException("Role not found"));
-        user.deleteRole(role);
-        userRepository.save(user);
-    }
-
-    public Boolean isTeacher(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getRoles().stream().anyMatch(role -> role.getName().equals(Consts.teacherRole));
-    }
-
-    public Boolean isStudent(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getRoles().stream().anyMatch(role -> role.getName().equals(Consts.studentRole));
-    }
-
-    public Boolean addStudent(Long teacherId, Long studentId) {
+    public Student addStudent(Long teacherId, String studentName) {
         User teacher = userRepository.findById(teacherId).orElseThrow(() -> new RuntimeException("Teacher not found"));
-        User student = userRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
-        if (student.getRoles().stream().anyMatch(r -> Objects.equals(r.getName(), Consts.studentRole))) {
-            teacher.addStudent(student);
-            userRepository.save(teacher);
-            return true;
-        }
-        return false;
+        Student student = new Student(studentName);
+        student.setTeacher(teacher);
+        studentRepository.save(student);
+        userRepository.save(teacher);
+        return student;
     }
 
     public User deleteStudent(Long teacherId, Long studentId) {
         User teacher = userRepository.findById(teacherId).orElseThrow(() -> new RuntimeException("Teacher not found"));
-        User student = userRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
         teacher.deleteStudent(student);
         userRepository.save(teacher);
         return teacher;
@@ -88,18 +54,7 @@ public class UserService {
     public User updateUser(UserModel model) {
         User user = userRepository.findById(model.getID()).orElseThrow(() -> new RuntimeException("User not found"));
         user.setUsername(model.getUsername());
-        user.setAvatar_url(model.getAvatar());
         User res = userRepository.save(user);
-        if (model.getStudent()) {
-            addRoleToUser(res.getUser_id(), 2L);
-        } else {
-            deleteRoleFromUser(res.getUser_id(), 2L);
-        }
-        if (model.getTeacher()) {
-            addRoleToUser(res.getUser_id(), 1L);
-        } else {
-            deleteRoleFromUser(res.getUser_id(), 1L);
-        }
         return res;
     }
 }

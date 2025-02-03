@@ -13,7 +13,7 @@ import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
-import {Lesson, User} from "../../models";
+import {Lesson, Student} from "../../models";
 
 
 const Profile = () => {
@@ -21,7 +21,7 @@ const Profile = () => {
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [loading, setLoading] = useState<boolean>(true);
     const [latestLessons, setLessons] = useState<Lesson[]>([]);
-    const [students, setStudents] = useState<User[]>([]);
+    const [students, setStudents] = useState<Student[]>([]);
     const [newStudent, setNewStudent] = useState<string>("");
 
     useEffect(() => {
@@ -66,14 +66,14 @@ const Profile = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email: newStudent }),
+                body: JSON.stringify({ name: newStudent }),
             });
 
             let data = await response.json();
 
             if (response.ok) {
                 if (data.success) {
-                    setStudents([...students, data.user]);
+                    setStudents([...students, data.student]);
                 } else {
                     alert(data.message);
                 }
@@ -90,19 +90,15 @@ const Profile = () => {
         <Table.Tr key={element.id}>
             <Table.Td>{element.date}</Table.Td>
             <Table.Td>{element.topic}</Table.Td>
-            <Table.Td c={element.teacher == thisUser?.username ? "dimmed" : ""}>
-                {element.teacher == thisUser?.username ? "You" : element.teacher}
-            </Table.Td>
-            <Table.Td c={element.student == thisUser?.username ? "dimmed" : ""}>
-                {element.student == thisUser?.username ? "You" : element.student}
+            <Table.Td>
+                {element.student}
             </Table.Td>
         </Table.Tr>
     )) : null;
 
-    const studentRows = students ? students.map((element: User) => (
+    const studentRows = students ? students.map((element: Student) => (
         <Table.Tr key={element.id}>
-            <Table.Td>{element.username}</Table.Td>
-            <Table.Td>{element.email}</Table.Td>
+            <Table.Td>{element.name}</Table.Td>
             <Table.Td><Code> todo </Code></Table.Td>
             <Table.Td><Code> todo </Code></Table.Td>
         </Table.Tr>
@@ -119,17 +115,7 @@ const Profile = () => {
                 )}
                 {!loading && (
                     <div className="content">
-                        <Box className={styles.titlebox}>
-                            <Title order={1} className={styles.title}>Profile</Title>
-                            <Box>
-                                {thisUser?.teacher && (
-                                    <Badge size="lg" radius="sm">Teacher</Badge>
-                                )}
-                                {thisUser?.student && (
-                                    <Badge size="lg" radius="sm" ml="sm">Student</Badge>
-                                )}
-                            </Box>
-                        </Box>
+                        <Title order={1} className={styles.title}>Profile</Title>
 
                         <Divider my="md" label="Personal data" labelPosition="center"/>
                         <Box className={styles.textContainer}>
@@ -158,7 +144,6 @@ const Profile = () => {
                                     <Table.Tr>
                                         <Table.Th className={styles.tableheader}>Date</Table.Th>
                                         <Table.Th className={styles.tableheader}>Topic</Table.Th>
-                                        <Table.Th className={styles.tableheader}>Teacher</Table.Th>
                                         <Table.Th className={styles.tableheader}>Student</Table.Th>
                                     </Table.Tr>
                                 </Table.Thead>
@@ -177,7 +162,7 @@ const Profile = () => {
                         <Box className={styles.boxadd}>
                             <TextInput
                                 flex={"0.7"}
-                                placeholder="email"
+                                placeholder="name"
                                 value={newStudent}
                                 onChange={(event) => setNewStudent(event.currentTarget.value)}
                             />
@@ -191,7 +176,6 @@ const Profile = () => {
                             <Table.Thead>
                                 <Table.Tr>
                                     <Table.Th className={styles.tableheader}>Name</Table.Th>
-                                    <Table.Th className={styles.tableheader}>Email</Table.Th>
                                     <Table.Th className={styles.tableheader}>Last lesson date</Table.Th>
                                     <Table.Th className={styles.tableheader}>Last lesson topic</Table.Th>
                                 </Table.Tr>

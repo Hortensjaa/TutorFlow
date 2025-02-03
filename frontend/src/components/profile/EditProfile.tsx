@@ -14,8 +14,6 @@ const EditProfile = () => {
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [loading, setLoading] = useState<boolean>(true);
     const [username, setUsername] = useState<string>("");
-    const [teacher, setTeacher] = useState<boolean>(false);
-    const [student, setStudent] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -28,8 +26,6 @@ const EditProfile = () => {
     useEffect(() => {
         if (thisUser) {
             setUsername(thisUser.username || "");
-            setTeacher(thisUser.teacher || false);
-            setStudent(thisUser.student || false);
         }
     }, [thisUser]);
 
@@ -37,13 +33,9 @@ const EditProfile = () => {
         console.log(thisUser)
         if (thisUser) {
             actions.setName(username);
-            actions.setTeacher(teacher);
-            actions.setStudent(student);
             await actions.saveUser({
                 ...thisUser,
                 username: username,
-                teacher: teacher,
-                student: student
             })
         }
         navigation("/profile")
@@ -79,33 +71,6 @@ const EditProfile = () => {
                             disabled
                             mt="sm"
                         />
-
-                        <HoverCard width={280} shadow="md">
-                            <HoverCard.Target>
-                                <Box>
-                                    <Divider my="md" label="Your roles" labelPosition="center"/>
-                                    <Checkbox
-                                        className={styles.checkbox}
-                                        label="Teacher"
-                                        checked={teacher || false}
-                                        onChange={() => setTeacher(!teacher)}
-                                    />
-                                    <Checkbox
-                                        className={styles.checkbox}
-                                        label="Student"
-                                        checked={student || false}
-                                        onChange={() => setStudent(!student)}
-                                    />
-                                </Box>
-                            </HoverCard.Target>
-                            <HoverCard.Dropdown>
-                                <Text size="sm">
-                                    Roles defines, what you can do on the platform.
-                                    You can be both teacher and student and it is possible to change it anytime.
-                                </Text>
-                            </HoverCard.Dropdown>
-                        </HoverCard>
-
                         <div className="buttonContainer">
                             <Button onClick={saveUser} className="wideButton">
                                 Save

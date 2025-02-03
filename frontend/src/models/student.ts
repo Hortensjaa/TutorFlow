@@ -1,27 +1,26 @@
 // To parse this data:
 //
-//   import { Convert, User } from "./file";
+//   import { Convert, Student } from "./file";
 //
-//   const user = Convert.toUser(json);
+//   const student = Convert.toStudent(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-export interface User {
-    id:       number;
-    username: string;
-    email:    string;
+export interface Student {
+    id:   number;
+    name: string;
 }
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
 export class Convert {
-    public static toUser(json: string): User {
-        return cast(JSON.parse(json), r("User"));
+    public static toStudent(json: string): Student {
+        return cast(JSON.parse(json), r("Student"));
     }
 
-    public static userToJson(value: User): string {
-        return JSON.stringify(uncast(value, r("User")), null, 2);
+    public static studentToJson(value: Student): string {
+        return JSON.stringify(uncast(value, r("Student")), null, 2);
     }
 }
 
@@ -178,9 +177,8 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-    "User": o([
+    "Student": o([
         { json: "id", js: "id", typ: 0 },
-        { json: "username", js: "username", typ: "" },
-        { json: "email", js: "email", typ: "" },
+        { json: "name", js: "name", typ: "" },
     ], false),
 };

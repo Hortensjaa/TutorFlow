@@ -26,24 +26,9 @@ public class LessonController {
     @Autowired
     private UserService userService;
 
-    private List<LessonModel> getTaughtLessonsHelper(Long teacherId) {
+    private List<LessonModel> getAllLessonsHelper(Long teacherId) {
         return lessonService.getLessonsByTeacherId(teacherId)
                 .stream().map(LessonModel::new).collect(Collectors.toList());
-    }
-
-    private List<LessonModel> getAttendedLessonsHelper(Long studentId) {
-        return lessonService.getLessonsByStudentId(studentId)
-                .stream().map(LessonModel::new).collect(Collectors.toList());
-    }
-
-    private List<LessonModel> getAllLessonsHelper(Long user_id) {
-        if (!userService.isTeacher(user_id)) {
-            return getAttendedLessonsHelper(user_id);
-        }
-        if (!userService.isStudent(user_id)) {
-            return getTaughtLessonsHelper(user_id);
-        }
-        return lessonService.getLessonsByUserId(user_id).stream().map(LessonModel::new).collect(Collectors.toList());
     }
 
     private User getUser(@AuthenticationPrincipal OAuth2User principal) {
@@ -56,18 +41,6 @@ public class LessonController {
             throw new AccessDeniedException("User not found");
         }
         return user;
-    }
-
-    @GetMapping("/api/lessons/teacher")
-    public ResponseEntity<List<LessonModel>> getTaughtLessons(@AuthenticationPrincipal OAuth2User principal) {
-        User user = getUser(principal);
-        return new ResponseEntity<>(getTaughtLessonsHelper(user.getUser_id()), HttpStatus.OK);
-    }
-
-    @GetMapping("/api/lessons/student")
-    public ResponseEntity<List<LessonModel>> getAttendedLessons(@AuthenticationPrincipal OAuth2User principal) {
-        User user = getUser(principal);
-        return new ResponseEntity<>(getAttendedLessonsHelper(user.getUser_id()), HttpStatus.OK);
     }
 
     @GetMapping("/api/lessons/all")
@@ -101,12 +74,11 @@ public class LessonController {
 
     @DeleteMapping("/api/lessons/{id}/delete")
     public void deleteLesson(@AuthenticationPrincipal OAuth2User principal, @PathVariable String id) {
-        User user = getUser(principal);
-        Lesson lesson = lessonService.getLesson(Long.valueOf(id))
-                .orElseThrow(() -> new RuntimeException("Lesson not found"));
-        if (!Objects.equals(lesson.getTeacher().getUser_id(), user.getUser_id())) {
-            throw new AccessDeniedException("User is not a teacher");
-        }
+//        User user = getUser(principal);
+//        if (lessonService.getLesson(Long.valueOf(id)).isPresent() &&
+//                !Objects.equals(user.getUser_id(), lessonService.getLesson(Long.valueOf(id)).getTeacher_id())) {
+//            throw new AccessDeniedException("User not authorized to delete lesson");
+//        }
         lessonService.deleteLesson(Long.valueOf(id));
     }
 }

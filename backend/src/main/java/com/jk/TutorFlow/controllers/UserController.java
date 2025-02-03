@@ -1,6 +1,8 @@
 package com.jk.TutorFlow.controllers;
 
+import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
+import com.jk.TutorFlow.models.StudentModel;
 import com.jk.TutorFlow.models.UserModel;
 import com.jk.TutorFlow.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +23,6 @@ import java.util.Objects;
 
 @RestController
 public class UserController {
-
-    public static class AddRoleToUserRequest {
-        public String user;
-        public String role;
-    }
 
     @Autowired
     private UserService userService;
@@ -53,10 +50,11 @@ public class UserController {
         return new UserModel(entity);
     }
 
-    @PostMapping("/api/user/add_role")
-    public User addRoleToUser(@RequestBody AddRoleToUserRequest request) {
-        userService.addRoleToUser(Long.valueOf(request.user), Long.valueOf(request.role));
-        return userService.getUserById(Long.valueOf(request.user));
+    @GetMapping("/api/user/students")
+    public List<StudentModel> getStudents(@AuthenticationPrincipal OAuth2User principal) {
+        User userData = extractData(principal);
+        User entity = userService.getUserByEmail(userData.getEmail());
+        return userService.getStudents(entity.getUser_id()).stream().map(StudentModel::new).toList();
     }
 
     @PutMapping("/api/user/")
@@ -65,17 +63,6 @@ public class UserController {
             return userService.updateUser(user);
         }
         throw new AccessDeniedException("Email doesn't match");
-    }
-
-    @GetMapping("/api/user/students/all")
-    public List<UserModel> getAllStudents() {
-        return userService.getAllStudents().stream().map(UserModel::new).toList();
-    }
-
-    @GetMapping("/api/user/students")
-    public List<UserModel> getStudents(@AuthenticationPrincipal OAuth2User principal) {
-        User existingUser = userService.getUserByEmail(principal.getAttribute("email"));
-        return userService.getStudents(existingUser.getUser_id()).stream().map(UserModel::new).toList();
     }
 
     @PostMapping("/api/user/add_student")
@@ -90,22 +77,14 @@ public class UserController {
                     .body(Map.of("success", false, "message", "Teacher not found"));
         }
 
-        String email = request.get("email");
-        User existingStudent = userService.getUserByEmail(email);
-        if (existingStudent == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("success", false, "message", "Email not found"));
+        String name = request.get("name");
+        if (name == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("success", false, "message", "Name is required"));
         }
 
-        Boolean res = userService.addStudent(existingTeacher.getUser_id(), existingStudent.getUser_id());
-        if (res) {
-            return ResponseEntity.ok(Map.of("success", true, "user", new UserModel(existingStudent)));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(
-                            "success", false,
-                            "message", "Failed to add user - not student."));
-        }
+        Student student = userService.addStudent(existingTeacher.getUser_id(), name);
+        return ResponseEntity.ok(Map.of("success", true, "student", new StudentModel(student)));
     }
 
     private User extractData(@AuthenticationPrincipal OAuth2User principal) {
@@ -115,7 +94,6 @@ public class UserController {
             assert email != null;
             name = email.substring(0, email.indexOf('@'));
         }
-        String avatarUrl = principal.getAttribute("picture");
-        return new User(name, email, avatarUrl);
+        return new User(name, email);
     }
 }

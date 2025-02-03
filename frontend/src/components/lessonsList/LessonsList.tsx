@@ -17,6 +17,7 @@ import { SideNavbar } from "../index.ts";
 import { TopNavbar } from "../navBar/TopNavbar.tsx";
 import styles from './LessonsList.module.css';
 import {useNavigate} from "react-router-dom";
+import {useMediaQuery} from "@mantine/hooks";
 
 
 export function Th({ children, reversed, sorted, onSort }: ThProps) {
@@ -39,6 +40,7 @@ export function Th({ children, reversed, sorted, onSort }: ThProps) {
 
 export default function LessonsList() {
     const navigate = useNavigate();
+    const isMobile = useMediaQuery('(max-width: 768px)');
     const [search, setSearch] = useState('');
     const [originalData, setOriginalData] = useState<Lesson[]>([]);
     const [sortedData, setSortedData] = useState<Lesson[]>([]);
@@ -91,17 +93,16 @@ export default function LessonsList() {
                 <Text fw={500}>{row.topic}</Text>
             </Table.Td>
             <Table.Td>{row.student}</Table.Td>
-            <Table.Td>{row.teacher}</Table.Td>
         </Table.Tr>
     ));
 
     return (
         <ScrollArea>
             <div className={styles.container}>
-                {parseFloat(theme.breakpoints.sm) * 16 < window.innerWidth ? <SideNavbar /> : null}
+                {!isMobile ? <SideNavbar /> : null}
 
                 <div className={styles.content}>
-                    {parseFloat(theme.breakpoints.sm) * 16 < window.innerWidth ? null : <TopNavbar />}
+                    {!isMobile ? null : <TopNavbar />}
                     <TextInput
                         placeholder="Search by any field"
                         mb="md"
@@ -134,13 +135,6 @@ export default function LessonsList() {
                                     onSort={() => setSorting('student')}
                                 >
                                     Student
-                                </Th>
-                                <Th
-                                    sorted={sortBy === 'teacher'}
-                                    reversed={reverseSortDirection}
-                                    onSort={() => setSorting('teacher')}
-                                >
-                                    Teacher
                                 </Th>
                             </Table.Tr>
                         </Table.Tbody>

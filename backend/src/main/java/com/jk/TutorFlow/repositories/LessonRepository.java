@@ -19,18 +19,18 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
     Set<Lesson> findAllByTeacherId(@Param("teacherId") Long teacherId);
 
     @Query("SELECT l FROM Lesson l " +
-            "WHERE l.student.user_id = :studentId " +
+            "WHERE l.student.student_id = :studentId " +
             "ORDER BY l.date DESC")
     Set<Lesson> findAllByStudentId(@Param("studentId") Long studentId);
 
     @Query("SELECT l FROM Lesson l " +
-            "WHERE l.student.user_id = :userId OR l.teacher.user_id = :userId " +
+            "WHERE l.student.student_id = :userId OR l.teacher.user_id = :userId " +
             "ORDER BY l.date DESC")
     Set<Lesson> findAllByUserId(@Param("userId") Long studentId);
 
     @Query("SELECT l FROM Lesson l " +
-            "WHERE l.student.user_id = :userId OR l.teacher.user_id = :userId " +
+            "WHERE l.student.student_id = :userId OR l.teacher.user_id = :userId " +
             "ORDER BY l.date DESC " +
-            "LIMIT 5")
+            "LIMIT 3")
     Set<Lesson> findLatest(@Param("userId") Long studentId);
 }

@@ -59,8 +59,8 @@ public class LessonModel {
         this.topic = entity.getTopic();
         this.description = entity.getDescription();
         this.date = entity.getDate().toLocalDate();
-        this.student = entity.getStudent().getUsername();
+        this.student = entity.getStudent().getName();
         this.teacher = entity.getTeacher().getUsername();
-        this.studentID = entity.getStudent().getUser_id();
+        this.studentID = entity.getStudent().getStudent_id();
     }
 }
