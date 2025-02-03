@@ -24,7 +24,8 @@ const AddLesson = () => {
         const fetchStudents = async () => {
             setLoading(true);
             try {
-                const response = await fetch('/api/user/students');
+                const response = await fetch('/api/user/students',
+                    {method: "GET", credentials: "include", redirect: "follow"} );
                 const data = await response.json();
                 setStudents(data.map((student) => ({ value: student.id.toString(), label: student.username })));
             } catch (error) {

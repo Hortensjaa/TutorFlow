@@ -2,18 +2,18 @@ import {UserContext} from "../../providers/UserContext.tsx";
 import {useContext, useEffect, useState} from "react";
 import {
     Badge,
-    Box, Code,
+    Box, Button, Code,
     Divider,
     Loader,
     ScrollArea, Table,
-    Text,
+    Text, TextInput,
     Title
 } from "@mantine/core";
 import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
-import {Lesson} from "../../models";
+import {Lesson, User} from "../../models";
 
 
 const Profile = () => {
@@ -21,6 +21,8 @@ const Profile = () => {
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [loading, setLoading] = useState<boolean>(true);
     const [latestLessons, setLessons] = useState<Lesson[]>([]);
+    const [students, setStudents] = useState<User[]>([]);
+    const [newStudent, setNewStudent] = useState<string>("");
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -39,10 +41,50 @@ const Profile = () => {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 setLessons(data)
             })
     }, [])
+
+    useEffect(() => {
+        fetch('/api/user/students',
+            {
+                method: 'GET',
+                redirect: 'follow',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                setStudents(data)
+            })
+    }, [])
+
+    const addStudent = async () => {
+        try {
+            let response = await fetch('/api/user/add_student', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: newStudent }),
+            });
+
+            let data = await response.json();
+
+            if (response.ok) {
+                if (data.success) {
+                    setStudents([...students, data.user]);
+                } else {
+                    alert(data.message);
+                }
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error("Error adding student:", error);
+            alert("A network error occurred. Please try again.");
+        }
+    };
 
     const lessonRows = latestLessons ? latestLessons.map((element: Lesson) => (
         <Table.Tr key={element.id}>
@@ -54,6 +96,15 @@ const Profile = () => {
             <Table.Td c={element.student == thisUser?.username ? "dimmed" : ""}>
                 {element.student == thisUser?.username ? "You" : element.student}
             </Table.Td>
+        </Table.Tr>
+    )) : null;
+
+    const studentRows = students ? students.map((element: User) => (
+        <Table.Tr key={element.id}>
+            <Table.Td>{element.username}</Table.Td>
+            <Table.Td>{element.email}</Table.Td>
+            <Table.Td><Code> todo </Code></Table.Td>
+            <Table.Td><Code> todo </Code></Table.Td>
         </Table.Tr>
     )) : null;
 
@@ -74,7 +125,7 @@ const Profile = () => {
                                 {thisUser?.teacher && (
                                     <Badge size="lg" radius="sm">Teacher</Badge>
                                 )}
-                                {thisUser?.teacher && (
+                                {thisUser?.student && (
                                     <Badge size="lg" radius="sm" ml="sm">Student</Badge>
                                 )}
                             </Box>
@@ -100,22 +151,59 @@ const Profile = () => {
                         </Box>
 
                         <Divider my="md" label="Latest lessons" labelPosition="center"/>
+
+                        {latestLessons.length > 0 ? (
+                            <Table>
+                                <Table.Thead>
+                                    <Table.Tr>
+                                        <Table.Th className={styles.tableheader}>Date</Table.Th>
+                                        <Table.Th className={styles.tableheader}>Topic</Table.Th>
+                                        <Table.Th className={styles.tableheader}>Teacher</Table.Th>
+                                        <Table.Th className={styles.tableheader}>Student</Table.Th>
+                                    </Table.Tr>
+                                </Table.Thead>
+                                <Table.Tbody>
+                                    {lessonRows}
+                                </Table.Tbody>
+                            </Table>
+                        ) : (
+                            <Text c="dimmed">
+                                No lessons yet
+                            </Text>
+                        )}
+
+                        <Divider my="md" label="My students" labelPosition="center"/>
+
+                        <Box className={styles.boxadd}>
+                            <TextInput
+                                flex={"0.7"}
+                                placeholder="email"
+                                value={newStudent}
+                                onChange={(event) => setNewStudent(event.currentTarget.value)}
+                            />
+                            <Button onClick={addStudent}
+                                    flex={"0.26"}>
+                                Add student
+                            </Button>
+                        </Box>
+                        {students.length > 0 ? (
                         <Table>
                             <Table.Thead>
                                 <Table.Tr>
-                                    <Table.Th className={styles.tableheader}>Date</Table.Th>
-                                    <Table.Th className={styles.tableheader}>Topic</Table.Th>
-                                    <Table.Th className={styles.tableheader}>Teacher</Table.Th>
-                                    <Table.Th className={styles.tableheader}>Student</Table.Th>
+                                    <Table.Th className={styles.tableheader}>Name</Table.Th>
+                                    <Table.Th className={styles.tableheader}>Email</Table.Th>
+                                    <Table.Th className={styles.tableheader}>Last lesson date</Table.Th>
+                                    <Table.Th className={styles.tableheader}>Last lesson topic</Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>
-                                {lessonRows}
+                                {studentRows}
                             </Table.Tbody>
-                        </Table>
-
-                        <Divider my="md" label="My students" labelPosition="center"/>
-                        <Code>Not available yet</Code>
+                        </Table>) : (
+                            <Text c="dimmed">
+                                Add your first student
+                            </Text>
+                        )}
                     </div>
                 )}
             </div>

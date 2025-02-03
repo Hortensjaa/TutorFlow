@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -15,4 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :roleName")
     List<User> findByRoleName(@Param("roleName") String roleName);
+
+    @Query("SELECT u.students FROM User u WHERE u.user_id = :teacherId")
+    Set<User> findStudentsByTeacherId(Long teacherId);
 }

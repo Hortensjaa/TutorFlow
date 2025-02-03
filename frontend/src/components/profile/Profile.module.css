@@ -37,3 +37,9 @@
 .checkbox {
     margin-bottom: 15px;
 }
+
+.boxadd {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}

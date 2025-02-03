@@ -1,5 +1,6 @@
 package com.jk.TutorFlow.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jk.TutorFlow.models.UserModel;
 import jakarta.annotation.Nullable;
@@ -29,21 +30,33 @@ public class User {
 
     @OneToMany(mappedBy = "teacher")
     @JsonManagedReference
-    private Set<Lesson> taught_lessons;
+    private Set<Lesson> taught_lessons = new HashSet<>();
 
     @OneToMany(mappedBy = "student")
     @JsonManagedReference
-    private Set<Lesson> attended_lessons;
+    private Set<Lesson> attended_lessons = new HashSet<>();
 
     @ManyToMany(mappedBy = "users")
     @JsonManagedReference
-    Set<Role> roles;
+    Set<Role> roles = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "teacher_students",
+            joinColumns = @JoinColumn(name = "teacher_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    @JsonManagedReference
+    private Set<User> students = new HashSet<>();
+
+    @ManyToMany(mappedBy = "students")
+    @JsonBackReference
+    private Set<User> teachers = new HashSet<>();
 
     public User(String name, String email, @org.jetbrains.annotations.Nullable String avatar_url) {
         this.username = name;
         this.email = email;
         this.avatar_url = avatar_url;
-        this.roles = new HashSet<>();
     }
 
     public User(UserModel model) {
@@ -54,9 +67,6 @@ public class User {
     }
 
     public void addRole(Role role) {
-        if (this.roles == null) {
-            this.roles = new HashSet<>();
-        }
         this.roles.add(role);
         role.getUsers().add(this);
     }
@@ -65,4 +75,15 @@ public class User {
         this.roles.remove(role);
         role.getUsers().remove(this);
     }
+
+    public void addStudent(User student) {
+        this.students.add(student);
+        student.getTeachers().add(this);
+    }
+
+    public void deleteStudent(User student) {
+        this.students.remove(student);
+        student.getTeachers().remove(this);
+    }
+
 }
