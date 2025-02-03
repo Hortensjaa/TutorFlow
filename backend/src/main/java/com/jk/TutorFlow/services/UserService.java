@@ -21,9 +21,8 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public User addUser(User user) {
+    public void addUser(User user) {
         userRepository.save(user);
-        return user;
     }
 
     public User getUserById(Long id) {
