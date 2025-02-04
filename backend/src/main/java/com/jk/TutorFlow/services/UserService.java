@@ -43,13 +43,12 @@ public class UserService {
         return student;
     }
 
-    public User deleteStudent(Long teacherId, Long studentId) {
+    public void deleteStudent(Long teacherId, Long studentId) {
         User teacher = userRepository.findById(teacherId).orElseThrow(() -> new RuntimeException("Teacher not found"));
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
         studentRepository.delete(student);
         teacher.deleteStudent(student);
         userRepository.save(teacher);
-        return teacher;
     }
 
     public User updateUser(UserModel model) {

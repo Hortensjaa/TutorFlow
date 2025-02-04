@@ -1,11 +1,10 @@
 import {UserContext} from "../../providers/UserContext.tsx";
 import {useContext, useEffect, useState} from "react";
 import {
-    Box, Button, Code,
+    Box, Code,
     Divider,
-    Loader,
-    ScrollArea, Table,
-    Text, TextInput,
+    Loader, Table,
+    Text,
     Title
 } from "@mantine/core";
 import {SideNavbar} from "../index.ts";
@@ -14,14 +13,12 @@ import {useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
 import {Lesson, Student} from "../../models";
 
-
 const Profile = () => {
     const { state: thisUser, actions } = useContext(UserContext)
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [loading, setLoading] = useState<boolean>(true);
     const [latestLessons, setLessons] = useState<Lesson[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
-    const [newStudent, setNewStudent] = useState<string>("");
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -57,41 +54,11 @@ const Profile = () => {
             })
     }, [])
 
-    const addStudent = async () => {
-        try {
-            let response = await fetch('/api/user/add_student', {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name: newStudent }),
-            });
-
-            let data = await response.json();
-
-            if (response.ok) {
-                if (data.success) {
-                    setStudents([...students, data.student]);
-                } else {
-                    alert(data.message);
-                }
-            } else {
-                alert(data.message);
-            }
-        } catch (error) {
-            console.error("Error adding student:", error);
-            alert("A network error occurred. Please try again.");
-        }
-    };
-
     const lessonRows = latestLessons ? latestLessons.map((element: Lesson) => (
         <Table.Tr key={element.id}>
             <Table.Td>{element.date}</Table.Td>
-            <Table.Td>{element.topic}</Table.Td>
-            <Table.Td>
-                {element.student}
-            </Table.Td>
+            <Table.Td fw={500}>{element.topic}</Table.Td>
+            <Table.Td>{element.student}</Table.Td>
         </Table.Tr>
     )) : null;
 
@@ -157,18 +124,6 @@ const Profile = () => {
 
                     <Divider my="md" label="My students" labelPosition="center"/>
 
-                    <Box className={styles.boxadd}>
-                        <TextInput
-                            flex={"0.7"}
-                            placeholder="name"
-                            value={newStudent}
-                            onChange={(event) => setNewStudent(event.currentTarget.value)}
-                        />
-                        <Button onClick={addStudent}
-                                flex={"0.26"}>
-                            Add student
-                        </Button>
-                    </Box>
                     {students.length > 0 ? (
                     <Table>
                         <Table.Thead>
@@ -183,7 +138,7 @@ const Profile = () => {
                         </Table.Tbody>
                     </Table>) : (
                         <Text c="dimmed">
-                            Add your first student
+                            Add your first student in settings
                         </Text>
                     )}
                 </div>

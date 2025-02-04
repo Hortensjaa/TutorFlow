@@ -3,3 +3,7 @@
     flex-direction: column;
     flex: 1;
 }
+
+.title {
+    color: var(--mantine-primary-color-8);
+}

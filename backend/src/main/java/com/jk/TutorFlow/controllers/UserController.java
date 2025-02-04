@@ -82,6 +82,18 @@ public class UserController {
         return ResponseEntity.ok(Map.of("success", true, "student", new StudentModel(student)));
     }
 
+    @DeleteMapping("/api/user/delete_student")
+    public void deleteStudentByTeacher(
+            @AuthenticationPrincipal OAuth2User principal,
+            @RequestBody StudentModel studentModel
+    ) {
+        User userData = extractData(principal);
+        User existingTeacher = userService.getUserByEmail(userData.getEmail());
+        System.out.println(studentModel.getID());
+        System.out.println(studentModel.getName());
+        userService.deleteStudent(existingTeacher.getUser_id(), studentModel.getID());
+    }
+
     private User extractData(@AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             throw new AccessDeniedException("User not found");

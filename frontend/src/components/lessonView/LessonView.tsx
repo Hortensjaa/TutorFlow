@@ -5,6 +5,7 @@ import {Button, Container, Group, Title, Text, Loader} from "@mantine/core";
 import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
+import styles from "./LessonView.module.css"
 
 
 const LessonView = () => {
@@ -47,10 +48,6 @@ const LessonView = () => {
             .catch((error) => console.error('Error deleting lesson:', error));
     };
 
-    if (!lesson) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <div className={"container"}>
             {!isMobile ? <SideNavbar /> : <TopNavbar/>}
@@ -61,18 +58,22 @@ const LessonView = () => {
             )}
             {!loading && (
             <Container className={"content"}>
-                <Title order={2} mb="md">
+                <Text c="dimmed" mb="md">
                     Lesson Details
-                </Title>
+                </Text>
 
                 <Group mb="sm">
-                    <Text>Topic:</Text>
-                    <Text>{lesson.topic}</Text>
+                    <Title order={2} className={styles.title}>{lesson?.topic}</Title>
                 </Group>
 
                 <Group mb="sm">
-                    <Text>Date:</Text>
-                    <Text>{new Date(lesson.date).toLocaleDateString(undefined,
+                    <Text c="dimmed">Student:</Text>
+                    <Text>{lesson?.student}</Text>
+                </Group>
+
+                <Group mb="sm">
+                    <Text c="dimmed">Date:</Text>
+                    <Text>{new Date(lesson?.date).toLocaleDateString(undefined,
                         {
                             year: 'numeric',
                             month: 'numeric',
@@ -83,18 +84,8 @@ const LessonView = () => {
                 </Group>
 
                 <Group mb="sm">
-                    <Text>Description:</Text>
-                    <Text>{lesson.description}</Text>
-                </Group>
-
-                <Group mb="sm">
-                    <Text>Student:</Text>
-                    <Text>{lesson.student}</Text>
-                </Group>
-
-                <Group c="dimmed" mb="sm">
-                    <Text>Teacher:</Text>
-                    <Text>{lesson.teacher}</Text>
+                    <Text c="dimmed">Description:</Text>
+                    <Text>{lesson?.description}</Text>
                 </Group>
 
                 <div className="buttonContainer">

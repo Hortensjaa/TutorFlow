@@ -8,7 +8,6 @@ import {
     Table,
     Text,
     TextInput, UnstyledButton,
-    useMantineTheme
 } from '@mantine/core';
 
 import { Lesson } from "../../models";
