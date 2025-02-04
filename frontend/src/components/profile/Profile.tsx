@@ -1,7 +1,6 @@
 import {UserContext} from "../../providers/UserContext.tsx";
 import {useContext, useEffect, useState} from "react";
 import {
-    Badge,
     Box, Button, Code,
     Divider,
     Loader,
@@ -105,93 +104,91 @@ const Profile = () => {
     )) : null;
 
     return (
-        <ScrollArea>
-            <div className="container">
-                {!isMobile ? <SideNavbar /> : <TopNavbar/>}
-                {loading && (
-                    <div className={"loading"}>
-                        <Loader type="bars" />
-                    </div>
-                )}
-                {!loading && (
-                    <div className="content">
-                        <Title order={1} className={styles.title}>Profile</Title>
+        <div className="container">
+            {!isMobile ? <SideNavbar /> : <TopNavbar/>}
+            {loading && (
+                <div className={"loading"}>
+                    <Loader type="bars" />
+                </div>
+            )}
+            {!loading && (
+                <div className="content">
+                    <Title order={1} className={styles.title}>Profile</Title>
 
-                        <Divider my="md" label="Personal data" labelPosition="center"/>
-                        <Box className={styles.textContainer}>
-                            <Text size="md" weight={500} c="dimmed" className={styles.label}>
-                                Username
-                            </Text>
-                            <Text size="lg"  className={styles.value}>
-                                {thisUser?.username || "N/A"}
-                            </Text>
-                        </Box>
+                    <Divider my="md" label="Personal data" labelPosition="center"/>
+                    <Box className={styles.textContainer}>
+                        <Text size="md" weight={500} c="dimmed" className={styles.label}>
+                            Username
+                        </Text>
+                        <Text size="lg"  className={styles.value}>
+                            {thisUser?.username || "N/A"}
+                        </Text>
+                    </Box>
 
-                        <Box className={styles.textContainer}>
-                            <Text size="md" weight={500} c="dimmed" className={styles.label}>
-                                Email
-                            </Text>
-                            <Text size="lg" className={styles.value}>
-                                {thisUser?.email || "N/A"}
-                            </Text>
-                        </Box>
+                    <Box className={styles.textContainer}>
+                        <Text size="md" weight={500} c="dimmed" className={styles.label}>
+                            Email
+                        </Text>
+                        <Text size="lg" className={styles.value}>
+                            {thisUser?.email || "N/A"}
+                        </Text>
+                    </Box>
 
-                        <Divider my="md" label="Latest lessons" labelPosition="center"/>
+                    <Divider my="md" label="Latest lessons" labelPosition="center"/>
 
-                        {latestLessons.length > 0 ? (
-                            <Table>
-                                <Table.Thead>
-                                    <Table.Tr>
-                                        <Table.Th className={styles.tableheader}>Date</Table.Th>
-                                        <Table.Th className={styles.tableheader}>Topic</Table.Th>
-                                        <Table.Th className={styles.tableheader}>Student</Table.Th>
-                                    </Table.Tr>
-                                </Table.Thead>
-                                <Table.Tbody>
-                                    {lessonRows}
-                                </Table.Tbody>
-                            </Table>
-                        ) : (
-                            <Text c="dimmed">
-                                No lessons yet
-                            </Text>
-                        )}
-
-                        <Divider my="md" label="My students" labelPosition="center"/>
-
-                        <Box className={styles.boxadd}>
-                            <TextInput
-                                flex={"0.7"}
-                                placeholder="name"
-                                value={newStudent}
-                                onChange={(event) => setNewStudent(event.currentTarget.value)}
-                            />
-                            <Button onClick={addStudent}
-                                    flex={"0.26"}>
-                                Add student
-                            </Button>
-                        </Box>
-                        {students.length > 0 ? (
+                    {latestLessons.length > 0 ? (
                         <Table>
                             <Table.Thead>
                                 <Table.Tr>
-                                    <Table.Th className={styles.tableheader}>Name</Table.Th>
-                                    <Table.Th className={styles.tableheader}>Last lesson date</Table.Th>
-                                    <Table.Th className={styles.tableheader}>Last lesson topic</Table.Th>
+                                    <Table.Th className={styles.tableheader}>Date</Table.Th>
+                                    <Table.Th className={styles.tableheader}>Topic</Table.Th>
+                                    <Table.Th className={styles.tableheader}>Student</Table.Th>
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>
-                                {studentRows}
+                                {lessonRows}
                             </Table.Tbody>
-                        </Table>) : (
-                            <Text c="dimmed">
-                                Add your first student
-                            </Text>
-                        )}
-                    </div>
-                )}
-            </div>
-        </ScrollArea>
+                        </Table>
+                    ) : (
+                        <Text c="dimmed">
+                            No lessons yet
+                        </Text>
+                    )}
+
+                    <Divider my="md" label="My students" labelPosition="center"/>
+
+                    <Box className={styles.boxadd}>
+                        <TextInput
+                            flex={"0.7"}
+                            placeholder="name"
+                            value={newStudent}
+                            onChange={(event) => setNewStudent(event.currentTarget.value)}
+                        />
+                        <Button onClick={addStudent}
+                                flex={"0.26"}>
+                            Add student
+                        </Button>
+                    </Box>
+                    {students.length > 0 ? (
+                    <Table>
+                        <Table.Thead>
+                            <Table.Tr>
+                                <Table.Th className={styles.tableheader}>Name</Table.Th>
+                                <Table.Th className={styles.tableheader}>Last lesson date</Table.Th>
+                                <Table.Th className={styles.tableheader}>Last lesson topic</Table.Th>
+                            </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                            {studentRows}
+                        </Table.Tbody>
+                    </Table>) : (
+                        <Text c="dimmed">
+                            Add your first student
+                        </Text>
+                    )}
+                </div>
+            )}
+        </div>
     );
 }
 

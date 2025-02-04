@@ -46,7 +46,6 @@ export default function LessonsList() {
     const [sortedData, setSortedData] = useState<Lesson[]>([]);
     const [sortBy, setSortBy] = useState<keyof Lesson | null>('date');
     const [reverseSortDirection, setReverseSortDirection] = useState(true);
-    const theme = useMantineTheme();
 
     const setSorting = (field: keyof Lesson) => {
         const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -87,7 +86,7 @@ export default function LessonsList() {
     }, []);
 
     const rows = sortedData.map((row: Lesson) => (
-        <Table.Tr key={row.id} onClick={() => navigate(`/lesson/${row.id}`)}>
+        <Table.Tr style={{cursor: "pointer"}} key={row.id} onClick={() => navigate(`/lesson/${row.id}`)}>
             <Table.Td>{row.date}</Table.Td>
             <Table.Td>
                 <Text fw={500}>{row.topic}</Text>

@@ -70,13 +70,8 @@ public class UserController {
             @AuthenticationPrincipal OAuth2User principal,
             @RequestBody Map<String, String> request
     ) {
-        User existingTeacher = userService.getUserByEmail(principal.getAttribute("email"));
-
-        if (existingTeacher == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("success", false, "message", "Teacher not found"));
-        }
-
+        User userData = extractData(principal);
+        User existingTeacher = userService.getUserByEmail(userData.getEmail());
         String name = request.get("name");
         if (name == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -88,6 +83,9 @@ public class UserController {
     }
 
     private User extractData(@AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) {
+            throw new AccessDeniedException("User not found");
+        }
         String email = principal.getAttribute("email");
         String name = principal.getAttribute("name");
         if (name == null) {

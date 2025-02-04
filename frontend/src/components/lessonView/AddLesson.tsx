@@ -4,14 +4,15 @@ import {
     TextInput,
     Select,
     Textarea,
-    Button, Loader,
+    Button, Loader
 } from '@mantine/core';
-import {Lesson, Student} from '../../models';
+import '@mantine/dates/styles.css';
+import {useMediaQuery} from "@mantine/hooks";
 import {DateInput} from "@mantine/dates";
 import {useNavigate} from "react-router-dom";
+import {Lesson, Student} from '../../models';
 import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
-import {useMediaQuery} from "@mantine/hooks";
 import styles from "./LessonView.module.css";
 
 const AddLesson = () => {
@@ -93,6 +94,7 @@ const AddLesson = () => {
                     />
 
                     <DateInput
+                        valueFormat="DD MMM YYYY"
                         label="Date"
                         placeholder="Select lesson date"
                         {...form.getInputProps('date')}

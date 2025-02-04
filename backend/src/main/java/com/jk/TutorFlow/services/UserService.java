@@ -46,6 +46,7 @@ public class UserService {
     public User deleteStudent(Long teacherId, Long studentId) {
         User teacher = userRepository.findById(teacherId).orElseThrow(() -> new RuntimeException("Teacher not found"));
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
+        studentRepository.delete(student);
         teacher.deleteStudent(student);
         userRepository.save(teacher);
         return teacher;
@@ -54,7 +55,6 @@ public class UserService {
     public User updateUser(UserModel model) {
         User user = userRepository.findById(model.getID()).orElseThrow(() -> new RuntimeException("User not found"));
         user.setUsername(model.getUsername());
-        User res = userRepository.save(user);
-        return res;
+        return userRepository.save(user);
     }
 }

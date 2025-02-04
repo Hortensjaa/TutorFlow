@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {Lesson} from "../../models";
 import {useNavigate, useParams} from "react-router-dom";
-import {Button, Container, Group, Title, Text} from "@mantine/core";
+import {Button, Container, Group, Title, Text, Loader} from "@mantine/core";
 import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
@@ -54,6 +54,12 @@ const LessonView = () => {
     return (
         <div className={"container"}>
             {!isMobile ? <SideNavbar /> : <TopNavbar/>}
+            {loading && (
+                <div className={"loading"}>
+                    <Loader type="bars" />
+                </div>
+            )}
+            {!loading && (
             <Container className={"content"}>
                 <Title order={2} mb="md">
                     Lesson Details
@@ -66,7 +72,14 @@ const LessonView = () => {
 
                 <Group mb="sm">
                     <Text>Date:</Text>
-                    <Text>{new Date(lesson.date).toLocaleDateString()}</Text>
+                    <Text>{new Date(lesson.date).toLocaleDateString(undefined,
+                        {
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric',
+                            weekday: 'short',
+                        })}
+                    </Text>
                 </Group>
 
                 <Group mb="sm">
@@ -79,7 +92,7 @@ const LessonView = () => {
                     <Text>{lesson.student}</Text>
                 </Group>
 
-                <Group mb="sm">
+                <Group c="dimmed" mb="sm">
                     <Text>Teacher:</Text>
                     <Text>{lesson.teacher}</Text>
                 </Group>
@@ -90,6 +103,7 @@ const LessonView = () => {
                     </Button>
                 </div>
             </Container>
+            )}
         </div>
     );
 };

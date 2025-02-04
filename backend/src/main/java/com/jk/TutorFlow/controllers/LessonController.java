@@ -59,9 +59,9 @@ public class LessonController {
     }
 
     @PostMapping("api/lessons/add")
-    public Lesson addLesson(@AuthenticationPrincipal OAuth2User principal, @RequestBody LessonModel model) {
+    public ResponseEntity<Lesson> addLesson(@AuthenticationPrincipal OAuth2User principal, @RequestBody LessonModel model) {
         Long teacher_id = userService.getUserByEmail(principal.getAttribute("email")).getUser_id();
-        return lessonService.addLesson(model, teacher_id);
+        return new ResponseEntity<>(lessonService.addLesson(model, teacher_id), HttpStatus.OK);
     }
 
     @GetMapping("/api/lessons/{id}")
@@ -74,11 +74,16 @@ public class LessonController {
 
     @DeleteMapping("/api/lessons/{id}/delete")
     public void deleteLesson(@AuthenticationPrincipal OAuth2User principal, @PathVariable String id) {
-//        User user = getUser(principal);
-//        if (lessonService.getLesson(Long.valueOf(id)).isPresent() &&
-//                !Objects.equals(user.getUser_id(), lessonService.getLesson(Long.valueOf(id)).getTeacher_id())) {
-//            throw new AccessDeniedException("User not authorized to delete lesson");
-//        }
+        User user = getUser(principal);
+        Optional<Lesson> optionalLesson = lessonService.getLesson(Long.valueOf(id));
+        if (optionalLesson.isEmpty()) {
+            throw new RuntimeException("Lesson not found with id: " + id);
+        }
+
+        Lesson lesson = optionalLesson.get();
+        if (!Objects.equals(user.getUser_id(), lesson.getTeacher().getUser_id())) {
+            throw new AccessDeniedException("User not authorized to delete lesson");
+        }
         lessonService.deleteLesson(Long.valueOf(id));
     }
 }
