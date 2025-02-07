@@ -3,6 +3,7 @@ package com.jk.TutorFlow.controllers;
 import com.jk.TutorFlow.entities.Lesson;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.LessonModel;
+import com.jk.TutorFlow.services.GCPService;
 import com.jk.TutorFlow.services.LessonService;
 import com.jk.TutorFlow.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,6 +28,8 @@ public class LessonController {
     private LessonService lessonService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private GCPService gcpService;
 
     private List<LessonModel> getAllLessonsHelper(Long teacherId) {
         return lessonService.getLessonsByTeacherId(teacherId)
@@ -59,9 +64,15 @@ public class LessonController {
     }
 
     @PostMapping("api/lessons/add")
-    public ResponseEntity<Lesson> addLesson(@AuthenticationPrincipal OAuth2User principal, @RequestBody LessonModel model) {
+    public ResponseEntity<Lesson> addLesson(
+            @AuthenticationPrincipal OAuth2User principal,
+            @RequestPart("lesson") LessonModel model,
+            @RequestPart("files") MultipartFile[] files
+    ) throws IOException {
         Long teacher_id = userService.getUserByEmail(principal.getAttribute("email")).getUser_id();
-        return new ResponseEntity<>(lessonService.addLesson(model, teacher_id), HttpStatus.OK);
+        String[] fileUrls = gcpService.uploadFiles(String.valueOf(teacher_id), files);
+        Lesson lesson = lessonService.addLesson(model, teacher_id, fileUrls);
+        return new ResponseEntity<>(lesson, HttpStatus.OK);
     }
 
     @GetMapping("/api/lessons/{id}")

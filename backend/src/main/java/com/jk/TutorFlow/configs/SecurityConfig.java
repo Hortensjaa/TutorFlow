@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers( "/login").permitAll();
-                    registry.anyRequest().authenticated();
+                    registry.anyRequest().permitAll();
                 })
                 .oauth2Login(form -> form.defaultSuccessUrl("/api/user/add_user", true))
                 .logout(logout -> logout.logoutSuccessUrl(Consts.frontendUrl))

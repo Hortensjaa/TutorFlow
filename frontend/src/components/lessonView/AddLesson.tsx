@@ -9,6 +9,7 @@ import {
 import '@mantine/dates/styles.css';
 import {useMediaQuery} from "@mantine/hooks";
 import {DateInput} from "@mantine/dates";
+import { FileInput } from '@mantine/core';
 import {useNavigate} from "react-router-dom";
 import {Lesson, Student} from '../../models';
 import {SideNavbar} from "../index.ts";
@@ -20,6 +21,7 @@ const AddLesson = () => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState<boolean>(true);
     const [students, setStudents] = useState<{ value: string; label: string }[]>([]);
+
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -45,16 +47,27 @@ const AddLesson = () => {
             date: new Date(),
             description: '',
             student: '',
+            files: []
         },
         validate: {
             topic: (value) => (value.length < 3 ? 'Topic must be at least 3 characters' : null),
             date: (value) => (value === null ? 'Date is required' : null),
-            student: (value) => (value === '' ? 'Student is required' : null)
+            student: (value) => (value === '' ? 'Student is required' : null),
+            files: (value) => {
+                if (value) {
+                    for (const file of value) {
+                        if (file.size > 10 * 1024 * 1024) {
+                            return 'File size must be less than 10 MB';
+                        }
+                    }
+                }
+                return null;
+            },
         },
     });
 
     const handleSubmit = async (values: typeof form.values) => {
-        console.log('Form submitted:', values);
+        const formData = new FormData();
         let lesson: Lesson = {
             id: -1,
             topic: values.topic,
@@ -64,16 +77,32 @@ const AddLesson = () => {
             student_id: parseInt(values.student, 10),
             teacher: ''
         }
-        await fetch('/api/lessons/add', {
-            method: 'POST',
-            credentials: 'include',
-            redirect: 'follow',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(lesson),
-        });
-        navigate("/dashboard")
+        const lessonBlob = new Blob([JSON.stringify(lesson)], { type: 'application/json' });
+        formData.append('lesson', lessonBlob);
+        if (values.files) {
+            values.files.forEach((file) => {
+                formData.append('files', file);
+            });
+        }
+
+        try {
+            const response = await fetch('/api/lessons/add', {
+                method: 'POST',
+                credentials: 'include',
+                body: formData,
+            });
+
+            if (response.ok) {
+                console.log('Lesson added successfully');
+                const result = await response.json();
+                console.log(result);
+                navigate("/dashboard");
+            } else {
+                console.error('Failed to upload file:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        }
     };
 
     return (
@@ -111,6 +140,14 @@ const AddLesson = () => {
                         placeholder="Select a student"
                         data={students}
                         {...form.getInputProps('student')}
+                    />
+
+                    <FileInput
+                        clearable
+                        label="Files"
+                        placeholder="Upload files"
+                        multiple
+                        {...form.getInputProps('files')}
                     />
 
                     <div className="buttonContainer">

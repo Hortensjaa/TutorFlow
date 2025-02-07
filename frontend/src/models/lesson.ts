@@ -15,6 +15,7 @@ export interface Lesson {
     student:     string;
     student_id:  number;
     teacher:     string;
+    file_urls?: string[];
 }
 
 // Converts JSON strings to/from your types

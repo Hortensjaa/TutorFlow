@@ -40,7 +40,7 @@ public class LessonService {
         lessonRepository.delete(lesson);
     }
 
-    public Lesson addLesson(LessonModel model, Long teacher_id) {
+    public Lesson addLesson(LessonModel model, Long teacher_id, String[] file_urls) {
         Lesson lesson = new Lesson(model);
         User teacher = userRepository.findById(teacher_id)
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));

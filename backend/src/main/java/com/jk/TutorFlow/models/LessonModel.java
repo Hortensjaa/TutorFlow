@@ -1,6 +1,6 @@
 package com.jk.TutorFlow.models;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jk.TutorFlow.entities.Lesson;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
