@@ -2,12 +2,14 @@ package com.jk.TutorFlow.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.*;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "files")
 public class File {
 
@@ -20,4 +22,8 @@ public class File {
     @JoinColumn(name = "lesson", referencedColumnName = "lesson_id")
     @JsonBackReference
     private Lesson lesson;
+
+    public File(String path) {
+        this.path = path;
+    }
 }

@@ -1,5 +1,6 @@
 package com.jk.TutorFlow.services;
 
+import com.jk.TutorFlow.entities.File;
 import com.jk.TutorFlow.entities.Lesson;
 import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
@@ -40,12 +41,13 @@ public class LessonService {
         lessonRepository.delete(lesson);
     }
 
-    public Lesson addLesson(LessonModel model, Long teacher_id, String[] file_urls) {
+    public Lesson addLesson(LessonModel model, Long teacher_id, Set<File> files) {
         Lesson lesson = new Lesson(model);
         User teacher = userRepository.findById(teacher_id)
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
         Student student = studentRepository.findById(model.getStudentID())
                 .orElseThrow(() -> new RuntimeException("Student not found"));
+        lesson.setFiles(files);
         lesson.setTeacher(teacher);
         lesson.setStudent(student);
         lessonRepository.save(lesson);

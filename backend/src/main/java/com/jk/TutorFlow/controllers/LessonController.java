@@ -1,8 +1,10 @@
 package com.jk.TutorFlow.controllers;
 
+import com.jk.TutorFlow.entities.File;
 import com.jk.TutorFlow.entities.Lesson;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.LessonModel;
+import com.jk.TutorFlow.services.FileService;
 import com.jk.TutorFlow.services.GCPService;
 import com.jk.TutorFlow.services.LessonService;
 import com.jk.TutorFlow.services.UserService;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -30,6 +33,8 @@ public class LessonController {
     private UserService userService;
     @Autowired
     private GCPService gcpService;
+    @Autowired
+    private FileService fileService;
 
     private List<LessonModel> getAllLessonsHelper(Long teacherId) {
         return lessonService.getLessonsByTeacherId(teacherId)
@@ -71,7 +76,9 @@ public class LessonController {
     ) throws IOException {
         Long teacher_id = userService.getUserByEmail(principal.getAttribute("email")).getUser_id();
         String[] fileUrls = gcpService.uploadFiles(String.valueOf(teacher_id), files);
-        Lesson lesson = lessonService.addLesson(model, teacher_id, fileUrls);
+        Set<File> filesObjects = fileService.addFiles(fileUrls);
+        Lesson lesson = lessonService.addLesson(model, teacher_id, filesObjects);
+        fileService.updateFiles(lesson, filesObjects);
         return new ResponseEntity<>(lesson, HttpStatus.OK);
     }
 
