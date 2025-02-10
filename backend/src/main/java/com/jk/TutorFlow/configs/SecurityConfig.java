@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -31,6 +32,8 @@ public class SecurityConfig {
                 })
                 .oauth2Login(form -> form.defaultSuccessUrl("/api/user/add_user", true))
                 .logout(logout -> logout.logoutSuccessUrl(Consts.frontendUrl))
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(Consts.frontendUrl)))
                 .build();
     }
 
