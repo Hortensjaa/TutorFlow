@@ -130,7 +130,7 @@ const AddLesson = () => {
                     />
 
                     <Textarea
-                        label="Description"
+                        label="Notes"
                         placeholder="Enter lesson description"
                         {...form.getInputProps('description')}
                     />

@@ -15,7 +15,7 @@ export interface Lesson {
     student:     string;
     student_id:  number;
     teacher:     string;
-    file_urls?: string[];
+    files?: string[];
 }
 
 // Converts JSON strings to/from your types
@@ -191,5 +191,6 @@ const typeMap: any = {
         { json: "student", js: "student", typ: "" },
         { json: "student_id", js: "student_id", typ: 0 },
         { json: "teacher", js: "teacher", typ: "" },
+        { json: "files", js: "files", typ: a("") },
     ], false),
 };

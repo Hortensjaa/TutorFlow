@@ -5,6 +5,7 @@
   "description": "exercises 1, 2, 4 page 178 ",
   "student": "John Doe",
   "student_id": 123,
-  "teacher": "Mr. Smith"
+  "teacher": "Mr. Smith",
+  "files": ["exercises.pdf", "path/assignment.docx"]
 }
 

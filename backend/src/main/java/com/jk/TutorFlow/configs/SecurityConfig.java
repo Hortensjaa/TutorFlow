@@ -1,6 +1,7 @@
 package com.jk.TutorFlow.configs;
 
 
+import com.jk.TutorFlow.Consts;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -13,7 +14,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
-import com.jk.TutorFlow.Consts;
 
 
 @Configuration
@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers( "/login").permitAll();
-                    registry.anyRequest().permitAll();
+                    registry.anyRequest().authenticated();
                 })
                 .oauth2Login(form -> form.defaultSuccessUrl("/api/user/add_user", true))
                 .logout(logout -> logout.logoutSuccessUrl(Consts.frontendUrl))

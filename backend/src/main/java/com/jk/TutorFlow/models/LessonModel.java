@@ -1,6 +1,7 @@
 package com.jk.TutorFlow.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jk.TutorFlow.entities.File;
 import com.jk.TutorFlow.entities.Lesson;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class LessonModel {
     private String student;
     private long studentID;
     private String teacher;
+    private String[] files;
 
     @JsonProperty("id")
     public long getID() { return id; }
@@ -54,6 +56,11 @@ public class LessonModel {
     @JsonProperty("teacher")
     public void setTeacher(String value) { this.teacher = value; }
 
+    @JsonProperty("files")
+    public String[] getFiles() { return files; }
+    @JsonProperty("files")
+    public void setFiles(String[] value) { this.files = value; }
+
     public LessonModel(Lesson entity) {
         this.id = entity.getLesson_id();
         this.topic = entity.getTopic();
@@ -62,5 +69,6 @@ public class LessonModel {
         this.student = entity.getStudent().getName();
         this.teacher = entity.getTeacher().getUsername();
         this.studentID = entity.getStudent().getStudent_id();
+        this.files = entity.getFiles().stream().map(File::getPath).toArray(String[]::new);
     }
 }

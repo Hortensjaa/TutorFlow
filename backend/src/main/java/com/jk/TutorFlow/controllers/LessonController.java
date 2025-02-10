@@ -32,8 +32,6 @@ public class LessonController {
     @Autowired
     private UserService userService;
     @Autowired
-    private GCPService gcpService;
-    @Autowired
     private FileService fileService;
 
     private List<LessonModel> getAllLessonsHelper(Long teacherId) {
@@ -75,7 +73,7 @@ public class LessonController {
             @RequestPart("files") MultipartFile[] files
     ) throws IOException {
         Long teacher_id = userService.getUserByEmail(principal.getAttribute("email")).getUser_id();
-        String[] fileUrls = gcpService.uploadFiles(String.valueOf(teacher_id), files);
+        String[] fileUrls = GCPService.uploadFiles(String.valueOf(teacher_id), files);
         Set<File> filesObjects = fileService.addFiles(fileUrls);
         Lesson lesson = lessonService.addLesson(model, teacher_id, filesObjects);
         fileService.updateFiles(lesson, filesObjects);
