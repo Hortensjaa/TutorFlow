@@ -13,7 +13,7 @@ import {useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
 import {Lesson, Student} from "../../models";
 
-const Profile = () => {
+const Profile = (locales?: Intl.LocalesArgument, options?: Intl.DateTimeFormatOptions) => {
     const { state: thisUser, actions } = useContext(UserContext)
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [loading, setLoading] = useState<boolean>(true);
@@ -56,7 +56,14 @@ const Profile = () => {
 
     const lessonRows = latestLessons ? latestLessons.map((element: Lesson) => (
         <Table.Tr key={element.id}>
-            <Table.Td>{element.date}</Table.Td>
+            <Table.Td>
+                {new Date(element.date).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    weekday: 'short',
+                })}
+            </Table.Td>
             <Table.Td fw={500}>{element.topic}</Table.Td>
             <Table.Td>{element.student}</Table.Td>
         </Table.Tr>

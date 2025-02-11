@@ -86,7 +86,14 @@ export default function LessonsList() {
 
     const rows = sortedData.map((row: Lesson) => (
         <Table.Tr style={{cursor: "pointer"}} key={row.id} onClick={() => navigate(`/lesson/${row.id}`)}>
-            <Table.Td>{row.date}</Table.Td>
+            <Table.Td>
+                {new Date(row.date).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    weekday: 'short',
+                })}
+            </Table.Td>
             <Table.Td>
                 <Text fw={500}>{row.topic}</Text>
             </Table.Td>
