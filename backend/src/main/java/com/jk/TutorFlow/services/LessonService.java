@@ -47,7 +47,9 @@ public class LessonService {
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
         Student student = studentRepository.findById(model.getStudentID())
                 .orElseThrow(() -> new RuntimeException("Student not found"));
-        lesson.setFiles(files);
+        if (files != null && !files.isEmpty()) {
+            lesson.setFiles(files);
+        }
         lesson.setTeacher(teacher);
         lesson.setStudent(student);
         lessonRepository.save(lesson);

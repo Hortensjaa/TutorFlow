@@ -79,7 +79,6 @@ const AddLesson = () => {
             student_id: parseInt(values.student, 10),
             teacher: ''
         }
-        console.log(lesson);
         const lessonBlob = new Blob([JSON.stringify(lesson)], { type: 'application/json' });
         formData.append('lesson', lessonBlob);
         if (values.files) {
@@ -101,10 +100,10 @@ const AddLesson = () => {
                 console.log(result);
                 navigate("/dashboard");
             } else {
-                console.error('Failed to upload file:', response.statusText);
+                console.error('Failed to add lesson:', response.statusText);
             }
         } catch (error) {
-            console.error('Error uploading file:', error);
+            console.error('Error adding lesson:', error);
         }
     };
 

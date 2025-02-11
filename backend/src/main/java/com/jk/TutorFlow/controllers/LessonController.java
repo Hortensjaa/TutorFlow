@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -70,13 +67,18 @@ public class LessonController {
     public ResponseEntity<Lesson> addLesson(
             @AuthenticationPrincipal OAuth2User principal,
             @RequestPart("lesson") LessonModel model,
-            @RequestPart("files") MultipartFile[] files
+            @RequestPart(value = "files", required = false) MultipartFile[] files
     ) throws IOException {
         Long teacher_id = userService.getUserByEmail(principal.getAttribute("email")).getUser_id();
-        String[] fileUrls = GCPService.uploadFiles(String.valueOf(teacher_id), files);
-        Set<File> filesObjects = fileService.addFiles(fileUrls);
-        Lesson lesson = lessonService.addLesson(model, teacher_id, filesObjects);
-        fileService.updateFiles(lesson, filesObjects);
+        Lesson lesson;
+        if (files != null && files.length > 0) {
+            String[] fileUrls = GCPService.uploadFiles(String.valueOf(teacher_id), files);
+            Set<File> filesObjects = fileService.addFiles(fileUrls);
+            lesson = lessonService.addLesson(model, teacher_id, filesObjects);
+            fileService.updateFiles(lesson, filesObjects);
+        } else {
+            lesson = lessonService.addLesson(model, teacher_id, new HashSet<>());
+        }
         return new ResponseEntity<>(lesson, HttpStatus.OK);
     }
 
