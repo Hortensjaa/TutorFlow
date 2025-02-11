@@ -1,50 +1,72 @@
-# React + TypeScript + Vite
+# Tutor Flow Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for the Tutor Flow project, built with React and Vite. 
+It provides an intuitive and responsive interface for managing lessons, students, and user profiles.
 
-Currently, two official plugins are available:
+## Technologies Used
+- **React** - Component-based UI library
+- **Vite** - Fast build tool for frontend development
+- **React Router DOM** - Handles navigation between different pages
+- **Mantine** - UI component library for styling and interactivity
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- **Authentication & Security**
+    - Users must be logged in to access any pages except login.
+    - Redirection to login page if unauthorized.
 
-## Expanding the ESLint configuration
+- **User Profile**
+    - Displays user information.
+    - Quick access to the student list and recent lessons.
+    - Allows editing username and managing students.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Lessons Management**
+    - Dashboard with all lessons, including filtering, sorting, and search functionality.
+    - Ability to view, edit, or delete specific lessons.
+    - Page to add new lessons.
 
-- Configure the top-level `parserOptions` property like this:
+- **Responsive Design**
+    - Optimized for both desktop and mobile.
+    - Different navigation bars for each version.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Project Setup
+To set up and run the frontend locally:
+
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/Hortensjaa/TutorFlow
+   cd frontend
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Start the development server:
+   ```sh
+   npm run dev
+   ```
+4. Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+## Folder Structure
+```
+tutor-flow-frontend/
+│── src/
+│   ├── components/        # UI components
+│   ├── providers/         # Global state management
+│   ├── models/            # Request/Response Models
+│   ├── App.jsx            # Main App component
+│   ├── main.jsx           # Entry point
+│── package.json           # Project dependencies and scripts
+│── vite.config.js         # Vite configuration
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Build and Deployment
+To build the project for production:
+```sh
+npm run build
+```
+This will create an optimized `dist/` folder with production-ready files.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+To preview the build locally:
+```sh
+npm run preview
 ```
