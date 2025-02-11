@@ -25,6 +25,7 @@ public class Lesson {
     private Long lesson_id;
     private String topic;
     private String description;
+    private Integer rate;
     private Date date;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
@@ -48,5 +49,6 @@ public class Lesson {
         this.topic = model.getTopic();
         this.description = model.getDescription();
         this.date = Date.valueOf(model.getDate());
+        this.rate = model.getRate();
     }
 }

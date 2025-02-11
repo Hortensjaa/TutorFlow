@@ -3,8 +3,8 @@ import { useForm } from '@mantine/form';
 import {
     TextInput,
     Select,
-    Textarea,
-    Button, Loader, Title
+    Textarea, Input,
+    Button, Loader, Title, Rating
 } from '@mantine/core';
 import '@mantine/dates/styles.css';
 import {useMediaQuery} from "@mantine/hooks";
@@ -45,6 +45,7 @@ const AddLesson = () => {
         initialValues: {
             topic: '',
             date: new Date(),
+            rate: 0,
             description: '',
             student: '',
             files: []
@@ -73,10 +74,12 @@ const AddLesson = () => {
             topic: values.topic,
             date: values.date,
             description: values.description,
+            rate: values.rate,
             student: students.find((s) => s.value === values.student)?.label || '',
             student_id: parseInt(values.student, 10),
             teacher: ''
         }
+        console.log(lesson);
         const lessonBlob = new Blob([JSON.stringify(lesson)], { type: 'application/json' });
         formData.append('lesson', lessonBlob);
         if (values.files) {
@@ -123,6 +126,12 @@ const AddLesson = () => {
                         placeholder="Enter lesson topic"
                         {...form.getInputProps('topic')}
                     />
+
+                    <Input.Wrapper label="Rate">
+                        <Rating
+                            defaultValue={0}
+                            onChange={(value) => form.setFieldValue('rate', value)} />
+                    </Input.Wrapper>
 
                     <DateInput
                         valueFormat="DD MMM YYYY"

@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {Lesson} from "../../models";
 import {useNavigate, useParams} from "react-router-dom";
-import {Button, Container, Group, Title, Text, Loader, Pill} from "@mantine/core";
+import {Button, Container, Group, Title, Text, Loader, Pill, Rating} from "@mantine/core";
 import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
@@ -119,6 +119,11 @@ const LessonView = () => {
                             weekday: 'short',
                         })}
                     </Text>
+                </Group>
+
+                <Group mb="sm">
+                    <Text c="dimmed">Rate:</Text>
+                    <Rating value={lesson?.rate} readOnly />
                 </Group>
 
                 <Group mb="sm">

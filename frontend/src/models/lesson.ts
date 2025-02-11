@@ -14,6 +14,7 @@ export interface Lesson {
     description: string;
     student:     string;
     student_id:  number;
+    rate:  number;
     teacher:     string;
     files?: string[];
 }
@@ -190,6 +191,7 @@ const typeMap: any = {
         { json: "description", js: "description", typ: "" },
         { json: "student", js: "student", typ: "" },
         { json: "student_id", js: "student_id", typ: 0 },
+        { json: "rate", js: "rate", typ: 0 },
         { json: "teacher", js: "teacher", typ: "" },
         { json: "files", js: "files", typ: a("") },
     ], false),

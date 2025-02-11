@@ -36,7 +36,7 @@ public class LessonController {
 
     private List<LessonModel> getAllLessonsHelper(Long teacherId) {
         return lessonService.getLessonsByTeacherId(teacherId)
-                .stream().map(LessonModel::new).collect(Collectors.toList());
+                .stream().map(e -> lessonService.generateModel(e)).collect(Collectors.toList());
     }
 
     private User getUser(@AuthenticationPrincipal OAuth2User principal) {
@@ -62,7 +62,7 @@ public class LessonController {
         User user = getUser(principal);
         return new ResponseEntity<>(
                 lessonService.getLatestLessons(user.getUser_id())
-                        .stream().map(LessonModel::new).collect(Collectors.toList()),
+                        .stream().map(e -> lessonService.generateModel(e)).collect(Collectors.toList()),
                 HttpStatus.OK);
     }
 
@@ -84,7 +84,7 @@ public class LessonController {
     public ResponseEntity<LessonModel> getLesson(@PathVariable String id) {
         Optional<Lesson> lesson = lessonService.getLesson(Long.valueOf(id));
         return lesson.map(
-                        value -> new ResponseEntity<>(new LessonModel(value), HttpStatus.OK))
+                        value -> new ResponseEntity<>(lessonService.generateModel(value), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
