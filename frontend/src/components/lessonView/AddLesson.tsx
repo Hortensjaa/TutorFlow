@@ -4,7 +4,7 @@ import {
     TextInput,
     Select,
     Textarea,
-    Button, Loader
+    Button, Loader, Title
 } from '@mantine/core';
 import '@mantine/dates/styles.css';
 import {useMediaQuery} from "@mantine/hooks";
@@ -116,6 +116,8 @@ const AddLesson = () => {
             {!loading && (
             <div className="content">
                 <form onSubmit={form.onSubmit(handleSubmit)} className={styles.formlesson}>
+                    <Title order={1} className={styles.title} mb={"md"}>Add new lesson</Title>
+
                     <TextInput
                         label="Topic"
                         placeholder="Enter lesson topic"
@@ -131,7 +133,7 @@ const AddLesson = () => {
 
                     <Textarea
                         label="Notes"
-                        placeholder="Enter lesson description"
+                        placeholder="Done excercises, homework, problems, overall reflection and preparation for next lesson"
                         {...form.getInputProps('description')}
                     />
 

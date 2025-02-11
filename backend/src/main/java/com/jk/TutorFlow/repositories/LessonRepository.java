@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -19,18 +19,14 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
     Set<Lesson> findAllByTeacherId(@Param("teacherId") Long teacherId);
 
     @Query("SELECT l FROM Lesson l " +
-            "WHERE l.student.student_id = :studentId " +
-            "ORDER BY l.date DESC")
-    Set<Lesson> findAllByStudentId(@Param("studentId") Long studentId);
-
-    @Query("SELECT l FROM Lesson l " +
-            "WHERE l.student.student_id = :userId OR l.teacher.user_id = :userId " +
-            "ORDER BY l.date DESC")
-    Set<Lesson> findAllByUserId(@Param("userId") Long studentId);
-
-    @Query("SELECT l FROM Lesson l " +
-            "WHERE l.student.student_id = :userId OR l.teacher.user_id = :userId " +
+            "WHERE l.teacher.user_id = :userId " +
             "ORDER BY l.date DESC " +
             "LIMIT 3")
-    Set<Lesson> findLatest(@Param("userId") Long studentId);
+    Set<Lesson> findLatest(@Param("userId") Long userId);
+
+    @Query("SELECT l FROM Lesson l " +
+            "WHERE l.student.student_id = :studentId " +
+            "ORDER BY l.date DESC " +
+            "LIMIT 1")
+    Optional<Lesson> findMostRecentLessonByStudentId(@Param("studentId") Long studentId);
 }

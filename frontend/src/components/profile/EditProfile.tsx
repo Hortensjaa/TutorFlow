@@ -110,8 +110,13 @@ const EditProfile = () => {
     const studentRows = students ? students.map((element: Student) => (
         <Table.Tr key={element.id}>
             <Table.Td>{element.name}</Table.Td>
-            <Table.Td><Code> todo </Code></Table.Td>
-            <Table.Td><Code> todo </Code></Table.Td>
+            <Table.Td>
+                {element.last_lesson ? new Date(element.last_lesson).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                }) : null}
+            </Table.Td>
             <Table.Td onClick={(_) => handleDelete(element)}> <IconX/> </Table.Td>
         </Table.Tr>
     )) : null;
@@ -178,7 +183,6 @@ const EditProfile = () => {
                                     <Table.Tr>
                                         <Table.Th className={styles.tableheader}>Name</Table.Th>
                                         <Table.Th className={styles.tableheader}>Last lesson date</Table.Th>
-                                        <Table.Th className={styles.tableheader}>Last lesson topic</Table.Th>
                                         <Table.Th className={styles.tableheader}>Delete</Table.Th>
                                     </Table.Tr>
                                 </Table.Thead>

@@ -1,19 +1,14 @@
 package com.jk.TutorFlow.models;
 
 import com.fasterxml.jackson.annotation.*;
-import com.jk.TutorFlow.entities.Student;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.LocalDate;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class StudentModel {
     private long id;
     private String name;
+    private LocalDate lastLesson;
+    private String lastTopic;
+    private String studentModelClass;
 
     @JsonProperty("id")
     public long getID() { return id; }
@@ -25,8 +20,18 @@ public class StudentModel {
     @JsonProperty("name")
     public void setName(String value) { this.name = value; }
 
-    public StudentModel(Student entity) {
-        this.id = entity.getStudent_id();
-        this.name = entity.getName();
-    }
+    @JsonProperty("last_lesson")
+    public LocalDate getLastLesson() { return lastLesson; }
+    @JsonProperty("last_lesson")
+    public void setLastLesson(LocalDate value) { this.lastLesson = value; }
+
+    @JsonProperty("last_topic")
+    public String getLastTopic() { return lastTopic; }
+    @JsonProperty("last_topic")
+    public void setLastTopic(String value) { this.lastTopic = value; }
+
+    @JsonProperty("class")
+    public String getStudentModelClass() { return studentModelClass; }
+    @JsonProperty("class")
+    public void setStudentModelClass(String value) { this.studentModelClass = value; }
 }

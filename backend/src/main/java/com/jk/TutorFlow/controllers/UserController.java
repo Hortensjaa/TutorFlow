@@ -5,6 +5,7 @@ import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.StudentModel;
 import com.jk.TutorFlow.models.UserModel;
 import com.jk.TutorFlow.services.ConstsService;
+import com.jk.TutorFlow.services.StudentService;
 import com.jk.TutorFlow.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private ConstsService constsService;
+    @Autowired
+    private StudentService studentService;
 
     @GetMapping("/api/user/add_user")
     public RedirectView addUser(@AuthenticationPrincipal OAuth2User principal) {
@@ -55,7 +58,7 @@ public class UserController {
     public List<StudentModel> getStudents(@AuthenticationPrincipal OAuth2User principal) {
         User userData = extractData(principal);
         User entity = userService.getUserByEmail(userData.getEmail());
-        return userService.getStudents(entity.getUser_id()).stream().map(StudentModel::new).toList();
+        return userService.getStudents(entity.getUser_id()).stream().map(e -> studentService.generateModel(e)).toList();
     }
 
     @PutMapping("/api/user/")
@@ -80,7 +83,7 @@ public class UserController {
         }
 
         Student student = userService.addStudent(existingTeacher.getUser_id(), name);
-        return ResponseEntity.ok(Map.of("success", true, "student", new StudentModel(student)));
+        return ResponseEntity.ok(Map.of("success", true, "student", studentService.generateModel(student)));
     }
 
     @DeleteMapping("/api/user/delete_student")

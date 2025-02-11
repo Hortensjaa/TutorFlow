@@ -1,12 +1,15 @@
 package com.jk.TutorFlow.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,6 +28,10 @@ public class Student {
     @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User teacher;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<Lesson> lessons;
 
     public Student(String name) {
         this.name = name;

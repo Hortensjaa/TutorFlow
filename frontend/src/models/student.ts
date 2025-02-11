@@ -8,8 +8,11 @@
 // match the expected interface, even if the JSON is valid.
 
 export interface Student {
-    id:   number;
-    name: string;
+    id:          number;
+    name:        string;
+    last_lesson: Date;
+    last_topic:  string;
+    class:       string;
 }
 
 // Converts JSON strings to/from your types
@@ -180,5 +183,8 @@ const typeMap: any = {
     "Student": o([
         { json: "id", js: "id", typ: 0 },
         { json: "name", js: "name", typ: "" },
+        { json: "last_lesson", js: "last_lesson", typ: Date },
+        { json: "last_topic", js: "last_topic", typ: "" },
+        { json: "class", js: "class", typ: "" },
     ], false),
 };

@@ -17,7 +17,6 @@ const Profile = (locales?: Intl.LocalesArgument, options?: Intl.DateTimeFormatOp
     const { state: thisUser, actions } = useContext(UserContext)
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [loading, setLoading] = useState<boolean>(true);
-    const [latestLessons, setLessons] = useState<Lesson[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
 
     useEffect(() => {
@@ -27,19 +26,6 @@ const Profile = (locales?: Intl.LocalesArgument, options?: Intl.DateTimeFormatOp
         };
         fetchUser()
     }, []);
-
-    useEffect(() => {
-        fetch('/api/lessons/latest',
-            {
-                method: 'GET',
-                redirect: 'follow',
-                credentials: 'include'
-            })
-            .then(response => response.json())
-            .then(data => {
-                setLessons(data)
-            })
-    }, [])
 
     useEffect(() => {
         fetch('/api/user/students',
@@ -54,26 +40,17 @@ const Profile = (locales?: Intl.LocalesArgument, options?: Intl.DateTimeFormatOp
             })
     }, [])
 
-    const lessonRows = latestLessons ? latestLessons.map((element: Lesson) => (
+    const studentRows = students ? students.map((element: Student) => (
         <Table.Tr key={element.id}>
+            <Table.Td fw={500}>{element.name}</Table.Td>
             <Table.Td>
-                {new Date(element.date).toLocaleDateString(undefined, {
+                {element.last_lesson ? new Date(element.last_lesson).toLocaleDateString(undefined, {
                     year: 'numeric',
                     month: 'numeric',
                     day: 'numeric',
-                    weekday: 'short',
-                })}
+                }) : null}
             </Table.Td>
-            <Table.Td fw={500}>{element.topic}</Table.Td>
-            <Table.Td>{element.student}</Table.Td>
-        </Table.Tr>
-    )) : null;
-
-    const studentRows = students ? students.map((element: Student) => (
-        <Table.Tr key={element.id}>
-            <Table.Td>{element.name}</Table.Td>
-            <Table.Td><Code> todo </Code></Table.Td>
-            <Table.Td><Code> todo </Code></Table.Td>
+            <Table.Td>{element.last_topic}</Table.Td>
         </Table.Tr>
     )) : null;
 
@@ -108,29 +85,7 @@ const Profile = (locales?: Intl.LocalesArgument, options?: Intl.DateTimeFormatOp
                         </Text>
                     </Box>
 
-                    <Divider my="md" label="Latest lessons" labelPosition="center"/>
-
-                    {latestLessons.length > 0 ? (
-                        <Table>
-                            <Table.Thead>
-                                <Table.Tr>
-                                    <Table.Th className={styles.tableheader}>Date</Table.Th>
-                                    <Table.Th className={styles.tableheader}>Topic</Table.Th>
-                                    <Table.Th className={styles.tableheader}>Student</Table.Th>
-                                </Table.Tr>
-                            </Table.Thead>
-                            <Table.Tbody>
-                                {lessonRows}
-                            </Table.Tbody>
-                        </Table>
-                    ) : (
-                        <Text c="dimmed">
-                            No lessons yet
-                        </Text>
-                    )}
-
                     <Divider my="md" label="My students" labelPosition="center"/>
-
                     {students.length > 0 ? (
                     <Table>
                         <Table.Thead>
