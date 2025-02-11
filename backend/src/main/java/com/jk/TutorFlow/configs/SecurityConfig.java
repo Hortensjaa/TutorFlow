@@ -1,7 +1,8 @@
 package com.jk.TutorFlow.configs;
 
 
-import com.jk.TutorFlow.Consts;
+import com.jk.TutorFlow.services.ConstsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -21,6 +22,8 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    @Autowired
+    private ConstsService constsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,16 +34,16 @@ public class SecurityConfig {
                     registry.anyRequest().authenticated();
                 })
                 .oauth2Login(form -> form.defaultSuccessUrl("/api/user/add_user", true))
-                .logout(logout -> logout.logoutSuccessUrl(Consts.frontendUrl))
+                .logout(logout -> logout.logoutSuccessUrl(constsService.getFrontendURL()))
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(Consts.frontendUrl)))
+                        exceptionHandling.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(constsService.getFrontendURL())))
                 .build();
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(Consts.frontendUrl));
+        configuration.setAllowedOrigins(List.of(constsService.getFrontendURL()));
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

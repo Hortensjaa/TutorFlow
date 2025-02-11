@@ -6,6 +6,8 @@
   "student": "John Doe",
   "student_id": 123,
   "teacher": "Mr. Smith",
-  "files": ["exercises.pdf", "path/assignment.docx"]
+  "files": ["exercises.pdf", "path/assignment.docx"],
+  "rate": 5,
+  "subject": "mathematics"
 }
 

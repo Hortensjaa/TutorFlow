@@ -10,7 +10,7 @@
 //
 // Then you can deserialize a JSON string with
 //
-//     StudentModel data = Converter.fromJsonString(jsonString);
+//     Consts data = Converter.fromJsonString(jsonString);
 
 package com.jk.TutorFlow.models;
 
@@ -60,11 +60,11 @@ public class Converter {
     }
     // Serialize/deserialize helpers
 
-    public static StudentModel fromJsonString(String json) throws IOException {
+    public static Consts fromJsonString(String json) throws IOException {
         return getObjectReader().readValue(json);
     }
 
-    public static String toJsonString(StudentModel obj) throws JsonProcessingException {
+    public static String toJsonString(Consts obj) throws JsonProcessingException {
         return getObjectWriter().writeValueAsString(obj);
     }
 
@@ -85,8 +85,8 @@ public class Converter {
             }
         });
         mapper.registerModule(module);
-        reader = mapper.readerFor(StudentModel.class);
-        writer = mapper.writerFor(StudentModel.class);
+        reader = mapper.readerFor(Consts.class);
+        writer = mapper.writerFor(Consts.class);
     }
 
     private static ObjectReader getObjectReader() {

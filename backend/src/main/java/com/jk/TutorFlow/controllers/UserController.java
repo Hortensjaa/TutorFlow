@@ -4,6 +4,7 @@ import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.StudentModel;
 import com.jk.TutorFlow.models.UserModel;
+import com.jk.TutorFlow.services.ConstsService;
 import com.jk.TutorFlow.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,8 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-
-import com.jk.TutorFlow.Consts;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ConstsService constsService;
 
     @GetMapping("/api/user/add_user")
     public RedirectView addUser(@AuthenticationPrincipal OAuth2User principal) {
@@ -33,9 +34,9 @@ public class UserController {
         User existingUser = userService.getUserByEmail(user.getEmail());
         if (existingUser == null) {
             userService.addUser(user);
-            return new RedirectView(Consts.frontendUrl + "/profile/edit/");
+            return new RedirectView(constsService.getFrontendURL() + "/profile/edit/");
         }
-        return new RedirectView(Consts.frontendUrl + "/profile/");
+        return new RedirectView(constsService.getFrontendURL()  + "/profile/");
     }
 
     @GetMapping("/api/user/{id}")
