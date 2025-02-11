@@ -3,7 +3,7 @@ import {IconChevronDown, IconChevronUp, IconSearch, IconSelector} from '@tabler/
 import {
     Button,
     Center,
-    Group,
+    Group, Rating,
     ScrollArea,
     Table,
     Text,
@@ -86,6 +86,7 @@ export default function LessonsList() {
 
     const rows = sortedData.map((row: Lesson) => (
         <Table.Tr style={{cursor: "pointer"}} key={row.id} onClick={() => navigate(`/lesson/${row.id}`)}>
+            {!isMobile ?
             <Table.Td>
                 {new Date(row.date).toLocaleDateString(undefined, {
                     year: 'numeric',
@@ -94,10 +95,22 @@ export default function LessonsList() {
                     weekday: 'short',
                 })}
             </Table.Td>
+                :
+                <Table.Td>
+                    {new Date(row.date).toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric'
+                    })}
+                </Table.Td>
+            }
             <Table.Td>
                 <Text fw={500}>{row.topic}</Text>
             </Table.Td>
             <Table.Td>{row.student}</Table.Td>
+            {
+                !isMobile && <Table.Td><Rating value={row.rate} readOnly /></Table.Td>
+            }
         </Table.Tr>
     ));
 
@@ -141,6 +154,16 @@ export default function LessonsList() {
                                 >
                                     Student
                                 </Th>
+                                {
+                                    !isMobile &&
+                                    <Th
+                                        sorted={sortBy === 'rate'}
+                                        reversed={reverseSortDirection}
+                                        onSort={() => setSorting('rate')}
+                                    >
+                                        Rate
+                                    </Th>
+                                }
                             </Table.Tr>
                         </Table.Tbody>
                         <Table.Tbody>
