@@ -102,6 +102,7 @@ public class LessonController {
         if (!Objects.equals(user.getUser_id(), lesson.getTeacher().getUser_id())) {
             throw new AccessDeniedException("User not authorized to delete lesson");
         }
+        lesson.getFiles().stream().map(File::getPath).forEach(GCPService::deleteFile);
         lessonService.deleteLesson(Long.valueOf(id));
     }
 }

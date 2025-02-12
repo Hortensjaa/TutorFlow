@@ -53,29 +53,23 @@ public class GCPService {
         String downloadPath = downloadsFolder + fileName;
 
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        System.out.println("Downloading file " + filePath + " from bucket " + bucketName + " to " + downloadPath);
         BlobId blobId = BlobId.of(bucketName, filePath);
         Blob blob = storage.get(blobId);
 
         blob.downloadTo(Paths.get(downloadPath));
-        System.out.println("File " + fileName + " downloaded to " + downloadPath);
     }
 
-//
-//    // delete an existing file from GCS
-//    public static void deleteFile() throws IOException {
-//        // Create a new GCS client and get the blob object from the blob ID
-//        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-//        BlobId blobId = BlobId.of(bucketName, objectName);
-//        Blob blob = storage.get(blobId);
-//
-//        if (blob == null) {
-//            System.out.println("File " + objectName + " does not exist in bucket " + bucketName);
-//            return;
-//        }
-//
-//        // delete the file and print the status
-//        blob.delete();
-//        System.out.println("File " + objectName + " deleted from bucket " + bucketName);
-//    }
+
+    public static void deleteFile(String filePath) {
+        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+        BlobId blobId = BlobId.of(bucketName, filePath);
+        Blob blob = storage.get(blobId);
+
+        if (blob == null) {
+            System.out.println("File " + filePath + " does not exist in bucket " + bucketName);
+            return;
+        }
+
+        blob.delete();
+    }
 }
