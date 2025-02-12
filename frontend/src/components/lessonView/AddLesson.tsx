@@ -1,73 +1,16 @@
-import {useState, useEffect} from 'react';
-import { useForm } from '@mantine/form';
-import {
-    TextInput,
-    Select,
-    Textarea, Input,
-    Button, Loader, Title, Rating
-} from '@mantine/core';
 import '@mantine/dates/styles.css';
 import {useMediaQuery} from "@mantine/hooks";
-import {DateInput} from "@mantine/dates";
-import { FileInput } from '@mantine/core';
 import {useNavigate} from "react-router-dom";
-import {Lesson, Student} from '../../models';
+import {Lesson} from '../../models';
 import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
-import styles from "./LessonView.module.css";
+import LessonForm from "./LessonForm.tsx";
 
 const AddLesson = () => {
     const isMobile = useMediaQuery('(max-width: 768px)');
-    const navigate = useNavigate()
-    const [loading, setLoading] = useState<boolean>(true);
-    const [students, setStudents] = useState<{ value: string; label: string }[]>([]);
+    const navigate = useNavigate();
 
-
-    useEffect(() => {
-        const fetchStudents = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch('/api/user/students',
-                    {method: "GET", credentials: "include", redirect: "follow"} );
-                const data = await response.json();
-                setStudents(data.map((student: Student) => ({ value: student.id.toString(), label: student.name })));
-            } catch (error) {
-                console.error('Error fetching students:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchStudents();
-    }, []);
-
-
-    const form = useForm({
-        initialValues: {
-            topic: '',
-            date: new Date(),
-            rate: 0,
-            description: '',
-            student: '',
-            files: []
-        },
-        validate: {
-            topic: (value) => (value.length < 3 ? 'Topic must be at least 3 characters' : null),
-            date: (value) => (value === null ? 'Date is required' : null),
-            student: (value) => (value === '' ? 'Student is required' : null),
-            files: (value) => {
-                if (value) {
-                    for (const file of value) {
-                        if (file.size > 10 * 1024 * 1024) {
-                            return 'File size must be less than 10 MB';
-                        }
-                    }
-                }
-                return null;
-            },
-        },
-    });
-
-    const handleSubmit = async (values: typeof form.values) => {
+    const handleSubmit = async (values: any) => {
         const formData = new FormData();
         let lesson: Lesson = {
             id: -1,
@@ -75,7 +18,7 @@ const AddLesson = () => {
             date: values.date,
             description: values.description,
             rate: values.rate,
-            student: students.find((s) => s.value === values.student)?.label || '',
+            student: '',
             student_id: parseInt(values.student, 10),
             teacher: ''
         }
@@ -96,8 +39,7 @@ const AddLesson = () => {
 
             if (response.ok) {
                 console.log('Lesson added successfully');
-                const result = await response.json();
-                console.log(result);
+                await response.json();
                 navigate("/dashboard");
             } else {
                 console.error('Failed to add lesson:', response.statusText);
@@ -110,64 +52,10 @@ const AddLesson = () => {
     return (
         <div className={"container"}>
             {!isMobile ? <SideNavbar /> : <TopNavbar/>}
-            {loading && (
-                <div className={"loading"}>
-                    <Loader type="bars" />
-                </div>
-            )}
-            {!loading && (
-            <div className="content">
-                <form onSubmit={form.onSubmit(handleSubmit)} className={styles.formlesson}>
-                    <Title order={1} className={styles.title} mb={"md"}>Add new lesson</Title>
-
-                    <TextInput
-                        label="Topic"
-                        placeholder="Enter lesson topic"
-                        {...form.getInputProps('topic')}
-                    />
-
-                    <Input.Wrapper label="Rate">
-                        <Rating
-                            defaultValue={0}
-                            onChange={(value) => form.setFieldValue('rate', value)} />
-                    </Input.Wrapper>
-
-                    <DateInput
-                        valueFormat="DD MMM YYYY"
-                        label="Date"
-                        placeholder="Select lesson date"
-                        {...form.getInputProps('date')}
-                    />
-
-                    <Textarea
-                        label="Notes"
-                        placeholder="Done excercises, homework, problems, overall reflection and preparation for next lesson"
-                        {...form.getInputProps('description')}
-                    />
-
-                    <Select
-                        label="Student"
-                        placeholder="Select a student"
-                        data={students}
-                        {...form.getInputProps('student')}
-                    />
-
-                    <FileInput
-                        clearable
-                        label="Files"
-                        placeholder="Upload files"
-                        multiple
-                        {...form.getInputProps('files')}
-                    />
-
-                    <div className="buttonContainer">
-                        <Button type="submit" className="wideButton">
-                            Add Lesson
-                        </Button>
-                    </div>
-                </form>
-            </div>
-            )}
+            <LessonForm
+                onSubmit={handleSubmit}
+                header="Add Lesson"
+            />
         </div>
     );
 };

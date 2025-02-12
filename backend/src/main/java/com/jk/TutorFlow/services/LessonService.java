@@ -11,6 +11,7 @@ import com.jk.TutorFlow.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.Optional;
 import java.util.Set;
 
@@ -52,6 +53,20 @@ public class LessonService {
         }
         lesson.setTeacher(teacher);
         lesson.setStudent(student);
+        lessonRepository.save(lesson);
+        return lesson;
+    }
+
+    public Lesson updateLesson(LessonModel model, Lesson lesson, Set<File> files) {
+        lesson.setTopic(model.getTopic());
+        lesson.setDate(Date.valueOf(model.getDate()));
+        lesson.setDescription(model.getDescription());
+        lesson.setRate(model.getRate());
+        lesson.setStudent(studentRepository.findById(model.getStudentID())
+                .orElseThrow(() -> new RuntimeException("Student not found")));
+        if (files != null && !files.isEmpty()) {
+            lesson.setFiles(files);
+        }
         lessonRepository.save(lesson);
         return lesson;
     }

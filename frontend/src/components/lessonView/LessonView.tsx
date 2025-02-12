@@ -17,10 +17,10 @@ const LessonView = () => {
 
     function trimPath(url) {
         const filename = url.substring(url.lastIndexOf("/") + 1);
-        const lastDashIndex = filename.lastIndexOf("--");
-        if (lastDashIndex !== -1) {
-            return filename.substring(0, lastDashIndex) + filename.substring(filename.lastIndexOf("."));
-        }
+        // const lastDashIndex = filename.lastIndexOf("--");
+        // if (lastDashIndex !== -1) {
+        //     return filename.substring(0, lastDashIndex) + filename.substring(filename.lastIndexOf("."));
+        // }
         return filename;
     }
 
@@ -147,7 +147,16 @@ const LessonView = () => {
 
 
                 <div className="buttonContainer">
-                    <Button onClick={handleDelete} variant={"outline"} className="wideButton">
+                    <Button
+                        onClick={() => navigate(`/lesson/${id}/edit`)}
+                        variant={"outline"}
+                        c="green"
+                        color="green"
+                        className="wideButton"
+                    >
+                        Edit Lesson
+                    </Button>
+                    <Button onClick={handleDelete} variant={"outline"} className="wideButton" ml={"10px"}>
                         Delete Lesson
                     </Button>
                 </div>

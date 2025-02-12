@@ -5,7 +5,8 @@ import Profile from "./profile/Profile.tsx";
 import EditProfile from "./profile/EditProfile.tsx";
 import AddLesson from "./lessonView/AddLesson.tsx";
 import LessonView from "./lessonView/LessonView.tsx";
+import EditLesson from "./lessonView/EditLesson.tsx";
 
 export {
-    LessonsList, SideNavbar, Login, Profile, EditProfile, AddLesson, LessonView
+    LessonsList, SideNavbar, Login, Profile, EditProfile, AddLesson, LessonView, EditLesson
 }

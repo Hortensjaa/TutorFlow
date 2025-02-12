@@ -2,7 +2,7 @@ import {MantineProvider} from "@mantine/core";
 import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
 
 import {pinkTheme} from "./themes/colorTheme.tsx";
-import {EditProfile, LessonsList, Login, Profile, AddLesson, LessonView} from "./components";
+import {EditProfile, LessonsList, Login, Profile, AddLesson, LessonView, EditLesson} from "./components";
 import {mantineCssVariableResolver} from "./themes/varResolver.tsx";
 import HomePage from "./components/homePage/HomePage.tsx";
 import {UserProvider} from "./providers/UserProvider.tsx";
@@ -21,6 +21,7 @@ function App() {
                         <Route path="/profile" element={<Profile/>}/>
                         <Route path="/profile/edit" element={<EditProfile/>}/>
                         <Route path="/lesson/:id" element={<LessonView/>}/>
+                        <Route path="/lesson/:id/edit" element={<EditLesson/>}/>
                         <Route path="*" element={<Navigate to={"/"}/>}/>
                     </Routes>
                 </Router>

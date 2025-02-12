@@ -1,7 +1,7 @@
 import {UserContext} from "../../providers/UserContext.tsx";
 import {useContext, useEffect, useState} from "react";
 import {
-    Box, Code,
+    Box,
     Divider,
     Loader, Table,
     Text,
@@ -11,9 +11,9 @@ import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
-import {Lesson, Student} from "../../models";
+import { Student} from "../../models";
 
-const Profile = (locales?: Intl.LocalesArgument, options?: Intl.DateTimeFormatOptions) => {
+const Profile = () => {
     const { state: thisUser, actions } = useContext(UserContext)
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [loading, setLoading] = useState<boolean>(true);

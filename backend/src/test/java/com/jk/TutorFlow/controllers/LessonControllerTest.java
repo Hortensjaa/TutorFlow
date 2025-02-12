@@ -39,9 +39,6 @@ class LessonControllerTest {
     private UserService userService;
 
     @Mock
-    private GCPService gcpService;
-
-    @Mock
     private FileService fileService;
 
     @InjectMocks
@@ -101,7 +98,7 @@ class LessonControllerTest {
 
     @Test
     void testAddLesson() throws IOException {
-        when(gcpService.uploadFiles(anyString(), any())).thenReturn(new String[]{"url1", "url2"});
+        when(GCPService.uploadFiles(anyString(), any())).thenReturn(new String[]{"url1", "url2"});
         when(fileService.addFiles(any())).thenReturn(Collections.emptySet());
         when(lessonService.addLesson(any(), anyLong(), any())).thenReturn(new Lesson());
 
@@ -116,7 +113,7 @@ class LessonControllerTest {
 
     @Test
     void testGetLesson() {
-        ResponseEntity<LessonModel> response = lessonController.getLesson("1");
+        ResponseEntity<LessonModel> response = lessonController.getLesson(principal, "1");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -126,7 +123,7 @@ class LessonControllerTest {
     void testGetLessonNotFound() {
         when(lessonService.getLesson(2L)).thenReturn(Optional.empty());
 
-        ResponseEntity<LessonModel> response = lessonController.getLesson("2");
+        ResponseEntity<LessonModel> response = lessonController.getLesson(principal, "2");
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }

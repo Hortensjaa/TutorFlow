@@ -3,7 +3,6 @@ import {useContext, useEffect, useState} from "react";
 import {
     Box,
     Button,
-    Code,
     Divider,
     Loader,
     ScrollArea,
@@ -109,7 +108,7 @@ const EditProfile = () => {
 
     const studentRows = students ? students.map((element: Student) => (
         <Table.Tr key={element.id}>
-            <Table.Td>{element.name}</Table.Td>
+            <Table.Td fw={500}>{element.name}</Table.Td>
             <Table.Td>
                 {element.last_lesson ? new Date(element.last_lesson).toLocaleDateString(undefined, {
                     year: 'numeric',

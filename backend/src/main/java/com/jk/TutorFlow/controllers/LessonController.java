@@ -83,11 +83,49 @@ public class LessonController {
     }
 
     @GetMapping("/api/lessons/{id}")
-    public ResponseEntity<LessonModel> getLesson(@PathVariable String id) {
-        Optional<Lesson> lesson = lessonService.getLesson(Long.valueOf(id));
-        return lesson.map(
-                        value -> new ResponseEntity<>(lessonService.generateModel(value), HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<LessonModel> getLesson(
+            @AuthenticationPrincipal OAuth2User principal, @PathVariable String id) {
+        Optional<Lesson> optionalLesson = lessonService.getLesson(Long.valueOf(id));
+        User user = getUser(principal);
+        if (optionalLesson.isEmpty()) {
+            throw new RuntimeException("Lesson not found with id: " + id);
+        }
+        Lesson lesson = optionalLesson.get();
+        if (!Objects.equals(user.getUser_id(), lesson.getTeacher().getUser_id())) {
+            throw new AccessDeniedException("User not authorized to update lesson");
+        }
+        return new ResponseEntity<>(lessonService.generateModel(lesson), HttpStatus.OK);
+    }
+
+    @PutMapping("/api/lessons/{id}/edit")
+    public ResponseEntity<LessonModel> updateLesson(
+            @AuthenticationPrincipal OAuth2User principal,
+            @PathVariable String id,
+            @RequestPart("lesson") LessonModel model,
+            @RequestPart(value = "files", required = false) MultipartFile[] files
+    ) throws IOException {
+        User user = getUser(principal);
+        Optional<Lesson> optionalLesson = lessonService.getLesson(Long.valueOf(id));
+        if (optionalLesson.isEmpty()) {
+            throw new RuntimeException("Lesson not found with id: " + id);
+        }
+        Lesson lesson = optionalLesson.get();
+        if (!Objects.equals(user.getUser_id(), lesson.getTeacher().getUser_id())) {
+            throw new AccessDeniedException("User not authorized to update lesson");
+        }
+        if (!lesson.getFiles().isEmpty()) {
+            lesson.getFiles().stream().map(File::getPath).forEach(GCPService::deleteFile);
+            lesson.setFiles(new HashSet<>());
+        }
+        if (files != null && files.length > 0) {
+            String[] fileUrls = GCPService.uploadFiles(String.valueOf(user.getUser_id()), files);
+            Set<File> filesObjects = fileService.addFiles(fileUrls);
+            lesson = lessonService.updateLesson(model, lesson, filesObjects);
+            fileService.updateFiles(lesson, filesObjects);
+        } else {
+            lesson = lessonService.updateLesson(model, lesson, new HashSet<>());
+        }
+        return new ResponseEntity<>(lessonService.generateModel(lesson), HttpStatus.OK);
     }
 
     @DeleteMapping("/api/lessons/{id}/delete")
