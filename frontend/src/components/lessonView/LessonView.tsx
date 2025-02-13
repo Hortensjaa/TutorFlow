@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
 import {Lesson} from "../../models";
 import {useNavigate, useParams} from "react-router-dom";
-import {Button, Container, Group, Loader, Pill, Rating, Text, Title} from "@mantine/core";
+import {Button, Container, Dialog, Group, Loader, Pill, Rating, Text, Title} from "@mantine/core";
 import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
-import {useMediaQuery} from "@mantine/hooks";
+import {useDisclosure, useMediaQuery} from "@mantine/hooks";
 import styles from "./LessonView.module.css"
 import {trimPath} from "./utils.ts";
 
@@ -15,6 +15,7 @@ const LessonView = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();
     const [lesson, setLesson] = useState<Lesson | null>(null);
+    const [opened, { toggle, close }] = useDisclosure(false);
 
     useEffect(() => {
         const fetchLesson = async () => {
@@ -89,6 +90,19 @@ const LessonView = () => {
             )}
             {!loading && (
             <Container className={"content"}>
+                <Dialog opened={opened} withCloseButton onClose={close} size="lg" radius="md">
+                    <Text size="sm" mb="xs" fw={500}>
+                        Are you sure you want to delete this lesson? This action cannot be reverted.
+                    </Text>
+
+                    <Group align="flex-end">
+                        <Button onClick={(_) => {
+                            handleDelete();
+                            close()
+                        }}>Delete</Button>
+                    </Group>
+                </Dialog>
+
                 <Text c="dimmed" mb="md">
                     Lesson Details
                 </Text>
@@ -149,7 +163,7 @@ const LessonView = () => {
                     >
                         Edit Lesson
                     </Button>
-                    <Button onClick={handleDelete} variant={"outline"} className="wideButton" ml={"10px"}>
+                    <Button onClick={toggle} variant={"outline"} className="wideButton" ml={"10px"}>
                         Delete Lesson
                     </Button>
                 </div>

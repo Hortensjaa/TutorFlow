@@ -3,17 +3,17 @@ import {useContext, useEffect, useState} from "react";
 import {
     Box,
     Button,
-    Divider,
+    Divider, Dialog,
     Loader,
     ScrollArea,
     Table,
     Text,
     TextInput,
-    Title
+    Title, Group
 } from "@mantine/core";
 import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
-import {useMediaQuery} from "@mantine/hooks";
+import {useDisclosure, useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
 import {useNavigate} from "react-router-dom";
 import {Student} from "../../models";
@@ -28,6 +28,8 @@ const EditProfile = () => {
     const [username, setUsername] = useState<string>("");
     const [students, setStudents] = useState<Student[]>([]);
     const [newStudent, setNewStudent] = useState<string>("");
+    const [opened, { toggle, close }] = useDisclosure(false);
+    const [studentToDelete, setStudentToDelete] = useState<Student | null>(null);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -116,7 +118,10 @@ const EditProfile = () => {
                     day: 'numeric',
                 }) : null}
             </Table.Td>
-            <Table.Td onClick={(_) => handleDelete(element)}> <IconX/> </Table.Td>
+            <Table.Td onClick={(_) => {
+                setStudentToDelete(element);
+                toggle()
+            }}> <IconX/> </Table.Td>
         </Table.Tr>
     )) : null;
 
@@ -144,6 +149,22 @@ const EditProfile = () => {
                 )}
                 {!loading && (
                     <div className={"content"}>
+                        <Dialog opened={opened} withCloseButton onClose={close} size="lg" radius="md">
+                            <Text size="sm" mb="xs" fw={500}>
+                                Are you sure you want to delete student {studentToDelete?.name}?
+                                This action cannot be reverted and will be save immediately.
+                            </Text>
+
+                            <Group align="flex-end">
+                                <Button onClick={(_) => {
+                                    if (studentToDelete) {
+                                        handleDelete(studentToDelete);
+                                    }
+                                    close()
+                                }}>Delete</Button>
+                            </Group>
+                        </Dialog>
+
                         <Title order={1} className={styles.title}>Profile settings</Title>
 
                         <Divider my="md" label="Personal data" labelPosition="center"/>
