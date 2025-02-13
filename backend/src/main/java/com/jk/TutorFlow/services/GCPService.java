@@ -1,13 +1,15 @@
 package com.jk.TutorFlow.services;
 
+import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.*;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.UUID;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 
 // source: https://github.com/sohamkamani/java-gcp-examples/blob/main/src/main/java/com/sohamkamani/storage/App.java
@@ -17,16 +19,9 @@ public class GCPService {
     private static final String bucketName = "tutorflow-storage";
 
     @NotNull
-    private static String getWholeFileName(String userId, MultipartFile file, String uniqueId) {
+    private static String getWholeFileName(String userId, MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
-        String fileExtension = "";
-        String fileName = "";
-        if (originalFilename != null && originalFilename.contains(".")) {
-            fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            fileName = originalFilename.substring(0, originalFilename.lastIndexOf("."));
-        }
-
-        return userId + "/" + fileName + "--" + uniqueId + fileExtension;
+        return userId + "/" + originalFilename;
     }
 
     public static String[] uploadFiles(String userId, MultipartFile[] files) throws IOException {
@@ -34,8 +29,7 @@ public class GCPService {
         String[] publicUrls = new String[files.length];
 
         for (int i = 0; i < files.length; i++) {
-            String uniqueId = UUID.randomUUID().toString();
-            String wholeFileName = getWholeFileName(userId, files[i], uniqueId);
+            String wholeFileName = getWholeFileName(userId, files[i]);
             BlobId blobId = BlobId.of(bucketName, wholeFileName);
             BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
@@ -46,17 +40,24 @@ public class GCPService {
         return publicUrls;
     }
 
-    public static void downloadFile(String filePath) {
-        String userHome = System.getProperty("user.home");
-        String downloadsFolder = userHome + "/Downloads/";
-        String fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
-        String downloadPath = downloadsFolder + fileName;
-
+    public static void downloadFile(String filePath, HttpServletResponse response) throws IOException {
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
         BlobId blobId = BlobId.of(bucketName, filePath);
         Blob blob = storage.get(blobId);
 
-        blob.downloadTo(Paths.get(downloadPath));
+        String fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+        response.setContentType(blob.getContentType());
+
+        try (ReadChannel reader = blob.reader();
+             OutputStream outputStream = response.getOutputStream()) {
+            ByteBuffer buffer = ByteBuffer.allocate(10 * 100 * 1024);
+            while (reader.read(buffer) > 0) {
+                buffer.flip();
+                outputStream.write(buffer.array(), 0, buffer.limit());
+                buffer.clear();
+            }
+        }
     }
 
 

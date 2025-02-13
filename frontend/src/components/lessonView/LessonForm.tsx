@@ -2,18 +2,19 @@ import { useState, useEffect } from 'react';
 import { useForm } from '@mantine/form';
 import {
     TextInput,
-    Select,
+    Select, Text,
     Textarea, Input,
-    Button, Title, Rating, Loader
+    Button, Title, Rating, Loader, Group, Anchor, InputBase, Pill
 } from '@mantine/core';
 import '@mantine/dates/styles.css';
 import { DateInput } from "@mantine/dates";
 import { FileInput } from '@mantine/core';
 import {Lesson, Student} from '../../models';
 import styles from "./LessonView.module.css";
+import {trimPath} from "./utils.ts";
 
 interface LessonFormProps {
-    initialValues?: Lesson;
+    initialValues?: { lesson: Lesson, newFiles: File[] };
     onSubmit: (values: any) => Promise<void>;
     header: string;
 }
@@ -21,6 +22,7 @@ interface LessonFormProps {
 const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
     const [students, setStudents] = useState<{ value: string; label: string }[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -41,18 +43,23 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
 
     const form = useForm({
         initialValues: {
-            topic: initialValues?.topic || '',
-            date: initialValues?.date ? new Date(initialValues.date) : new Date(),
-            rate: initialValues?.rate || 0,
-            description: initialValues?.description || '',
-            student: initialValues?.student_id?.toString() || '',
-            files: []
+            lesson: {
+                topic: initialValues?.lesson.topic || '',
+                date: initialValues?.lesson.date ? new Date(initialValues.lesson.date) : new Date(),
+                rate: initialValues?.lesson.rate || 0,
+                description: initialValues?.lesson.description || '',
+                student: initialValues?.lesson.student_id?.toString() || '',
+                files: initialValues?.lesson.files || [],
+            },
+            newFiles: [],
         },
         validate: {
-            topic: (value) => (value.length < 3 ? 'Topic must be at least 3 characters' : null),
-            date: (value) => (value === null ? 'Date is required' : null),
-            student: (value) => (value === '' ? 'Student is required' : null),
-            files: (value) => {
+            lesson: {
+                topic: (value) => (value.length < 3 ? 'Topic must be at least 3 characters' : null),
+                date: (value) => (value === null ? 'Date is required' : null),
+                student: (value) => (value === '' ? 'Student is required' : null)
+            },
+            newFiles: (value) => {
                 if (value) {
                     for (const file of value) {
                         if (file.size > 10 * 1024 * 1024) {
@@ -61,7 +68,7 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
                     }
                 }
                 return null;
-            },
+            }
         },
     });
 
@@ -72,49 +79,70 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
                     <Loader type="bars" />
                 </div>
             )}
-            {!loading && (
-            <div className="content">
+            {!loading && <div className="content">
                 <form onSubmit={form.onSubmit(onSubmit)} className={styles.formlesson}>
                     <Title order={1} className={styles.title} mb={"md"}>{header}</Title>
 
                     <TextInput
                         label="Topic"
                         placeholder="Enter lesson topic"
-                        {...form.getInputProps('topic')}
+                        {...form.getInputProps('lesson.topic')}
                     />
 
                     <Input.Wrapper label="Rate">
                         <Rating
-                            defaultValue={initialValues?.rate || 0}
-                            onChange={(value) => form.setFieldValue('rate', value)} />
+                            defaultValue={initialValues?.lesson.rate || 0}
+                            onChange={(value) => form.setFieldValue('lesson.rate', value)} />
                     </Input.Wrapper>
 
                     <DateInput
                         valueFormat="DD MMM YYYY"
                         label="Date"
                         placeholder="Select lesson date"
-                        {...form.getInputProps('date')}
+                        {...form.getInputProps('lesson.date')}
                     />
 
                     <Textarea
                         label="Notes"
                         placeholder="Done excercises, homework, problems, overall reflection and preparation for next lesson"
-                        {...form.getInputProps('description')}
+                        {...form.getInputProps('lesson.description')}
                     />
 
                     <Select
                         label="Student"
                         placeholder="Select a student"
                         data={students}
-                        {...form.getInputProps('student')}
+                        {...form.getInputProps('lesson.student')}
                     />
+
+                    {
+                        form.values.lesson.files.length > 0 && (
+                            <InputBase component="div" label={"Previously uploaded files"} multiline>
+                                <Pill.Group>
+                                    {
+                                        form.values.lesson.files.map((file: String, index: number) => (
+                                            <Pill
+                                                key={index}
+                                                withRemoveButton
+                                                onRemove={() => form.setFieldValue('lesson.files',
+                                                    form.values.lesson.files.filter((_, i) => i !== index))}
+                                            >
+                                                {trimPath(file)}
+                                            </Pill>
+                                        ))
+                                    }
+                                </Pill.Group>
+                            </InputBase>
+                        )
+                    }
+
 
                     <FileInput
                         clearable
                         label="Files"
-                        placeholder="Upload files"
+                        placeholder="Upload new files"
                         multiple
-                        {...form.getInputProps('files')}
+                        {...form.getInputProps('newFiles')}
                     />
 
                     <div className="buttonContainer">
@@ -123,8 +151,7 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
                         </Button>
                     </div>
                 </form>
-            </div>
-            )}
+            </div>}
         </div>
     );
 };

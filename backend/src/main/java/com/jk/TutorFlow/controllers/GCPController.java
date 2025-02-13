@@ -1,6 +1,7 @@
 package com.jk.TutorFlow.controllers;
 
 import com.jk.TutorFlow.services.GCPService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +18,7 @@ public class GCPController {
     }
 
     @PostMapping("/api/storage/download")
-    public void downloadFile(@RequestBody FileRequest request) throws IOException {
-        GCPService.downloadFile(request.getObjectName());
+    public void downloadFile(@RequestBody FileRequest request, HttpServletResponse response) throws IOException {
+        GCPService.downloadFile(request.getObjectName(), response);
     }
 }

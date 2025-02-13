@@ -14,18 +14,18 @@ const AddLesson = () => {
         const formData = new FormData();
         let lesson: Lesson = {
             id: -1,
-            topic: values.topic,
-            date: values.date,
-            description: values.description,
-            rate: values.rate,
+            topic: values.lesson.topic,
+            date: values.lesson.date,
+            description: values.lesson.description,
+            rate: values.lesson.rate,
             student: '',
-            student_id: parseInt(values.student, 10),
+            student_id: parseInt(values.lesson.student, 10),
             teacher: ''
         }
         const lessonBlob = new Blob([JSON.stringify(lesson)], { type: 'application/json' });
         formData.append('lesson', lessonBlob);
-        if (values.files) {
-            values.files.forEach((file) => {
+        if (values.newFiles) {
+            values.newFiles.forEach((file) => {
                 formData.append('files', file);
             });
         }

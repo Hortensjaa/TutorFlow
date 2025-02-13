@@ -35,18 +35,21 @@ const EditLesson = () => {
         const formData = new FormData();
         let lesson: Lesson = {
             id: parseInt(id || "-1"),
-            topic: values.topic,
-            date: values.date,
-            description: values.description,
-            rate: values.rate,
+            topic: values.lesson.topic,
+            date: values.lesson.date,
+            description: values.lesson.description,
+            rate: values.lesson.rate,
             student: '',
-            student_id: parseInt(values.student, 10),
-            teacher: ''
+            student_id: parseInt(values.lesson.student, 10),
+            teacher: '',
+            files: values.lesson.files
         }
         const lessonBlob = new Blob([JSON.stringify(lesson)], { type: 'application/json' });
         formData.append('lesson', lessonBlob);
-        if (values.files) {
-            values.files.forEach((file) => {
+
+        // new files
+        if (values.newFiles) {
+            values.newFiles.forEach((file) => {
                 formData.append('files', file);
             });
         }
@@ -79,11 +82,11 @@ const EditLesson = () => {
                 </div>
             )}
             {!loading && (
-            <LessonForm
-                initialValues={lesson || undefined}
-                onSubmit={handleSubmit}
-                header="Save Lesson"
-            />
+                <LessonForm
+                    initialValues={lesson ? {lesson: lesson, newFiles: []} : undefined}
+                    onSubmit={handleSubmit}
+                    header="Save Lesson"
+                />
             )}
         </div>
     );

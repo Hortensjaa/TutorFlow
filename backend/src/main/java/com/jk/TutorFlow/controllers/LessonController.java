@@ -113,19 +113,29 @@ public class LessonController {
         if (!Objects.equals(user.getUser_id(), lesson.getTeacher().getUser_id())) {
             throw new AccessDeniedException("User not authorized to update lesson");
         }
-        if (!lesson.getFiles().isEmpty()) {
-            lesson.getFiles().stream().map(File::getPath).forEach(GCPService::deleteFile);
-            lesson.setFiles(new HashSet<>());
-        }
+
+        // delete removed files
+        lesson.getFiles().forEach(file -> {
+            if (model.getFiles() == null || Arrays.stream(model.getFiles()).noneMatch(f -> f.equals(file.getPath()))) {
+                GCPService.deleteFile(file.getPath());
+            }
+        });
+
+        Lesson updatedLesson;
+
+        // upload new files
         if (files != null && files.length > 0) {
             String[] fileUrls = GCPService.uploadFiles(String.valueOf(user.getUser_id()), files);
             Set<File> filesObjects = fileService.addFiles(fileUrls);
-            lesson = lessonService.updateLesson(model, lesson, filesObjects);
             fileService.updateFiles(lesson, filesObjects);
+
+            // update lesson
+            updatedLesson = lessonService.updateLesson(model, lesson, filesObjects);
         } else {
-            lesson = lessonService.updateLesson(model, lesson, new HashSet<>());
+            updatedLesson = lessonService.updateLesson(model, lesson, new HashSet<>());
         }
-        return new ResponseEntity<>(lessonService.generateModel(lesson), HttpStatus.OK);
+
+        return new ResponseEntity<>(lessonService.generateModel(updatedLesson), HttpStatus.OK);
     }
 
     @DeleteMapping("/api/lessons/{id}/delete")

@@ -5,6 +5,7 @@ import com.jk.TutorFlow.entities.Lesson;
 import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.LessonModel;
+import com.jk.TutorFlow.repositories.FileRepository;
 import com.jk.TutorFlow.repositories.LessonRepository;
 import com.jk.TutorFlow.repositories.StudentRepository;
 import com.jk.TutorFlow.repositories.UserRepository;
@@ -12,8 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class LessonService {
@@ -23,6 +23,8 @@ public class LessonService {
     private UserRepository userRepository;
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private FileRepository fileRepository;
 
     public Optional<Lesson> getLesson(Long id) {
         return lessonRepository.findById(id);
@@ -57,15 +59,22 @@ public class LessonService {
         return lesson;
     }
 
-    public Lesson updateLesson(LessonModel model, Lesson lesson, Set<File> files) {
+    public Lesson updateLesson(LessonModel model, Lesson lesson, Set<File> newFiles) {
         lesson.setTopic(model.getTopic());
         lesson.setDate(Date.valueOf(model.getDate()));
         lesson.setDescription(model.getDescription());
         lesson.setRate(model.getRate());
         lesson.setStudent(studentRepository.findById(model.getStudentID())
                 .orElseThrow(() -> new RuntimeException("Student not found")));
-        if (files != null && !files.isEmpty()) {
-            lesson.setFiles(files);
+
+        Set<String> modelFilePaths = model.getFiles() != null
+                ? new HashSet<>(Arrays.asList(model.getFiles()))
+                : Collections.emptySet();
+
+        lesson.getFiles().removeIf(f -> !modelFilePaths.contains(f.getPath()));
+
+        if (newFiles != null && !newFiles.isEmpty()) {
+            lesson.addFiles(newFiles);
         }
         lessonRepository.save(lesson);
         return lesson;

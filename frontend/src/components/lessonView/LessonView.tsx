@@ -1,11 +1,12 @@
 import {useEffect, useState} from "react";
 import {Lesson} from "../../models";
 import {useNavigate, useParams} from "react-router-dom";
-import {Button, Container, Group, Title, Text, Loader, Pill, Rating} from "@mantine/core";
+import {Button, Container, Group, Loader, Pill, Rating, Text, Title} from "@mantine/core";
 import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
 import styles from "./LessonView.module.css"
+import {trimPath} from "./utils.ts";
 
 
 const LessonView = () => {
@@ -14,15 +15,6 @@ const LessonView = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();
     const [lesson, setLesson] = useState<Lesson | null>(null);
-
-    function trimPath(url) {
-        const filename = url.substring(url.lastIndexOf("/") + 1);
-        // const lastDashIndex = filename.lastIndexOf("--");
-        // if (lastDashIndex !== -1) {
-        //     return filename.substring(0, lastDashIndex) + filename.substring(filename.lastIndexOf("."));
-        // }
-        return filename;
-    }
 
     useEffect(() => {
         const fetchLesson = async () => {
@@ -58,6 +50,7 @@ const LessonView = () => {
     };
 
     const handleDownload = (file) => {
+        console.log('Downloading file:', file);
         fetch('/api/storage/download', {
             method: 'POST',
             headers: {
@@ -75,7 +68,7 @@ const LessonView = () => {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = file;
+                a.download = trimPath(file);
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -84,7 +77,7 @@ const LessonView = () => {
             .catch(error => {
                 console.error('Error downloading file:', error);
             });
-    }
+    };
 
     return (
         <div className={"container"}>
