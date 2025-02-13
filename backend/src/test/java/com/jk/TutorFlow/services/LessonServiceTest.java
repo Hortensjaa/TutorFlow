@@ -14,7 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -209,4 +211,109 @@ class LessonServiceTest {
         verify(studentRepository, times(1)).findById(model.getStudentID());
         verify(lessonRepository, never()).save(any());
     }
+
+    @Test
+    void testUpdateLesson_Success() {
+        // Arrange
+        LessonModel model = new LessonModel();
+        model.setTopic("Updated Topic");
+        model.setDate(LocalDate.of(2024, 2, 10));
+        model.setDescription("Updated Description");
+        model.setRate(4);
+        model.setStudentID(1L);
+        model.setFiles(new String[]{"file1.pdf", "file2.pdf"});
+
+        Lesson lesson = new Lesson();
+        lesson.setFiles(new HashSet<>(Set.of(new File("oldFile.pdf"))));
+
+        Student student = new Student();
+        student.setStudent_id(1L);
+
+        Set<File> newFiles = Set.of(new File("newFile.pdf"));
+
+        when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
+        when(lessonRepository.save(any(Lesson.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        Lesson updatedLesson = lessonService.updateLesson(model, lesson, newFiles);
+
+        // Assert
+        assertNotNull(updatedLesson);
+        assertEquals("Updated Topic", updatedLesson.getTopic());
+        assertEquals(Date.valueOf(LocalDate.of(2024, 2, 10)), updatedLesson.getDate());
+        assertEquals("Updated Description", updatedLesson.getDescription());
+        assertEquals(4, updatedLesson.getRate());
+        assertEquals(student, updatedLesson.getStudent());
+        assertTrue(updatedLesson.getFiles().stream().anyMatch(f -> f.getPath().equals("newFile.pdf")));
+        verify(studentRepository, times(1)).findById(1L);
+        verify(lessonRepository, times(1)).save(lesson);
+    }
+
+    @Test
+    void testUpdateLesson_RemoveFiles() {
+        // Arrange
+        LessonModel model = new LessonModel();
+        model.setStudentID(1L);
+        model.setDate(LocalDate.now());
+        model.setFiles(new String[]{"file1.pdf"}); // Keeping only "file1.pdf"
+
+        Lesson lesson = new Lesson();
+        lesson.setFiles(new HashSet<>(Set.of(new File("file1.pdf"), new File("file2.pdf"))));
+
+        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(new Student()));
+        when(lessonRepository.save(any(Lesson.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        Lesson updatedLesson = lessonService.updateLesson(model, lesson, null);
+
+        // Assert
+        assertEquals(1, updatedLesson.getFiles().size());
+        assertTrue(updatedLesson.getFiles().stream().anyMatch(f -> f.getPath().equals("file1.pdf")));
+        assertFalse(updatedLesson.getFiles().stream().anyMatch(f -> f.getPath().equals("file2.pdf")));
+        verify(lessonRepository, times(1)).save(lesson);
+    }
+
+    @Test
+    void testUpdateLesson_AddNewFiles() {
+        // Arrange
+        LessonModel model = new LessonModel();
+        model.setStudentID(1L);
+        model.setDate(LocalDate.now());
+        model.setFiles(new String[]{"file1.pdf"});
+
+        Lesson lesson = new Lesson();
+        lesson.setFiles(new HashSet<>(Set.of(new File("file1.pdf"))));
+
+        Set<File> newFiles = Set.of(new File("newFile.pdf"));
+
+        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(new Student()));
+        when(lessonRepository.save(any(Lesson.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        Lesson updatedLesson = lessonService.updateLesson(model, lesson, newFiles);
+
+        // Assert
+        assertEquals(2, updatedLesson.getFiles().size());
+        assertTrue(updatedLesson.getFiles().stream().anyMatch(f -> f.getPath().equals("file1.pdf")));
+        assertTrue(updatedLesson.getFiles().stream().anyMatch(f -> f.getPath().equals("newFile.pdf")));
+        verify(lessonRepository, times(1)).save(lesson);
+    }
+
+    @Test
+    void testUpdateLesson_StudentNotFound() {
+        // Arrange
+        LessonModel model = new LessonModel();
+        model.setDate(LocalDate.now());
+        model.setStudentID(999L);
+
+        Lesson lesson = new Lesson();
+
+        when(studentRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> lessonService.updateLesson(model, lesson, null));
+        verify(studentRepository, times(1)).findById(999L);
+        verify(lessonRepository, never()).save(any());
+    }
+
 }

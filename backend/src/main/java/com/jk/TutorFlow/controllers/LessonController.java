@@ -30,6 +30,8 @@ public class LessonController {
     private UserService userService;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private GCPService GCPService;
 
     private List<LessonModel> getAllLessonsHelper(Long teacherId) {
         return lessonService.getLessonsByTeacherId(teacherId)

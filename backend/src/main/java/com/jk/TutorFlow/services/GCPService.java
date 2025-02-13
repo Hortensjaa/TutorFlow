@@ -24,7 +24,7 @@ public class GCPService {
         return userId + "/" + originalFilename;
     }
 
-    public static String[] uploadFiles(String userId, MultipartFile[] files) throws IOException {
+    public String[] uploadFiles(String userId, MultipartFile[] files) throws IOException {
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
         String[] publicUrls = new String[files.length];
 
@@ -40,7 +40,7 @@ public class GCPService {
         return publicUrls;
     }
 
-    public static void downloadFile(String filePath, HttpServletResponse response) throws IOException {
+    public void downloadFile(String filePath, HttpServletResponse response) throws IOException {
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
         BlobId blobId = BlobId.of(bucketName, filePath);
         Blob blob = storage.get(blobId);
@@ -61,7 +61,7 @@ public class GCPService {
     }
 
 
-    public static void deleteFile(String filePath) {
+    public void deleteFile(String filePath) {
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
         BlobId blobId = BlobId.of(bucketName, filePath);
         Blob blob = storage.get(blobId);

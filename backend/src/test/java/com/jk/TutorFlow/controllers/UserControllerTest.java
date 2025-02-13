@@ -1,10 +1,11 @@
 package com.jk.TutorFlow.controllers;
 
-import com.jk.TutorFlow.controllers.UserController;
 import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.StudentModel;
 import com.jk.TutorFlow.models.UserModel;
+import com.jk.TutorFlow.services.ConstsService;
+import com.jk.TutorFlow.services.StudentService;
 import com.jk.TutorFlow.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,12 +29,21 @@ class UserControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private ConstsService constsService;
+
+    @Mock
+    private StudentService studentService;
+
     @InjectMocks
     private UserController userController;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        StudentModel studentModel = new StudentModel();
+        studentModel.setName("Student Name");
+        when(studentService.generateModel(any())).thenReturn(studentModel);
     }
 
     @Test
@@ -133,17 +143,17 @@ class UserControllerTest {
         user.setUser_id(1L);
         when(userService.getUserByEmail("test@example.com")).thenReturn(user);
 
-        Student student = new Student("New Student");
+        Student student = new Student("Student Name");
         student.setStudent_id(2L);
-        when(userService.addStudent(user.getUser_id(), "New Student")).thenReturn(student);
+        when(userService.addStudent(user.getUser_id(), "Student Name")).thenReturn(student);
 
         ResponseEntity<Map<String, Object>> result =
-                userController.addStudentByTeacher(principal, Map.of("name", "New Student"));
+                userController.addStudentByTeacher(principal, Map.of("name", "Student Name"));
 
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertTrue((Boolean) result.getBody().get("success"));
-        assertEquals("New Student", ((StudentModel) result.getBody().get("student")).getName());
+        assertEquals("Student Name", ((StudentModel) result.getBody().get("student")).getName());
     }
 
     @Test
