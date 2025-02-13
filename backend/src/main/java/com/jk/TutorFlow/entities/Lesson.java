@@ -3,6 +3,7 @@ package com.jk.TutorFlow.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jk.TutorFlow.models.LessonModel;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,7 +42,8 @@ public class Lesson {
     @ManyToOne
     @JoinColumn(name = "student", referencedColumnName = "student_id")
     @JsonBackReference
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Nullable
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Student student;
 
     public Lesson(LessonModel model) {

@@ -29,7 +29,7 @@ public class Student {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User teacher;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student")
     @JsonManagedReference
     private Set<Lesson> lessons;
 
