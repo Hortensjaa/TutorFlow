@@ -87,7 +87,7 @@ public class LessonService {
         model.setDate(entity.getDate().toLocalDate());
         model.setDescription(entity.getDescription());
         model.setRate(entity.getRate());
-        model.setStudent(entity.getStudent() != null ? entity.getStudent().getName() : "Deleted student");
+        model.setStudent(entity.getStudent() != null ? entity.getStudent().getName() : "DELETED STUDENT");
         model.setStudentID(entity.getStudent() != null ? entity.getStudent().getStudent_id() : -1);
         model.setTeacher(entity.getTeacher().getUsername());
         model.setFiles(entity.getFiles().stream().map(File::getPath).toArray(String[]::new));

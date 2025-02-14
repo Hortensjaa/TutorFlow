@@ -2,9 +2,9 @@ package com.jk.TutorFlow.controllers;
 
 import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
+import com.jk.TutorFlow.models.Consts;
 import com.jk.TutorFlow.models.StudentModel;
 import com.jk.TutorFlow.models.UserModel;
-import com.jk.TutorFlow.services.ConstsService;
 import com.jk.TutorFlow.services.StudentService;
 import com.jk.TutorFlow.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +27,6 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
-    private ConstsService constsService;
-    @Autowired
     private StudentService studentService;
 
     @GetMapping("/api/user/add_user")
@@ -37,9 +35,9 @@ public class UserController {
         User existingUser = userService.getUserByEmail(user.getEmail());
         if (existingUser == null) {
             userService.addUser(user);
-            return new RedirectView(constsService.getFrontendURL() + "/profile/edit/");
+            return new RedirectView(Consts.getFrontendURL() + "/profile/edit/");
         }
-        return new RedirectView(constsService.getFrontendURL()  + "/profile/");
+        return new RedirectView(Consts.getFrontendURL()  + "/profile/");
     }
 
     @GetMapping("/api/user/{id}")
