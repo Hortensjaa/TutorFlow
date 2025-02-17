@@ -9,6 +9,7 @@ import {useEffect, useState} from "react";
 import {Loader} from "@mantine/core";
 
 const EditLesson = () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const isMobile = useMediaQuery('(max-width: 768px)');
     const navigate = useNavigate();
     const [loading, setLoading] = useState<boolean>(true);
@@ -19,7 +20,7 @@ const EditLesson = () => {
         const fetchLesson = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`/api/lessons/${id}`, {redirect: "follow"});
+                const response = await fetch(`${backendUrl}/api/lessons/${id}`, {redirect: "follow"});
                 const data = await response.json();
                 setLesson(data);
             } catch (error) {
@@ -55,7 +56,7 @@ const EditLesson = () => {
         }
 
         try {
-            const response = await fetch(`/api/lessons/${id}/edit`, {
+            const response = await fetch(`${backendUrl}/api/lessons/${id}/edit`, {
                 method: 'PUT',
                 credentials: 'include',
                 body: formData,

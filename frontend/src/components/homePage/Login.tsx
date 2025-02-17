@@ -1,8 +1,10 @@
 import {Box, Button, Title, Text, TextInput, Divider} from '@mantine/core';
 
 const Login = () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
+
     const googleLogin = () => {
-        window.location.href = '/oauth2/authorization/google';
+        window.location.href = `${backendUrl}/oauth2/authorization/google`;
     };
 
     return (

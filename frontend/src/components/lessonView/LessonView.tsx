@@ -10,6 +10,7 @@ import {trimPath} from "./utils.ts";
 
 
 const LessonView = () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const isMobile = useMediaQuery('(max-width: 768px)');
     const { id } = useParams<{ id: string }>();
     const [loading, setLoading] = useState<boolean>(true);
@@ -21,7 +22,7 @@ const LessonView = () => {
         const fetchLesson = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`/api/lessons/${id}`, {redirect: "follow"});
+                const response = await fetch(`${backendUrl}/api/lessons/${id}`, {redirect: "follow", credentials: "include"});
                 const data = await response.json();
                 setLesson(data);
             } catch (error) {
@@ -34,7 +35,7 @@ const LessonView = () => {
     }, [id]);
 
     const handleDelete = () => {
-        fetch(`/api/lessons/${id}/delete`, {
+        fetch(`${backendUrl}/api/lessons/${id}/delete`, {
             method: 'DELETE',
             credentials: 'include',
             redirect: 'follow',
@@ -52,7 +53,7 @@ const LessonView = () => {
 
     const handleDownload = (file) => {
         console.log('Downloading file:', file);
-        fetch('/api/storage/download', {
+        fetch(`${backendUrl}/api/storage/download`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

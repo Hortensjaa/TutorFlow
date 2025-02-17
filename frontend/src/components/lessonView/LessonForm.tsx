@@ -20,6 +20,7 @@ interface LessonFormProps {
 }
 
 const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const [students, setStudents] = useState<{ value: string; label: string }[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -28,7 +29,7 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
         const fetchStudents = async () => {
             setLoading(true);
             try {
-                const response = await fetch('/api/user/students',
+                const response = await fetch(`${backendUrl}/api/user/students`,
                     {method: "GET", credentials: "include", redirect: "follow"} );
                 const data = await response.json();
                 setStudents(data.map((student: Student) => ({ value: student.id.toString(), label: student.name })));

@@ -38,6 +38,7 @@ export function Th({ children, reversed, sorted, onSort }: ThProps) {
 }
 
 export default function LessonsList() {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const navigate = useNavigate();
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [search, setSearch] = useState('');
@@ -61,7 +62,7 @@ export default function LessonsList() {
 
     const loadData = () => {
         console.log('starting fetching data');
-        fetch('/api/lessons/all', {
+        fetch(`${backendUrl}/api/lessons/all`, {
             method: 'GET',
             redirect: 'follow',
             credentials: 'include',

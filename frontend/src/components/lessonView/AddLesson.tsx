@@ -7,6 +7,7 @@ import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import LessonForm from "./LessonForm.tsx";
 
 const AddLesson = () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const isMobile = useMediaQuery('(max-width: 768px)');
     const navigate = useNavigate();
 
@@ -31,7 +32,7 @@ const AddLesson = () => {
         }
 
         try {
-            const response = await fetch('/api/lessons/add', {
+            const response = await fetch(`${backendUrl}/api/lessons/add`, {
                 method: 'POST',
                 credentials: 'include',
                 body: formData,

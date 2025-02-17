@@ -1,28 +1,46 @@
 import {useState} from 'react';
 import {UserContext} from "./UserContext.tsx";
 import {User} from "../models";
+import {useNavigate} from "react-router-dom";
 
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 
-    const loadUser = async () => {
-        const response = await fetch('/api/user/active', {
-            method: 'GET',
-            credentials: 'include',
-            redirect: "follow"
-        });
+    const loadUser = async (retry = false) => {
+        try {
+            const response = await fetch(`${backendUrl}/api/user/active`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                }
+            });
 
-        if (response.redirected) {
-            document.location = response.url;
+            if (response.status === 401) {
+                console.warn("🚨 User is not authenticated! Redirecting...");
+                if (!retry) {
+                    console.log("🔄 Retrying after 1 second...");
+                    setTimeout(() => loadUser(true), 1000);
+                } else {
+                    window.location.href = `${backendUrl}/login`;  // Redirect manually
+                }
+                return;
+            }
+
+            const data = await response.json();
+            console.log("✅ User loaded:", data);
+            setUser(data);
+        } catch (error) {
+            console.error("❌ Error loading user:", error);
         }
-
-        const data = await response.json();
-        setUser(data);
     };
 
+
     const saveUser = async (newModel: User) => {
-        const response = await fetch('/api/user/', {
+        const response = await fetch(`${backendUrl}/api/user/`, {
             method: 'PUT',
             credentials: 'include',
             redirect: 'follow',
@@ -43,27 +61,9 @@ export const UserProvider = ({ children }) => {
         }
     }
 
-    function setAvatar(newUrl: String) {
-        if (user) {
-            setUser({avatar_url: newUrl, ...user});
-        }
-    }
-
-    function setTeacher(val: boolean) {
-        if (user) {
-            setUser({teacher: val, ...user});
-        }
-    }
-
-    function setStudent(val: boolean) {
-        if (user) {
-            setUser({student: val, ...user});
-        }
-    }
-
     const value = {
         state: user,
-        actions: { setUser, loadUser, setName, setAvatar, setTeacher, setStudent, saveUser },
+        actions: { setUser, loadUser, setName, saveUser },
     };
 
 

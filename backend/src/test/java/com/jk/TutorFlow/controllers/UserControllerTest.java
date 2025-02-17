@@ -4,7 +4,6 @@ import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.StudentModel;
 import com.jk.TutorFlow.models.UserModel;
-import com.jk.TutorFlow.services.ConstsService;
 import com.jk.TutorFlow.services.StudentService;
 import com.jk.TutorFlow.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +14,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 import java.util.Map;
@@ -28,9 +26,6 @@ class UserControllerTest {
 
     @Mock
     private UserService userService;
-
-    @Mock
-    private ConstsService constsService;
 
     @Mock
     private StudentService studentService;
@@ -54,7 +49,7 @@ class UserControllerTest {
 
         when(userService.getUserByEmail("test@example.com")).thenReturn(null);
 
-        RedirectView result = userController.addUser(principal);
+        ResponseEntity<Map<String, String>> result = userController.addUser(principal);
 
         assertNotNull(result);
         verify(userService, times(1)).addUser(any(User.class));
@@ -82,7 +77,7 @@ class UserControllerTest {
         user.setUser_id(1L);
         when(userService.getUserByEmail("test@example.com")).thenReturn(user);
 
-        UserModel result = userController.getActiveUser(principal);
+        UserModel result = userController.getActiveUser(principal).getBody();
 
         assertNotNull(result);
         assertEquals("Test User", result.getUsername());
@@ -107,7 +102,7 @@ class UserControllerTest {
         not_my_student.setStudent_id(2L);
         when(userService.getStudents(user.getUser_id())).thenReturn(Set.of(student));
 
-        List<StudentModel> result = userController.getStudents(principal);
+        List<StudentModel> result = userController.getStudents(principal).getBody();
 
         assertNotNull(result);
         assertEquals(1, result.size());

@@ -9,9 +9,6 @@ interface UserContext {
         loadUser: () => void;
         saveUser: (newModel: User) => void;
         setName: (name: string) => void;
-        setAvatar: (avatarUrl: string) => void;
-        setTeacher: (role: boolean) => void;
-        setStudent: (role: boolean) => void;
     };
 }
 
@@ -22,8 +19,5 @@ export const UserContext = createContext<UserContext>({
         loadUser: () => {},
         saveUser: (newModel: User) => {},
         setName: () => {},
-        setAvatar: () => {},
-        setTeacher: () => {},
-        setStudent: () => {},
     },
 });

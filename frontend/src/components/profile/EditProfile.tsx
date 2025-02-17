@@ -21,6 +21,7 @@ import {IconX} from "@tabler/icons-react";
 
 
 const EditProfile = () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const { state: thisUser, actions } = useContext(UserContext)
     const navigation = useNavigate();
     const isMobile = useMediaQuery('(max-width: 768px)');
@@ -46,7 +47,7 @@ const EditProfile = () => {
     }, [thisUser]);
 
     useEffect(() => {
-        fetch('/api/user/students',
+        fetch(`${backendUrl}/api/user/students`,
             {
                 method: 'GET',
                 redirect: 'follow',
@@ -59,7 +60,7 @@ const EditProfile = () => {
     }, [])
 
     const handleDelete = (student: Student) => {
-        fetch(`/api/user/delete_student`, {
+        fetch(`${backendUrl}/api/user/delete_student`, {
             method: 'DELETE',
             credentials: 'include',
             redirect: 'follow',
@@ -82,7 +83,7 @@ const EditProfile = () => {
     const addStudent = async () => {
         setNewStudent("")
         try {
-            let response = await fetch('/api/user/add_student', {
+            let response = await fetch(`${backendUrl}/api/user/add_student`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

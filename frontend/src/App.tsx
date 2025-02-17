@@ -10,7 +10,7 @@ import {UserProvider} from "./providers/UserProvider.tsx";
 function App() {
 
   return (
-        <MantineProvider theme={pinkTheme} cssVariablesResolver={mantineCssVariableResolver} withNormalizeCSS>
+        <MantineProvider theme={pinkTheme} cssVariablesResolver={mantineCssVariableResolver}>
             <UserProvider>
                 <Router>
                     <Routes>
