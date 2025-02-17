@@ -41,7 +41,7 @@ const Login = () => {
                     onClick={googleLogin}
                     style={{backgroundColor: "rgb(8,133,27)"}}
                 >
-                    Continue in with Gmail
+                    Continue with Gmail
                 </Button>
         </Box>
     );

@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TutorFlowApplication {
 
 	public static void main(String[] args) {
-		System.out.println("Hello World, version 23:12");
 		SpringApplication.run(TutorFlowApplication.class, args);
 	}
 }

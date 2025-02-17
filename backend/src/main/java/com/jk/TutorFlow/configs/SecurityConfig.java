@@ -2,7 +2,6 @@ package com.jk.TutorFlow.configs;
 
 
 import com.jk.TutorFlow.models.Consts;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -45,13 +45,7 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            System.out.println("🚨 Unauthenticated request: Redirect blocked");
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setHeader("Access-Control-Allow-Origin", Consts.getFrontendURL());
-                            response.setHeader("Access-Control-Allow-Credentials", "true");
-                            response.getWriter().write("Unauthorized");
-                        })
+                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(Consts.getFrontendURL()))
                 )
                 .build();
     }
@@ -64,10 +58,6 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowCredentials(true);
-
-        System.out.println("Applying CORS settings:");
-        System.out.println("Allow Credentials: " + configuration.getAllowCredentials());
-        System.out.println("Allow Origins: " + configuration.getAllowedOrigins());
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

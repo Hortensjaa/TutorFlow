@@ -20,7 +20,10 @@ const EditLesson = () => {
         const fetchLesson = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${backendUrl}/api/lessons/${id}`, {redirect: "follow"});
+                const response = await fetch(`${backendUrl}/api/lessons/${id}`, {
+                    method: "GET",
+                    credentials: "include"
+                });
                 const data = await response.json();
                 setLesson(data);
             } catch (error) {

@@ -14,8 +14,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,27 +29,18 @@ public class UserController {
     @Autowired
     private StudentService studentService;
 
-//    private HttpHeaders headers() {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.set("Access-Control-Allow-Origin", Consts.getFrontendURL());
-//        headers.set("Access-Control-Allow-Credentials", "true");
-//        return headers;
-//    }
 
     @GetMapping("/api/user/add_user")
-    public ResponseEntity<Map<String, String>> addUser(@AuthenticationPrincipal OAuth2User principal) {
+    public RedirectView addUser(@AuthenticationPrincipal OAuth2User principal) {
         User user = extractData(principal);
         User existingUser = userService.getUserByEmail(user.getEmail());
-        Map<String, String> response = new HashMap<>();
 
         if (existingUser == null) {
             userService.addUser(user);
-            response.put("redirectUrl", Consts.getFrontendURL() + "/profile/edit/");
+            return new RedirectView(Consts.getFrontendURL() + "/profile/edit/");
         } else {
-            response.put("redirectUrl", Consts.getFrontendURL() + "/profile/");
+            return new RedirectView(Consts.getFrontendURL() + "/profile/");
         }
-
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/api/user/{id}")

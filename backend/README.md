@@ -1,7 +1,12 @@
 # Tutor Flow Backend
 
 ## Overview
-The backend of the **Tutor Flow** project is built using **Spring Boot** with Java 17. It provides a RESTful API for managing users (teachers), students, lessons, and file storage via Google Cloud Storage.
+The backend of the **Tutor Flow** project is built using **Spring Boot** with Java 17. 
+It provides a RESTful API for managing users (teachers), students, lessons, and file storage via Google Cloud Storage.
+
+## Production
+The backend is deployed on Render using Docker container and can be accessed at 
+[https://tutor-deployment-latest.onrender.com](https://tutor-deployment-latest.onrender.com).
 
 ## Technologies Used
 - **Spring Boot** (Java 17)

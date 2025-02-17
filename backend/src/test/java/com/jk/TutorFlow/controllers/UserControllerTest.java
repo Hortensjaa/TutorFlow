@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ class UserControllerTest {
 
         when(userService.getUserByEmail("test@example.com")).thenReturn(null);
 
-        ResponseEntity<Map<String, String>> result = userController.addUser(principal);
+        RedirectView result = userController.addUser(principal);
 
         assertNotNull(result);
         verify(userService, times(1)).addUser(any(User.class));
