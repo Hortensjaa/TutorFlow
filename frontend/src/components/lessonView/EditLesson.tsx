@@ -7,9 +7,9 @@ import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import LessonForm from "./LessonForm.tsx";
 import {useEffect, useState} from "react";
 import {Loader} from "@mantine/core";
+import {editLesson, getLesson} from "../../api/lessonApi.ts";
 
 const EditLesson = () => {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const isMobile = useMediaQuery('(max-width: 768px)');
     const navigate = useNavigate();
     const [loading, setLoading] = useState<boolean>(true);
@@ -18,63 +18,27 @@ const EditLesson = () => {
 
     useEffect(() => {
         const fetchLesson = async () => {
-            setLoading(true);
             try {
-                const response = await fetch(`${backendUrl}/api/lessons/${id}`, {
-                    method: "GET",
-                    credentials: "include"
-                });
-                const data = await response.json();
+                const data = await getLesson(id as string);
                 setLesson(data);
             } catch (error) {
-                console.error('Error fetching lesson:', error);
+                console.error("Error fetching lesson:", error);
             } finally {
                 setLoading(false);
             }
-        }
-        fetchLesson();
+        };
+        if (id) fetchLesson();
     }, [id]);
 
-    const handleSubmit = async (values: any) => {
-        const formData = new FormData();
-        let lesson: Lesson = {
-            id: parseInt(id || "-1"),
-            topic: values.lesson.topic,
-            date: values.lesson.date,
-            description: values.lesson.description,
-            rate: values.lesson.rate,
-            student: '',
-            student_id: parseInt(values.lesson.student, 10),
-            teacher: '',
-            files: values.lesson.files
-        }
-        const lessonBlob = new Blob([JSON.stringify(lesson)], { type: 'application/json' });
-        formData.append('lesson', lessonBlob);
-
-        // new files
-        if (values.newFiles) {
-            values.newFiles.forEach((file) => {
-                formData.append('files', file);
-            });
-        }
-
-        try {
-            const response = await fetch(`${backendUrl}/api/lessons/${id}/edit`, {
-                method: 'PUT',
-                credentials: 'include',
-                body: formData,
-            });
-
-            if (response.ok) {
-                console.log('Lesson edited successfully');
-                await response.json();
-                navigate(`/lesson/${id}`);
-            } else {
-                console.error('Failed to edit lesson:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error edit lesson:', error);
-        }
+    const handleEditLesson = async (values: any) => {
+        editLesson(id as String, values)
+            .then(() => {
+                console.log("Lesson edited successfully");
+            })
+            .catch((error) => {
+                console.error("Error editing lesson:", error);
+            })
+            .finally(() => navigate(`/lesson/${id}`))
     };
 
     return (
@@ -88,7 +52,7 @@ const EditLesson = () => {
             {!loading && (
                 <LessonForm
                     initialValues={lesson ? {lesson: lesson, newFiles: []} : undefined}
-                    onSubmit={handleSubmit}
+                    onSubmit={handleEditLesson}
                     header="Save Lesson"
                 />
             )}

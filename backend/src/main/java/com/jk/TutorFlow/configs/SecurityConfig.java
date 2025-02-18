@@ -36,7 +36,7 @@ public class SecurityConfig {
                     registry.anyRequest().authenticated();
                 })
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/api/user/add_user", true)
+                        .defaultSuccessUrl("/api/user/add_user/", true)
                         .failureUrl("/login?error=true")
                 )
                 .logout(logout -> logout

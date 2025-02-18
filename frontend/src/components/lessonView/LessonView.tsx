@@ -7,10 +7,10 @@ import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useDisclosure, useMediaQuery} from "@mantine/hooks";
 import styles from "./LessonView.module.css"
 import {trimPath} from "./utils.ts";
+import {deleteLesson, downloadFile, getLesson} from "../../api/lessonApi.ts";
 
 
 const LessonView = () => {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const isMobile = useMediaQuery('(max-width: 768px)');
     const { id } = useParams<{ id: string }>();
     const [loading, setLoading] = useState<boolean>(true);
@@ -20,64 +20,36 @@ const LessonView = () => {
 
     useEffect(() => {
         const fetchLesson = async () => {
-            setLoading(true);
             try {
-                const response = await fetch(`${backendUrl}/api/lessons/${id}`, {redirect: "follow", credentials: "include"});
-                const data = await response.json();
+                const data = await getLesson(id as string);
                 setLesson(data);
             } catch (error) {
-                console.error('Error fetching lesson:', error);
+                console.error("Error fetching lesson:", error);
             } finally {
                 setLoading(false);
             }
-        }
-        fetchLesson();
+        };
+        if (id) fetchLesson();
     }, [id]);
 
     const handleDelete = () => {
-        fetch(`${backendUrl}/api/lessons/${id}/delete`, {
-            method: 'DELETE',
-            credentials: 'include',
-            redirect: 'follow',
-        })
-            .then((response) => {
-                if (response.ok) {
-                    console.log('Lesson deleted successfully');
-                    navigate('/dashboard');
-                } else {
-                    console.error('Failed to delete lesson');
-                }
+        setLoading(true);
+        deleteLesson(id as string)
+            .then(() => {
+                console.log("Lesson deleted successfully");
             })
-            .catch((error) => console.error('Error deleting lesson:', error));
+            .catch((error) => {
+                console.error("Error deleting lesson:", error);
+                setLoading(false);
+            })
+            .finally(() => navigate("/dashboard"))
     };
 
     const handleDownload = (file) => {
-        console.log('Downloading file:', file);
-        fetch(`${backendUrl}/api/storage/download`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ objectName: file }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('File download failed');
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = trimPath(file);
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-            })
-            .catch(error => {
-                console.error('Error downloading file:', error);
+        downloadFile(file)
+            .catch((error) => {
+                console.error("Error downloading file:", error);
+                setLoading(false);
             });
     };
 
@@ -130,7 +102,7 @@ const LessonView = () => {
                 </Group>
 
                 <Group mb="sm">
-                    <Text c="dimmed">Rate:</Text>
+                    <Text c="dimmed">Overview:</Text>
                     <Rating value={lesson?.rate} readOnly />
                 </Group>
 

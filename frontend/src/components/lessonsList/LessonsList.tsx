@@ -63,7 +63,7 @@ export default function LessonsList() {
 
     const loadData = () => {
         setLoading(true);
-        fetch(`${backendUrl}/api/lessons/all`, {
+        fetch(`${backendUrl}/api/lessons/all/`, {
             method: 'GET',
             redirect: 'follow',
             credentials: 'include',

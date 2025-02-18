@@ -50,13 +50,13 @@ public class LessonController {
         return user;
     }
 
-    @GetMapping("/api/lessons/all")
+    @GetMapping("/api/lessons/all/")
     public ResponseEntity<List<LessonModel>> getAllLessons(@AuthenticationPrincipal OAuth2User principal) {
         User user = getUser(principal);
         return new ResponseEntity<>(getAllLessonsHelper(user.getUser_id()), HttpStatus.OK);
     }
 
-    @GetMapping("/api/lessons/latest")
+    @GetMapping("/api/lessons/latest/")
     public ResponseEntity<List<LessonModel>> getLatestLessons(@AuthenticationPrincipal OAuth2User principal) {
         User user = getUser(principal);
         return new ResponseEntity<>(
@@ -65,7 +65,7 @@ public class LessonController {
                 HttpStatus.OK);
     }
 
-    @PostMapping("api/lessons/add")
+    @PostMapping("api/lessons/add/")
     public ResponseEntity<Lesson> addLesson(
             @AuthenticationPrincipal OAuth2User principal,
             @RequestPart("lesson") LessonModel model,
@@ -84,7 +84,7 @@ public class LessonController {
         return new ResponseEntity<>(lesson, HttpStatus.OK);
     }
 
-    @GetMapping("/api/lessons/{id}")
+    @GetMapping("/api/lessons/{id}/")
     public ResponseEntity<LessonModel> getLesson(
             @AuthenticationPrincipal OAuth2User principal, @PathVariable String id) {
         Optional<Lesson> optionalLesson = lessonService.getLesson(Long.valueOf(id));
@@ -99,7 +99,7 @@ public class LessonController {
         return new ResponseEntity<>(lessonService.generateModel(lesson), HttpStatus.OK);
     }
 
-    @PutMapping("/api/lessons/{id}/edit")
+    @PutMapping("/api/lessons/{id}/edit/")
     public ResponseEntity<LessonModel> updateLesson(
             @AuthenticationPrincipal OAuth2User principal,
             @PathVariable String id,
@@ -140,7 +140,7 @@ public class LessonController {
         return new ResponseEntity<>(lessonService.generateModel(updatedLesson), HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/lessons/{id}/delete")
+    @DeleteMapping("/api/lessons/{id}/delete/")
     public void deleteLesson(@AuthenticationPrincipal OAuth2User principal, @PathVariable String id) {
         User user = getUser(principal);
         Optional<Lesson> optionalLesson = lessonService.getLesson(Long.valueOf(id));

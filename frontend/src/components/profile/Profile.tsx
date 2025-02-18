@@ -12,9 +12,9 @@ import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
 import { Student} from "../../models";
+import {getStudents} from "../../api/userApi.ts";
 
 const Profile = () => {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const { state: thisUser, actions } = useContext(UserContext)
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [loading, setLoading] = useState<boolean>(true);
@@ -29,30 +29,10 @@ const Profile = () => {
     }, []);
 
     useEffect(() => {
-        const getStudents = async () => {
-            try {
-                const response = await fetch(`${backendUrl}/api/user/students`, {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
-                });
-
-                if (response.status === 401) {
-                    console.warn("🚨 User is not authenticated! Redirecting...");
-                    window.location.href = `${backendUrl}/login`;
-                    return;
-                }
-
-                const data = await response.json();
-                setStudents(data);
-            } catch (error) {
-                console.error("Error loading user:", error);
-            }
-        };
-        getStudents();
-    }, [])
+        getStudents()
+            .then(setStudents)
+            .catch(console.error);
+    }, []);
 
     const studentRows = students ? students.map((element: Student) => (
         <Table.Tr key={element.id}>

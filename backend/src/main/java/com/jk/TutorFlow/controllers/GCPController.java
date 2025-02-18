@@ -21,7 +21,7 @@ public class GCPController {
         private String objectName;
     }
 
-    @PostMapping("/api/storage/download")
+    @PostMapping("/api/storage/download/")
     public void downloadFile(@RequestBody FileRequest request, HttpServletResponse response) throws IOException {
         GCPService.downloadFile(request.getObjectName(), response);
     }

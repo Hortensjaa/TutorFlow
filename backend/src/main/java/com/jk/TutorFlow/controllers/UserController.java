@@ -30,7 +30,7 @@ public class UserController {
     private StudentService studentService;
 
 
-    @GetMapping("/api/user/add_user")
+    @GetMapping("/api/user/add_user/")
     public RedirectView addUser(@AuthenticationPrincipal OAuth2User principal) {
         User user = extractData(principal);
         User existingUser = userService.getUserByEmail(user.getEmail());
@@ -43,12 +43,12 @@ public class UserController {
         }
     }
 
-    @GetMapping("/api/user/{id}")
+    @GetMapping("/api/user/{id}/")
     public User getUserById(@PathVariable String id) {
         return userService.getUserById(Long.valueOf(id));
     }
 
-    @GetMapping("/api/user/active")
+    @GetMapping("/api/user/active/")
     public ResponseEntity<UserModel> getActiveUser(@AuthenticationPrincipal OAuth2User principal) {
         User userData = extractData(principal);
         User entity = userService.getUserByEmail(userData.getEmail());
@@ -56,7 +56,7 @@ public class UserController {
         return ResponseEntity.ok().body(userModel);
     }
 
-    @GetMapping("/api/user/students")
+    @GetMapping("/api/user/students/")
     public ResponseEntity<List<StudentModel>> getStudents(@AuthenticationPrincipal OAuth2User principal) {
         User userData = extractData(principal);
         User entity = userService.getUserByEmail(userData.getEmail());
@@ -72,7 +72,7 @@ public class UserController {
         throw new AccessDeniedException("Email doesn't match");
     }
 
-    @PostMapping("/api/user/add_student")
+    @PostMapping("/api/user/add_student/")
     public ResponseEntity<Map<String, Object>> addStudentByTeacher(
             @AuthenticationPrincipal OAuth2User principal,
             @RequestBody Map<String, String> request
@@ -89,7 +89,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of("success", true, "student", studentService.generateModel(student)));
     }
 
-    @DeleteMapping("/api/user/delete_student")
+    @DeleteMapping("/api/user/delete_student/")
     public void deleteStudentByTeacher(
             @AuthenticationPrincipal OAuth2User principal,
             @RequestBody StudentModel studentModel

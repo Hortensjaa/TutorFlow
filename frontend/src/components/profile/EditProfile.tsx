@@ -18,10 +18,10 @@ import styles from './Profile.module.css';
 import {useNavigate} from "react-router-dom";
 import {Student} from "../../models";
 import {IconX} from "@tabler/icons-react";
+import {addStudent, deleteStudent, getStudents} from "../../api/userApi.ts";
 
 
 const EditProfile = () => {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const { state: thisUser, actions } = useContext(UserContext)
     const navigation = useNavigate();
     const isMobile = useMediaQuery('(max-width: 768px)');
@@ -47,66 +47,30 @@ const EditProfile = () => {
     }, [thisUser]);
 
     useEffect(() => {
-        fetch(`${backendUrl}/api/user/students`,
-            {
-                method: 'GET',
-                redirect: 'follow',
-                credentials: 'include'
-            })
-            .then(response => response.json())
-            .then(data => {
-                setStudents(data)
-            })
+        getStudents()
+            .then(setStudents)
+            .catch(console.error);
     }, [])
 
-    const handleDelete = (student: Student) => {
-        fetch(`${backendUrl}/api/user/delete_student`, {
-            method: 'DELETE',
-            credentials: 'include',
-            redirect: 'follow',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(student)
-        })
-            .then((response) => {
-                if (response.ok) {
-                    console.log('Student deleted successfully');
-                    setStudents(students.filter((s) => s.id !== student.id));
-                } else {
-                    console.error('Failed to delete student');
-                }
-            })
-            .catch((error) => console.error('Error deleting student:', error));
+    const handleDelete = () => {
+        if (studentToDelete) {
+            deleteStudent(studentToDelete)
+                .then((id) => {
+                    console.log(id)
+                    console.log(students)
+                    setStudents(students.filter((student) => student.id !== id))
+                })
+                .catch((error) => console.error('Error deleting student:', error));
+        }
     };
 
-    const addStudent = async () => {
-        setNewStudent("")
-        try {
-            let response = await fetch(`${backendUrl}/api/user/add_student`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name: newStudent }),
-            });
-
-            let data = await response.json();
-
-            if (response.ok) {
-                if (data.success) {
-                    setStudents([...students, data.student]);
-                } else {
-                    alert(data.message);
-                }
-            } else {
-                alert(data.message);
-            }
-        } catch (error) {
-            console.error("Error adding student:", error);
-            alert("A network error occurred. Please try again.");
+    const handleAdd = () => {
+        if (newStudent) {
+            addStudent(newStudent)
+                .then((student) => setStudents([...students, student]))
+                .catch((error) => console.error('Error adding student:', error));
         }
+        setNewStudent("")
     };
 
     const studentRows = students ? students.map((element: Student) => (
@@ -158,9 +122,7 @@ const EditProfile = () => {
 
                             <Group align="flex-end">
                                 <Button onClick={(_) => {
-                                    if (studentToDelete) {
-                                        handleDelete(studentToDelete);
-                                    }
+                                    handleDelete()
                                     close()
                                 }}>Delete</Button>
                             </Group>
@@ -193,7 +155,7 @@ const EditProfile = () => {
                                 value={newStudent}
                                 onChange={(event) => setNewStudent(event.currentTarget.value)}
                             />
-                            <Button onClick={addStudent}
+                            <Button onClick={handleAdd}
                                     flex={"0.26"}>
                                 Add student
                             </Button>

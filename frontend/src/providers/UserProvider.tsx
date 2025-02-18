@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
 
     const loadUser = async (retry = false) => {
         try {
-            const response = await fetch(`${backendUrl}/api/user/active`, {
+            const response = await fetch(`${backendUrl}/api/user/active/`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {

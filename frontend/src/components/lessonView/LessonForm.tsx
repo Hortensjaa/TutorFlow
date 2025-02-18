@@ -29,7 +29,7 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
         const fetchStudents = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${backendUrl}/api/user/students`,
+                const response = await fetch(`${backendUrl}/api/user/students/`,
                     {method: "GET", credentials: "include", redirect: "follow"} );
                 const data = await response.json();
                 setStudents(data.map((student: Student) => ({ value: student.id.toString(), label: student.name })));
@@ -90,7 +90,7 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
                         {...form.getInputProps('lesson.topic')}
                     />
 
-                    <Input.Wrapper label="Rate">
+                    <Input.Wrapper label="Overview">
                         <Rating
                             defaultValue={initialValues?.lesson.rate || 0}
                             onChange={(value) => form.setFieldValue('lesson.rate', value)} />
