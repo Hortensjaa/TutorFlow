@@ -93,6 +93,8 @@ export const downloadFile = async (file: string) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ objectName: file }),
+        credentials: 'include',
+        redirect: 'follow'
     });
 
     console.log("Response Status:", response.status);
