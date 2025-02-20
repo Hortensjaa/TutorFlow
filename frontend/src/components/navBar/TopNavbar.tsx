@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import {useContext, useState} from 'react';
 import {Container, Group, Text, UnstyledButton} from '@mantine/core';
 import classes from './TopNavbar.module.css';
 import {menuItem, menuItems} from "./menuItems.ts";
 import {IconLogout} from "@tabler/icons-react";
 import {useLocation, useNavigate} from "react-router-dom";
+import {UserContext} from "../../providers/UserContext.tsx";
 
 
 export function TopNavbar() {
+    const { state: thisUser, actions } = useContext(UserContext)
     const navigate = useNavigate();
     const [active, setActive] = useState(useLocation().pathname);
 
@@ -46,9 +48,7 @@ export function TopNavbar() {
                     href={"#"}
                     className={classes.link}
                     style={{color: "var(--mantine-primary-color-1)"}}
-                    onClick={(event) => {
-                        event.preventDefault();
-                    }}
+                    onClick={(event) => actions.logout}
                 >
                     <IconLogout stroke={1.5}/>
                 </a>

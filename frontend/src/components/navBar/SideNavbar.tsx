@@ -1,21 +1,14 @@
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {IconLogout} from '@tabler/icons-react';
 import {Code, Group, Text, UnstyledButton} from '@mantine/core';
 import classes from './SideNavbar.module.css';
 import {menuItems, menuItem} from "./menuItems.ts";
 import {useLocation, useNavigate} from "react-router-dom";
+import {UserContext} from "../../providers/UserContext.tsx";
 
-
-function NotificationCircle({ count }: { count: number }) {
-    if (count <= 0) return null;
-    return (
-        <div className={classes.circle}>
-            {count}
-        </div>
-    );
-}
 
 export default function SideNavbar() {
+    const { state: thisUser, actions } = useContext(UserContext)
     const navigate = useNavigate();
     const [active, setActive] = useState(useLocation().pathname);
 
@@ -42,7 +35,7 @@ export default function SideNavbar() {
         <nav className={classes.navbar}>
             <div className={classes.navbarMain}>
             <Group className={classes.header} justify="space-between">
-                <UnstyledButton onClick={() => navigate('/#logout')}>
+                <UnstyledButton onClick={() => navigate('/')}>
                     <Text
                         size="xl"
                         fw={900}
@@ -58,10 +51,12 @@ export default function SideNavbar() {
             </div>
 
             <div className={classes.footer}>
-                <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
+                <UnstyledButton
+                    className={classes.link}
+                    onClick={actions.logout}>
                     <IconLogout className={classes.linkIcon} stroke={1.5} />
                     <span>Logout</span>
-                </a>
+                </UnstyledButton>
             </div>
         </nav>
     );

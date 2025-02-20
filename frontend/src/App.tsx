@@ -1,4 +1,4 @@
-import {MantineProvider} from "@mantine/core";
+import {Loader, MantineProvider} from "@mantine/core";
 import {BrowserRouter as Router, Navigate, Outlet, Route, Routes} from "react-router-dom";
 
 import {pinkTheme} from "./themes/colorTheme.tsx";
@@ -8,13 +8,24 @@ import HomePage from "./components/homePage/HomePage.tsx";
 import {UserProvider} from "./providers/UserProvider.tsx";
 import {Notifications} from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
+import {useContext} from "react";
+import {UserContext} from "./providers/UserContext.tsx";
 
 
 const ProtectedRoutes = () => {
+    const { state, loading, _ } = useContext(UserContext);
+    if (loading) {
+        return (
+            <div className={"loading"}>
+                <Loader type="bars"/>
+            </div>
+        )
+    }
+    if (!state) {
+        return <Navigate to="/" replace/>;
+    }
     return (
-        <UserProvider>
-            <Outlet />
-        </UserProvider>
+        <Outlet />
     );
 };
 
@@ -28,7 +39,11 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/about" element={<About />} />
 
-                    <Route element={<ProtectedRoutes />}>
+                    <Route element={
+                        <UserProvider>
+                            <ProtectedRoutes />
+                        </UserProvider>
+                    }>
                         <Route path="/dashboard" element={<LessonsList />} />
                         <Route path="/lesson/add" element={<AddLesson />} />
                         <Route path="/lesson/:id" element={<LessonView />} />

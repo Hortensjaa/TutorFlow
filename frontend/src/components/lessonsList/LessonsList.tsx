@@ -17,6 +17,7 @@ import { TopNavbar } from "../navBar/TopNavbar.tsx";
 import styles from './LessonsList.module.css';
 import {useNavigate} from "react-router-dom";
 import {useMediaQuery} from "@mantine/hooks";
+import {getAllLessons} from "../../api/lessonApi.ts";
 
 
 export function Th({ children, reversed, sorted, onSort }: ThProps) {
@@ -61,30 +62,15 @@ export default function LessonsList() {
         setSortedData(sortData(originalData, { sortBy, reversed: reverseSortDirection, search: value }));
     };
 
-    const loadData = () => {
+    useEffect(() => {
         setLoading(true);
-        fetch(`${backendUrl}/api/lessons/all/`, {
-            method: 'GET',
-            redirect: 'follow',
-            credentials: 'include',
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
+        getAllLessons()
             .then((data) => {
-                console.log('Fetched Data:', data);
                 setOriginalData(data);
                 setSortedData(sortData(data, { sortBy, reversed: true, search }));
             })
             .catch((error) => console.error('Fetch error:', error))
             .finally(() => setLoading(false));
-    };
-
-    useEffect(() => {
-        loadData();
     }, []);
 
     const rows = sortedData.map((row: Lesson) => (
@@ -131,7 +117,7 @@ export default function LessonsList() {
                     <div className={styles.content}>
                         {!isMobile ? null : <TopNavbar/>}
                         <TextInput
-                            placeholder="Search by any field"
+                            placeholder="Search by topic or student's name"
                             mb="md"
                             leftSection={<IconSearch/>}
                             value={search}

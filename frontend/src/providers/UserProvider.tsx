@@ -1,14 +1,17 @@
 import {useEffect, useState} from 'react';
 import {UserContext} from "./UserContext.tsx";
 import {User} from "../models";
+import {useNavigate} from "react-router-dom";
 
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
+    const navigate = useNavigate()
 
     useEffect(() => {
-        const loadUser = async (retry = false) => {
+        const fetchUser = async () => {
             try {
                 const response = await fetch(`${backendUrl}/api/user/active/`, {
                     method: "GET",
@@ -19,26 +22,21 @@ export const UserProvider = ({ children }) => {
                     }
                 });
 
-                if (response.status === 401) {
-                    console.warn("🚨 User is not authenticated! Redirecting...");
-                    if (!retry) {
-                        console.log("🔄 Retrying after 1 second...");
-                        setTimeout(() => loadUser(true), 1000);
-                    } else {
-                        window.location.href = `${backendUrl}/login`; // Redirect manually
-                    }
-                    return;
+                if (response.ok) {
+                    const data = await response.json();
+                    setUser(data);
+                } else {
+                    setUser(null);
                 }
-
-                const data = await response.json();
-                console.log("✅ User loaded:", data);
-                setUser(data);
             } catch (error) {
-                console.error("❌ Error loading user:", error);
+                console.error("Error fetching user:", error);
+                setUser(null);
+            } finally {
+                setLoading(false);
             }
         };
 
-        loadUser();
+        fetchUser();
     }, []);
 
 
@@ -55,7 +53,7 @@ export const UserProvider = ({ children }) => {
 
             if (response.ok) {
                 const updatedUser = await response.json();
-                setUser(updatedUser); // ✅ Update frontend state
+                setUser(updatedUser);
             } else {
                 console.error("Failed to update user:", response.statusText);
             }
@@ -64,9 +62,23 @@ export const UserProvider = ({ children }) => {
         }
     };
 
+    const logout = async () => {
+        try {
+            await fetch(`${import.meta.env.VITE_BACKEND_URL}/logout`, {
+                method: 'GET',
+                credentials: 'include',
+            });
+            setUser(null);
+            navigate('/')
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    }
+
     const value = {
         state: user,
-        actions: { saveUser },
+        loading: loading,
+        actions: { saveUser, logout },
     };
 
 

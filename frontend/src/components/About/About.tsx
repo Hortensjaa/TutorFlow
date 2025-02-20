@@ -4,7 +4,6 @@ import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {Container, Title, Text, Code, Anchor, Group, Divider, List, Blockquote} from "@mantine/core";
 import styles from "../lessonView/LessonView.module.css";
 import { IconBrandGithub, IconButterfly } from "@tabler/icons-react";
-import {useNavigate} from "react-router-dom";
 import {ListItem} from "./ListItem.tsx";
 
 const About = () => {
@@ -32,7 +31,7 @@ const About = () => {
 
                 <Text>
                     Tutor Flow is a web application designed for tutors who want to efficiently track their lessons and
-                    monitor student progress. The platform allows tutors to manage students, schedule and review
+                    monitor students' progress. The platform allows tutors to manage students, schedule and review
                     lessons, and store lesson-related files in an organized manner.
                 </Text>
 

@@ -1,8 +1,7 @@
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
 
-export function trimPath(url) {
-    return url.substring(url.lastIndexOf("/") + 1);
-}
+
+
 
 export const addLesson = async (values: any) => {
     const formData = new FormData();
@@ -75,6 +74,16 @@ export const getLesson = async (id: string) => {
 
     return response.json();
 };
+
+export const getAllLessons = async () => {
+    const response = await fetch(`${backendUrl}/api/lessons/all/`, {
+        method: 'GET',
+        redirect: 'follow',
+        credentials: 'include',
+    })
+    if (!response.ok) throw new Error("Failed to fetch lessons");
+    return response.json();
+}
 
 export const deleteLesson = async (id: string) => {
     const response = await fetch(`${backendUrl}/api/lessons/${id}/delete/`, {
