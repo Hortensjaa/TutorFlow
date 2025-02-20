@@ -59,7 +59,7 @@ const About = () => {
                 </List>
 
                 <Divider m="xs" mt={"auto"}/>
-                <Title order={2} className={styles.title} mb="md">
+                <Title order={4} className={styles.title} mb="md">
                     Contact
                 </Title>
                 <Text>

@@ -2,12 +2,12 @@ package com.jk.TutorFlow.controllers;
 
 import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
-import com.jk.TutorFlow.models.Consts;
 import com.jk.TutorFlow.models.StudentModel;
 import com.jk.TutorFlow.models.UserModel;
 import com.jk.TutorFlow.services.StudentService;
 import com.jk.TutorFlow.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,6 +24,9 @@ import java.util.Objects;
 @RestController
 public class UserController {
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -37,9 +40,9 @@ public class UserController {
 
         if (existingUser == null) {
             userService.addUser(user);
-            return new RedirectView(Consts.getFrontendURL() + "/profile/edit/");
+            return new RedirectView(frontendUrl + "/profile/edit/");
         } else {
-            return new RedirectView(Consts.getFrontendURL() + "/profile/");
+            return new RedirectView(frontendUrl + "/profile/");
         }
     }
 

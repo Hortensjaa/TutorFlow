@@ -170,7 +170,7 @@ export default function LessonsList() {
                                                 reversed={reverseSortDirection}
                                                 onSort={() => setSorting('rate')}
                                             >
-                                                Rate
+                                                Overview
                                             </Th>
                                         }
                                     </Table.Tr>

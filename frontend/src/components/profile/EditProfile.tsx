@@ -33,14 +33,6 @@ const EditProfile = () => {
     const [studentToDelete, setStudentToDelete] = useState<Student | null>(null);
 
     useEffect(() => {
-        const fetchUser = async () => {
-            await actions.loadUser();
-            setLoading(false);
-        };
-        fetchUser()
-    }, []);
-
-    useEffect(() => {
         if (thisUser) {
             setUsername(thisUser.username || "");
         }
@@ -49,6 +41,7 @@ const EditProfile = () => {
     useEffect(() => {
         getStudents()
             .then(setStudents)
+            .then(() => setLoading(false))
             .catch(console.error);
     }, [])
 
@@ -56,8 +49,6 @@ const EditProfile = () => {
         if (studentToDelete) {
             deleteStudent(studentToDelete)
                 .then((id) => {
-                    console.log(id)
-                    console.log(students)
                     setStudents(students.filter((student) => student.id !== id))
                 })
                 .catch((error) => console.error('Error deleting student:', error));
@@ -91,9 +82,7 @@ const EditProfile = () => {
     )) : null;
 
     const saveUser = async () => {
-        console.log(thisUser)
         if (thisUser) {
-            actions.setName(username);
             await actions.saveUser({
                 ...thisUser,
                 username: username,

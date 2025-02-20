@@ -21,16 +21,9 @@ const Profile = () => {
     const [students, setStudents] = useState<Student[]>([]);
 
     useEffect(() => {
-        const fetchUser = async () => {
-            await actions.loadUser();
-            setLoading(false);
-        };
-        fetchUser()
-    }, []);
-
-    useEffect(() => {
         getStudents()
             .then(setStudents)
+            .then(() => setLoading(false))
             .catch(console.error);
     }, []);
 

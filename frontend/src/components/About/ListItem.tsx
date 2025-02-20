@@ -16,7 +16,7 @@ export function ListItem({ text, linkText, linkPath }: ListItemProps) {
             {linkText && linkPath && (
                 <Text
                     span
-                    c="blue"
+                    c="var(--mantine-primary-color-7)"
                     inherit
                     onClick={() => linkPath ? navigate(linkPath) : {}}
                     style={{ cursor: "pointer" }}

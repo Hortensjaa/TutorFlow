@@ -1,7 +1,7 @@
 package com.jk.TutorFlow.configs;
 
 
-import com.jk.TutorFlow.models.Consts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,6 +24,9 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -40,12 +43,12 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true")
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl(Consts.getFrontendURL())
+                        .logoutSuccessUrl(frontendUrl)
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(Consts.getFrontendURL()))
+                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(frontendUrl))
                 )
                 .build();
     }
@@ -54,7 +57,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(Consts.getFrontendURL()));
+        configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
