@@ -8,6 +8,7 @@ public class StudentModel {
     private String name;
     private LocalDate lastLesson;
     private String lastTopic;
+    private Long lastLessonId;
     private String studentModelClass;
 
     @JsonProperty("id")
@@ -29,6 +30,11 @@ public class StudentModel {
     public String getLastTopic() { return lastTopic; }
     @JsonProperty("last_topic")
     public void setLastTopic(String value) { this.lastTopic = value; }
+
+    @JsonProperty("last_lesson_id")
+    public Long getLastLessonId() { return lastLessonId; }
+    @JsonProperty("last_lesson_id")
+    public void setLastLessonId(Long value) { this.lastLessonId = value; }
 
     @JsonProperty("class")
     public String getStudentModelClass() { return studentModelClass; }

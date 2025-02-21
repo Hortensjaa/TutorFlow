@@ -13,6 +13,7 @@ export interface Student {
     last_lesson: Date;
     last_topic:  string;
     class:       string;
+    last_lesson_id: number;
 }
 
 // Converts JSON strings to/from your types
@@ -186,5 +187,6 @@ const typeMap: any = {
         { json: "last_lesson", js: "last_lesson", typ: Date },
         { json: "last_topic", js: "last_topic", typ: "" },
         { json: "class", js: "class", typ: "" },
+        { json: "last_lesson_id", js: "last_lesson_id", typ: 1},
     ], false),
 };

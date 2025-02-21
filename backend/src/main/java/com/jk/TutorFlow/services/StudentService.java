@@ -31,6 +31,7 @@ public class StudentService {
         if (lastLesson.isPresent()) {
             model.setLastLesson(lastLesson.get().getDate().toLocalDate());
             model.setLastTopic(lastLesson.get().getTopic());
+            model.setLastLessonId(lastLesson.get().getLesson_id());
         }
         model.setStudentModelClass("High School 1"); // todo: classes
         return model;

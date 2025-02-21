@@ -1,6 +1,7 @@
 import {UserContext} from "../../providers/UserContext.tsx";
 import {useContext, useEffect, useState} from "react";
 import {
+    Anchor,
     Box,
     Divider,
     Loader, Table,
@@ -13,12 +14,14 @@ import {useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
 import { Student} from "../../models";
 import {getStudents} from "../../api/studentApi.ts";
+import {useNavigate} from "react-router-dom";
 
 const Profile = () => {
     const { state: thisUser, actions } = useContext(UserContext)
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [loading, setLoading] = useState<boolean>(true);
     const [students, setStudents] = useState<Student[]>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getStudents()
@@ -27,17 +30,28 @@ const Profile = () => {
             .catch(console.error);
     }, []);
 
+    const NavLinkWrapper = ({ children, id }) => (
+        <Table.Td
+            style={{ cursor: id ? 'pointer' : 'default'}}
+            onClick={() => id ? navigate(`/lesson/${id}`) : {}}
+        >
+            {children}
+        </Table.Td>
+    )
+
     const studentRows = students ? students.map((element: Student) => (
         <Table.Tr key={element.id}>
             <Table.Td fw={500}>{element.name}</Table.Td>
-            <Table.Td>
+            <NavLinkWrapper id={element.last_lesson_id}>
                 {element.last_lesson ? new Date(element.last_lesson).toLocaleDateString(undefined, {
                     year: 'numeric',
                     month: 'numeric',
                     day: 'numeric',
                 }) : null}
-            </Table.Td>
-            <Table.Td>{element.last_topic}</Table.Td>
+            </NavLinkWrapper>
+            <NavLinkWrapper id={element.last_lesson_id}>
+                {element.last_topic}
+            </NavLinkWrapper>
         </Table.Tr>
     )) : null;
 
