@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {UserContext} from "./UserContext.tsx";
 import {User} from "../models";
 import {useNavigate} from "react-router-dom";
+import {getUser, logoutUser, saveUser} from "../api/userApi.ts";
 
 
 export const UserProvider = ({ children }) => {
@@ -11,74 +12,44 @@ export const UserProvider = ({ children }) => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await fetch(`${backendUrl}/api/user/active/`, {
-                    method: "GET",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setUser(data);
-                } else {
-                    setUser(null);
-                }
-            } catch (error) {
-                console.error("Error fetching user:", error);
-                setUser(null);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUser();
+        const response = getUser();
+        response.then((data) => {
+            setUser(data);
+        }).catch((error) => {
+            setUser(null)
+            console.log(error);
+        }).finally(() => {
+            setLoading(false);
+        });
     }, []);
 
 
-    const saveUser = async (newModel: User) => {
-        try {
-            const response = await fetch(`${backendUrl}/api/user/`, {
-                method: "PUT",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(newModel),
-            });
-
-            if (response.ok) {
-                const updatedUser = await response.json();
-                setUser(updatedUser);
-            } else {
-                console.error("Failed to update user:", response.statusText);
-            }
-        } catch (error) {
-            console.error("Error saving user:", error);
-        }
+    const save = async (newModel: User) => {
+        const response = saveUser(newModel);
+        response.then((data) => {
+            setUser(data);
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
+            setLoading(false);
+        });
     };
 
     const logout = async () => {
-        try {
-            await fetch(`${import.meta.env.VITE_BACKEND_URL}/logout`, {
-                method: 'GET',
-                credentials: 'include',
-            });
+        const response = logoutUser();
+        response.then((data) => {
             setUser(null);
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
             navigate('/')
-        } catch (error) {
-            console.error('Logout failed:', error);
-        }
+        });
     }
 
     const value = {
         state: user,
         loading: loading,
-        actions: { saveUser, logout },
+        actions: { save, logout },
     };
 
 

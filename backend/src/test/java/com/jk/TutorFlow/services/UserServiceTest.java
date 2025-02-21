@@ -28,6 +28,8 @@ class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+    @InjectMocks
+    private StudentService studentService;
 
     @BeforeEach
     void setUp() {
@@ -115,7 +117,7 @@ class UserServiceTest {
         when(userRepository.findStudentsByTeacherId(teacherId)).thenReturn(students);
 
         // Act
-        Set<Student> result = userService.getStudents(teacherId);
+        Set<Student> result = studentService.getStudents(teacherId);
 
         // Assert
         assertEquals(2, result.size());
@@ -134,7 +136,7 @@ class UserServiceTest {
         when(studentRepository.save(any(Student.class))).thenReturn(student);
 
         // Act
-        Student result = userService.addStudent(teacherId, studentName);
+        Student result = studentService.addStudent(teacherId, studentName);
 
         // Assert
         assertNotNull(result);
@@ -153,7 +155,7 @@ class UserServiceTest {
         when(userRepository.findById(teacherId)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(RuntimeException.class, () -> userService.addStudent(teacherId, studentName));
+        assertThrows(RuntimeException.class, () -> studentService.addStudent(teacherId, studentName));
         verify(userRepository, times(1)).findById(teacherId);
         verify(studentRepository, never()).save(any());
         verify(userRepository, never()).save(any());
@@ -171,7 +173,7 @@ class UserServiceTest {
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
 
         // Act
-        userService.deleteStudent(teacherId, studentId);
+        studentService.deleteStudent(teacherId, studentId);
 
         // Assert
         verify(userRepository, times(1)).findById(teacherId);
@@ -188,7 +190,7 @@ class UserServiceTest {
         when(userRepository.findById(teacherId)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(RuntimeException.class, () -> userService.deleteStudent(teacherId, studentId));
+        assertThrows(RuntimeException.class, () -> studentService.deleteStudent(teacherId, studentId));
         verify(userRepository, times(1)).findById(teacherId);
         verify(studentRepository, never()).findById(any());
         verify(studentRepository, never()).delete(any());
@@ -205,7 +207,7 @@ class UserServiceTest {
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(RuntimeException.class, () -> userService.deleteStudent(teacherId, studentId));
+        assertThrows(RuntimeException.class, () -> studentService.deleteStudent(teacherId, studentId));
         verify(userRepository, times(1)).findById(teacherId);
         verify(studentRepository, times(1)).findById(studentId);
         verify(studentRepository, never()).delete(any());

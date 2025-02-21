@@ -8,6 +8,7 @@ import com.jk.TutorFlow.services.FileService;
 import com.jk.TutorFlow.services.GCPService;
 import com.jk.TutorFlow.services.LessonService;
 import com.jk.TutorFlow.services.UserService;
+import com.jk.TutorFlow.utils.PrincipalExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,33 +33,23 @@ public class LessonController {
     private FileService fileService;
     @Autowired
     private GCPService GCPService;
+    @Autowired
+    private PrincipalExtractor PrincipalExtractor;
 
     private List<LessonModel> getAllLessonsHelper(Long teacherId) {
         return lessonService.getLessonsByTeacherId(teacherId)
                 .stream().map(e -> lessonService.generateModel(e)).collect(Collectors.toList());
     }
 
-    private User getUser(@AuthenticationPrincipal OAuth2User principal) {
-        String user_email = principal.getAttribute("email");
-        if (user_email == null) {
-            throw new AccessDeniedException("User not authenticated");
-        }
-        User user = userService.getUserByEmail(user_email);
-        if (user == null) {
-            throw new AccessDeniedException("User not found");
-        }
-        return user;
-    }
-
     @GetMapping("/api/lessons/all/")
     public ResponseEntity<List<LessonModel>> getAllLessons(@AuthenticationPrincipal OAuth2User principal) {
-        User user = getUser(principal);
+        User user = PrincipalExtractor.getUserFromPrincipal(principal);
         return new ResponseEntity<>(getAllLessonsHelper(user.getUser_id()), HttpStatus.OK);
     }
 
     @GetMapping("/api/lessons/latest/")
     public ResponseEntity<List<LessonModel>> getLatestLessons(@AuthenticationPrincipal OAuth2User principal) {
-        User user = getUser(principal);
+        User user = PrincipalExtractor.getUserFromPrincipal(principal);
         return new ResponseEntity<>(
                 lessonService.getLatestLessons(user.getUser_id())
                         .stream().map(e -> lessonService.generateModel(e)).collect(Collectors.toList()),
@@ -88,7 +79,7 @@ public class LessonController {
     public ResponseEntity<LessonModel> getLesson(
             @AuthenticationPrincipal OAuth2User principal, @PathVariable String id) {
         Optional<Lesson> optionalLesson = lessonService.getLesson(Long.valueOf(id));
-        User user = getUser(principal);
+        User user = PrincipalExtractor.getUserFromPrincipal(principal);
         if (optionalLesson.isEmpty()) {
             throw new RuntimeException("Lesson not found with id: " + id);
         }
@@ -106,7 +97,7 @@ public class LessonController {
             @RequestPart("lesson") LessonModel model,
             @RequestPart(value = "files", required = false) MultipartFile[] files
     ) throws IOException {
-        User user = getUser(principal);
+        User user = PrincipalExtractor.getUserFromPrincipal(principal);
         Optional<Lesson> optionalLesson = lessonService.getLesson(Long.valueOf(id));
         if (optionalLesson.isEmpty()) {
             throw new RuntimeException("Lesson not found with id: " + id);
@@ -142,7 +133,7 @@ public class LessonController {
 
     @DeleteMapping("/api/lessons/{id}/delete/")
     public void deleteLesson(@AuthenticationPrincipal OAuth2User principal, @PathVariable String id) {
-        User user = getUser(principal);
+        User user = PrincipalExtractor.getUserFromPrincipal(principal);
         Optional<Lesson> optionalLesson = lessonService.getLesson(Long.valueOf(id));
         if (optionalLesson.isEmpty()) {
             throw new RuntimeException("Lesson not found with id: " + id);

@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useForm } from '@mantine/form';
 import {
     TextInput,
-    Select, Text,
+    Select,
     Textarea, Input,
-    Button, Title, Rating, Loader, Group, Anchor, InputBase, Pill
+    Button, Title, Rating, Loader, InputBase, Pill
 } from '@mantine/core';
 import '@mantine/dates/styles.css';
 import { DateInput } from "@mantine/dates";
@@ -12,6 +12,7 @@ import { FileInput } from '@mantine/core';
 import {Lesson, Student} from '../../models';
 import styles from "./LessonView.module.css";
 import {trimPath} from "./utils.ts";
+import {getStudents} from "../../api/studentApi.ts";
 
 interface LessonFormProps {
     initialValues?: { lesson: Lesson, newFiles: File[] };
@@ -20,26 +21,19 @@ interface LessonFormProps {
 }
 
 const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
     const [students, setStudents] = useState<{ value: string; label: string }[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
 
     useEffect(() => {
-        const fetchStudents = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch(`${backendUrl}/api/user/students/`,
-                    {method: "GET", credentials: "include", redirect: "follow"} );
-                const data = await response.json();
-                setStudents(data.map((student: Student) => ({ value: student.id.toString(), label: student.name })));
-            } catch (error) {
-                console.error('Error fetching students:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchStudents();
+        setLoading(true);
+        const response = getStudents();
+        response.then((data) => {
+            setStudents(data.map((student: Student) => ({
+                value: student.id.toString(), label: student.name }
+            )))})
+            .catch((error) => console.error('Error fetching students:', error))
+            .finally(() => setLoading(false));
     }, []);
 
     const form = useForm({

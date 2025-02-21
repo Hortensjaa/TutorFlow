@@ -1,13 +1,13 @@
-import {Student} from "../models";
+import {User} from "../models";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 
-export const getStudents = async () => {
-    const response = await fetch(`${backendUrl}/api/user/students/`, {
-        method: 'GET',
-        credentials: 'include',
+export const getUser = async () => {
+    const response = await fetch(`${backendUrl}/api/user/active/`, {
+        method: "GET",
+        credentials: "include",
         headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
         }
     });
 
@@ -16,31 +16,28 @@ export const getStudents = async () => {
     return await response.json();
 }
 
-export const deleteStudent = async (student: Student): Promise<number> => {
-    const response = await fetch(`${backendUrl}/api/user/delete_student/`, {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(student)
+export const saveUser = async (newModel: User) => {
+    const response = await fetch(`${backendUrl}/api/user/update/`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newModel),
     });
 
-    if (!response.ok) throw new Error("Failed to delete student");
+    if (!response.ok) throw new Error("Failed to save user");
 
-    return student.id;
-};
+    return await response.json();
+}
 
-
-export const addStudent = async (name: String) => {
-    const response = await fetch(`${backendUrl}/api/user/add_student/`, {
-        method: 'POST',
+export const logoutUser = async () => {
+    const response = await fetch(`${backendUrl}/logout`, {
+        method: 'GET',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
     });
 
-    const data = await response.json();
+    if (!response.ok) throw new Error("Failed to logout");
 
-    if (!response.ok || !data.success) throw new Error(data.message || "Failed to add student");
-
-    return data.student;
-};
+    return response;
+}

@@ -1,7 +1,6 @@
 package com.jk.TutorFlow.models;
 
-import com.fasterxml.jackson.annotation.*;
-import com.jk.TutorFlow.entities.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -24,10 +23,4 @@ public class UserModel {
     public String getEmail() { return email; }
     @JsonProperty("email")
     public void setEmail(String value) { this.email = value; }
-
-    public UserModel(User entity) {
-        this.id = entity.getUser_id();
-        this.username = entity.getUsername();
-        this.email = entity.getEmail();
-    }
 }

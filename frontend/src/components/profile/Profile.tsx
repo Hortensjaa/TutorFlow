@@ -12,7 +12,7 @@ import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
 import { Student} from "../../models";
-import {getStudents} from "../../api/userApi.ts";
+import {getStudents} from "../../api/studentApi.ts";
 
 const Profile = () => {
     const { state: thisUser, actions } = useContext(UserContext)

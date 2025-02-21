@@ -105,10 +105,6 @@ export const downloadFile = async (file: string) => {
         credentials: 'include',
         redirect: 'follow'
     });
-
-    console.log("Response Status:", response.status);
-    console.log("Response Content-Type:", response.headers.get("Content-Type"));
-
     if (!response.ok) {
         const errorText = await response.text();
         console.error("File download failed:", errorText);

@@ -8,10 +8,7 @@ import com.jk.TutorFlow.entities.Lesson;
 import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.LessonModel;
-import com.jk.TutorFlow.services.FileService;
-import com.jk.TutorFlow.services.LessonService;
-import com.jk.TutorFlow.services.UserService;
-import com.jk.TutorFlow.services.GCPService;
+import com.jk.TutorFlow.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,13 +39,12 @@ class LessonControllerTest {
 
     @Mock
     private Storage storage;
-
     @Mock
     private LessonService lessonService;
-
     @Mock
     private UserService userService;
-
+    @Mock
+    private StudentService studentService;
     @Mock
     private FileService fileService;
 
@@ -57,8 +53,6 @@ class LessonControllerTest {
 
     @InjectMocks
     private LessonController lessonController;
-
-
 
     private User user;
     private Student student;
@@ -76,7 +70,7 @@ class LessonControllerTest {
         student = new Student();
         student.setStudent_id(1L);
         student.setTeacher(user);
-        when(userService.getStudents(1L)).thenReturn(Set.of(student));
+        when(studentService.getStudents(1L)).thenReturn(Set.of(student));
 
         lesson = new Lesson();
         lesson.setLesson_id(1L);

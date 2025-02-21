@@ -18,7 +18,7 @@ import styles from './Profile.module.css';
 import {useNavigate} from "react-router-dom";
 import {Student} from "../../models";
 import {IconX} from "@tabler/icons-react";
-import {addStudent, deleteStudent, getStudents} from "../../api/userApi.ts";
+import {addStudent, deleteStudent, getStudents} from "../../api/studentApi.ts";
 
 
 const EditProfile = () => {
@@ -83,7 +83,7 @@ const EditProfile = () => {
 
     const saveUser = async () => {
         if (thisUser) {
-            await actions.saveUser({
+            await actions.save({
                 ...thisUser,
                 username: username,
             })

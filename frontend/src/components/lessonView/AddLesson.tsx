@@ -1,4 +1,3 @@
-import '@mantine/dates/styles.css';
 import {useMediaQuery} from "@mantine/hooks";
 import {useNavigate} from "react-router-dom";
 import {SideNavbar} from "../index.ts";
@@ -18,7 +17,9 @@ const AddLesson = () => {
             .catch((error) => {
                 console.error("Error adding lesson:", error);
             })
-            .finally(() => navigate("/dashboard"))
+            .finally(() => {
+                navigate("/dashboard")
+            })
     };
 
     return (

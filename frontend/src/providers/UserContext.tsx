@@ -6,7 +6,7 @@ interface UserContext {
     state: User | null;
     loading: boolean;
     actions: {
-        saveUser: (newModel: User) => void;
+        save: (newModel: User) => void;
         logout: () => void;
     };
 }
@@ -15,7 +15,7 @@ export const UserContext = createContext<UserContext>({
     state: null,
     loading: true,
     actions: {
-        saveUser: (newModel: User) => {},
+        save: (newModel: User) => {},
         logout: () => {}
     },
 });
