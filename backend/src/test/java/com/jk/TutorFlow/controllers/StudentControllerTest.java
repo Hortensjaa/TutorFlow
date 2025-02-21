@@ -19,26 +19,30 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 public class StudentControllerTest {
     @Mock
     private UserService userService;
-
     @Mock
     private StudentService studentService;
+    @Mock
+    private com.jk.TutorFlow.utils.PrincipalExtractor PrincipalExtractor;
 
     @InjectMocks
     private StudentController studentController;
+
+    private User user;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         StudentModel studentModel = new StudentModel();
         studentModel.setName("Student Name");
+        user = new User("Test User", "test@example.com");
+        when(userService.getUserByEmail("test@example.com")).thenReturn(user);
         when(studentService.generateModel(any())).thenReturn(studentModel);
+        when(PrincipalExtractor.getUserFromPrincipal(any())).thenReturn(user);
     }
 
     @Test
@@ -47,9 +51,6 @@ public class StudentControllerTest {
         when(principal.getAttribute("email")).thenReturn("test@example.com");
         when(principal.getAttribute("name")).thenReturn("Test User");
 
-        User user = new User("Test User", "test@example.com");
-        when(userService.getUserByEmail("test@example.com")).thenReturn(user);
-
         Student student = new Student("Student Name");
         student.setStudent_id(1L);
         user.setStudents(Set.of(student));
@@ -57,7 +58,7 @@ public class StudentControllerTest {
 
         Student not_my_student = new Student("NonStudent Name");
         not_my_student.setStudent_id(2L);
-        when(userService.getStudents(user.getUser_id())).thenReturn(Set.of(student));
+        when(studentService.getStudents(user.getUser_id())).thenReturn(Set.of(student));
 
         List<StudentModel> result = studentController.getStudents(principal).getBody();
 
@@ -78,7 +79,7 @@ public class StudentControllerTest {
 
         Student student = new Student("Student Name");
         student.setStudent_id(2L);
-        when(userService.addStudent(user.getUser_id(), "Student Name")).thenReturn(student);
+        when(studentService.addStudent(user.getUser_id(), "Student Name")).thenReturn(student);
 
         ResponseEntity<Map<String, Object>> result =
                 studentController.addStudentByTeacher(principal, Map.of("name", "Student Name"));

@@ -2,7 +2,6 @@ package com.jk.TutorFlow.services;
 
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.UserModel;
-import com.jk.TutorFlow.repositories.StudentRepository;
 import com.jk.TutorFlow.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Service;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private StudentRepository studentRepository;
 
     public void addUser(User user) {
         userRepository.save(user);

@@ -9,6 +9,7 @@ import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.LessonModel;
 import com.jk.TutorFlow.services.*;
+import com.jk.TutorFlow.utils.PrincipalExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -47,9 +48,10 @@ class LessonControllerTest {
     private StudentService studentService;
     @Mock
     private FileService fileService;
-
     @Mock
     private GCPService GCPService;
+    @Mock
+    private PrincipalExtractor PrincipalExtractor;
 
     @InjectMocks
     private LessonController lessonController;
@@ -82,6 +84,8 @@ class LessonControllerTest {
         when(lessonService.generateModel(any(Lesson.class))).thenReturn(new LessonModel());
         when(lessonService.getLessonsByTeacherId(1L)).thenReturn(Set.of(lesson));
         when(lessonService.getLesson(1L)).thenReturn(Optional.of(lesson));
+        when(lessonService.getLessonsByTeacherId(1L)).thenReturn(Set.of(lesson));
+        when(PrincipalExtractor.getUserFromPrincipal(any())).thenReturn(user);
     }
 
     @Test
