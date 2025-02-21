@@ -27,12 +27,13 @@ TutorFlowBackend/
 │   │   │   ├── config/                   # Security Configurations
 │   │   │   ├── controllers/              # API Controllers
 │   │   │   ├── entities/                 # Entity Classes
+│   │   │   ├── models/                   # Request/Response Models
 │   │   │   ├── repositories/             # JPA Repositories
 │   │   │   ├── services/                 # Business Logic
-│   │   │   ├── models/                   # Request/Response Models
+│   │   │   ├── utils/                    # Additional, shared functions
 │   │   ├── resources/ 
 │   │   │   ├── application.properties    # Configuration Files
-│   ├── test/                            # Tests
+│   ├── test/                             # Tests
 │-- pom.xml                               # Maven Dependencies
 ```
 
@@ -70,21 +71,24 @@ File
 ## API Endpoints
 
 ### Lesson Endpoints
-- `GET /api/lessons/all` - Retrieve all user's lessons
-- `POST /api/lessons/add` - Add a new lesson
-- `GET /api/lessons/{id}` - Retrieve a lesson by ID
-- `DELETE /api/lessons/{id}/delete` - Delete a lesson
+- `GET /api/lessons/all/` - Retrieve all user's lessons
+- `POST /api/lessons/add/` - Add a new lesson
+- `GET /api/lessons/{id}/` - Retrieve a lesson by ID
+- `DELETE /api/lessons/{id}/delete/` - Delete a lesson
 
 ### File Storage
-- `POST /api/storage/download` - Download a file
+- `POST /api/storage/download/` - Download a file
 
 ### User Management
-- `GET /api/user/add_user` - Add a user
-- `GET /api/user/active` - Retrieve the active user
-- `GET /api/user/students` - Get a list of students for the teacher
-- `PUT /api/user/` - Update user details
-- `POST /api/user/add_student` - Add a student
-- `DELETE /api/user/delete_student` - Remove a student
+- `GET /api/user/add_user/` - Add a user
+- `GET /api/user/active/` - Retrieve the active user
+- `PUT /api/user/update/` - Update user details
+
+## Student Management
+- `GET /api/students/all/` - Get a list of students for the teacher
+- `POST /api/students/add/` - Add a student
+- `DELETE /api/students/delete/` - Remove a student
+
 
 ## Setup & Running the Backend
 

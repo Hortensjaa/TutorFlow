@@ -50,6 +50,7 @@ To set up and run the frontend locally:
 ```
 tutor-flow-frontend/
 │── src/
+│   ├── api/               # Requests to backend api
 │   ├── components/        # UI components
 │   ├── providers/         # Global state management
 │   ├── models/            # Request/Response Models
