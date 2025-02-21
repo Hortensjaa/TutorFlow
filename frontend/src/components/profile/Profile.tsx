@@ -1,7 +1,6 @@
 import {UserContext} from "../../providers/UserContext.tsx";
 import {useContext, useEffect, useState} from "react";
 import {
-    Anchor,
     Box,
     Divider,
     Loader, Table,
