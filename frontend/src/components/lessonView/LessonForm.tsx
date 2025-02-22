@@ -13,12 +13,8 @@ import {Lesson, Student} from '../../models';
 import styles from "./LessonView.module.css";
 import {trimPath} from "./utils.ts";
 import {getStudents} from "../../api/studentApi.ts";
+import {LessonFormProps} from "./props.ts";
 
-interface LessonFormProps {
-    initialValues?: { lesson: Lesson, newFiles: File[] };
-    onSubmit: (values: any) => Promise<void>;
-    header: string;
-}
 
 const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
     const [students, setStudents] = useState<{ value: string; label: string }[]>([]);

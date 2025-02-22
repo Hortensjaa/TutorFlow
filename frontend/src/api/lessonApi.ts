@@ -75,8 +75,9 @@ export const getLesson = async (id: string) => {
     return response.json();
 };
 
-export const getAllLessons = async () => {
-    const response = await fetch(`${backendUrl}/api/lessons/all/`, {
+export const getAllLessons = async (page=0, size=20, sortBy=null, descending=true, studentId="") => {
+    const response = await fetch(
+        `${backendUrl}/api/lessons/all/?page=${page}&size=${size}&sortBy=${sortBy}&descending=${descending}&studentId=${studentId ? studentId : ""}`, {
         method: 'GET',
         redirect: 'follow',
         credentials: 'include',

@@ -10,6 +10,7 @@ import com.jk.TutorFlow.services.LessonService;
 import com.jk.TutorFlow.services.UserService;
 import com.jk.TutorFlow.utils.PrincipalExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -36,24 +36,19 @@ public class LessonController {
     @Autowired
     private PrincipalExtractor PrincipalExtractor;
 
-    private List<LessonModel> getAllLessonsHelper(Long teacherId) {
-        return lessonService.getLessonsByTeacherId(teacherId)
-                .stream().map(e -> lessonService.generateModel(e)).collect(Collectors.toList());
-    }
-
     @GetMapping("/api/lessons/all/")
-    public ResponseEntity<List<LessonModel>> getAllLessons(@AuthenticationPrincipal OAuth2User principal) {
-        User user = PrincipalExtractor.getUserFromPrincipal(principal);
-        return new ResponseEntity<>(getAllLessonsHelper(user.getUser_id()), HttpStatus.OK);
-    }
+    public ResponseEntity<Page<LessonModel>> getAllLessons(
+            @AuthenticationPrincipal OAuth2User principal,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "true") boolean descending,
+            @RequestParam(defaultValue = "") Long studentId) {
 
-    @GetMapping("/api/lessons/latest/")
-    public ResponseEntity<List<LessonModel>> getLatestLessons(@AuthenticationPrincipal OAuth2User principal) {
         User user = PrincipalExtractor.getUserFromPrincipal(principal);
-        return new ResponseEntity<>(
-                lessonService.getLatestLessons(user.getUser_id())
-                        .stream().map(e -> lessonService.generateModel(e)).collect(Collectors.toList()),
-                HttpStatus.OK);
+        Page<Lesson> lessons = lessonService.getLessonsByTeacherId(user.getUser_id(), studentId, page, size, sortBy, descending);
+        Page<LessonModel> models = lessons.map(lessonService::generateModel);
+        return ResponseEntity.ok().body(models);
     }
 
     @PostMapping("api/lessons/add/")

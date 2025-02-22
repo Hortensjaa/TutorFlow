@@ -13,10 +13,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -77,30 +80,16 @@ class LessonServiceTest {
     void testGetLessonsByTeacherId() {
         // Arrange
         Long teacherId = 1L;
-        Set<Lesson> lessons = Set.of(new Lesson(), new Lesson());
-        when(lessonRepository.findAllByTeacherId(teacherId)).thenReturn(lessons);
+        List<Lesson> lessons = List.of(new Lesson(), new Lesson());
+        Page<Lesson> lessonPage = new PageImpl<>(lessons);
+        when(lessonRepository.findAllByTeacherId(teacherId, any(), any())).thenReturn(lessonPage);
 
         // Act
-        Set<Lesson> result = lessonService.getLessonsByTeacherId(teacherId);
+        Page<Lesson> result = lessonService.getLessonsByTeacherId(teacherId, any(), any(), any(), any(), any());
 
         // Assert
-        assertEquals(2, result.size());
-        verify(lessonRepository, times(1)).findAllByTeacherId(teacherId);
-    }
-
-    @Test
-    void testGetLatestLessons() {
-        // Arrange
-        Long userId = 1L;
-        Set<Lesson> lessons = Set.of(new Lesson(), new Lesson());
-        when(lessonRepository.findLatest(userId)).thenReturn(lessons);
-
-        // Act
-        Set<Lesson> result = lessonService.getLatestLessons(userId);
-
-        // Assert
-        assertEquals(2, result.size());
-        verify(lessonRepository, times(1)).findLatest(userId);
+        assertEquals(2, result.getContent().size());
+        verify(lessonRepository, times(1)).findAllByTeacherId(teacherId, any(), any());
     }
 
     @Test

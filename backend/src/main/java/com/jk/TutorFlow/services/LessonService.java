@@ -5,11 +5,14 @@ import com.jk.TutorFlow.entities.Lesson;
 import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.LessonModel;
-import com.jk.TutorFlow.repositories.FileRepository;
 import com.jk.TutorFlow.repositories.LessonRepository;
 import com.jk.TutorFlow.repositories.StudentRepository;
 import com.jk.TutorFlow.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -23,19 +26,15 @@ public class LessonService {
     private UserRepository userRepository;
     @Autowired
     private StudentRepository studentRepository;
-    @Autowired
-    private FileRepository fileRepository;
 
     public Optional<Lesson> getLesson(Long id) {
         return lessonRepository.findById(id);
     }
 
-    public Set<Lesson> getLessonsByTeacherId(Long teacherId) {
-        return lessonRepository.findAllByTeacherId(teacherId);
-    }
-
-    public Set<Lesson> getLatestLessons(Long userId) {
-        return lessonRepository.findLatest(userId);
+    public Page<Lesson> getLessonsByTeacherId(Long teacherId, Long studentId, int page, int size, String sortBy, boolean descending) {
+        Sort sort = descending ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return lessonRepository.findAllByTeacherId(teacherId, studentId, pageable);
     }
 
     public void deleteLesson(Long id) {

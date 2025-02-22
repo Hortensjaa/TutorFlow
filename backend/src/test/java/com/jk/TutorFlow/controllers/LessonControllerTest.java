@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -81,33 +83,26 @@ class LessonControllerTest {
         lesson.setDate(new Date(System.currentTimeMillis()));
         lesson.setFiles(Collections.emptySet());
         lesson.setRate(5);
+
         when(lessonService.generateModel(any(Lesson.class))).thenReturn(new LessonModel());
-        when(lessonService.getLessonsByTeacherId(1L)).thenReturn(Set.of(lesson));
         when(lessonService.getLesson(1L)).thenReturn(Optional.of(lesson));
-        when(lessonService.getLessonsByTeacherId(1L)).thenReturn(Set.of(lesson));
+
+        Page<Lesson> lessonPage = new PageImpl<>(List.of(lesson));
+        when(lessonService.getLessonsByTeacherId(eq(1L), any(), any(), any(), any(), any())).thenReturn(lessonPage);
+
         when(PrincipalExtractor.getUserFromPrincipal(any())).thenReturn(user);
     }
 
+
     @Test
     void testGetAllLessons() {
-        ResponseEntity<List<LessonModel>> response = lessonController.getAllLessons(principal);
+        ResponseEntity<Page<LessonModel>> response = lessonController.getAllLessons(principal, 0, 10, "date", true, null);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
+        assertEquals(1, response.getBody().getContent().size());
     }
 
-    @Test
-    void testGetLatestLessons() {
-        user.setTaught_lessons(Set.of(lesson));
-        when(lessonService.getLatestLessons(1L)).thenReturn(Set.of(lesson));
-
-        ResponseEntity<List<LessonModel>> response = lessonController.getLatestLessons(principal);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-    }
 
     @Test
     void testAddLesson() throws IOException {
