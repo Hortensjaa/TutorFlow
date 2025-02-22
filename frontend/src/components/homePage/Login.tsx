@@ -1,20 +1,12 @@
 import {Box, Button, Title, Text, TextInput, Divider} from '@mantine/core';
-import {notifications} from "@mantine/notifications";
 import {IconBrandGmail} from "@tabler/icons-react";
+import {loginLoadingNotification} from "./notifications.tsx";
 
 const Login = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 
     const googleLogin = () => {
-        notifications.show({
-            title: 'Please be patient',
-            message: 'It might take up to 2 minutes because of hosting issues. If you are not redirected after this time,' +
-                ' please close and open tab and try again.',
-            autoClose: 1200000,
-            withCloseButton: true,
-            loading: true,
-            color: "rgb(8,133,27)"
-        })
+        loginLoadingNotification()
         window.location.href = `${backendUrl}/oauth2/authorization/google`;
     };
 
@@ -51,9 +43,9 @@ const Login = () => {
                     fullWidth
                     size="md"
                     onClick={googleLogin}
-                    style={{backgroundColor: "rgb(8,133,27)"}}
                     leftSection={<IconBrandGmail/>}
                     rightSection={<span/>}
+                    color="google-green"
                 >
                     Continue with Gmail
                 </Button>

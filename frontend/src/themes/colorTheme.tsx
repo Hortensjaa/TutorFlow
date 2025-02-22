@@ -39,11 +39,39 @@ const deepOrange: MantineColorsTuple = [
     "#af5a00"
 ];
 
+const googleGreen: MantineColorsTuple = [
+    "#e9fcee",
+    "#d9f4e0",
+    "#b3e7c1",
+    "#8ada9f",
+    "#68cf83",
+    "#52c871",
+    "#45c567",
+    "#36ad56",
+    "#2b9a4a",
+    "#1b853d"
+]
+
+const failureRed: MantineColorsTuple = [
+    "#ffeaec",
+    "#fcd4d7",
+    "#f4a7ac",
+    "#ec777e",
+    "#e64f57",
+    "#e3353f",
+    "#e22732",
+    "#c91a25",
+    "#b41220",
+    "#9e0419"
+]
+
 export const pinkTheme: MantineThemeOverride = createTheme({
     ...DEFAULT_THEME,
     primaryColor: "pale-pink",
     colors: {
         "pale-pink": palePink,
-        "deep-orange": deepOrange
+        "deep-orange": deepOrange,
+        "google-green": googleGreen,
+        "failure-red": failureRed
     },
 });

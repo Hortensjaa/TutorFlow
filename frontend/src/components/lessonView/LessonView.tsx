@@ -8,6 +8,12 @@ import {useDisclosure, useMediaQuery} from "@mantine/hooks";
 import styles from "./LessonView.module.css"
 import {trimPath} from "./utils.ts";
 import {deleteLesson, downloadFile, getLesson} from "../../api/lessonApi.ts";
+import {
+    clearNotifications,
+    deleteFailureNotification,
+    deleteLoadingNotification,
+    deleteSuccessNotification
+} from "./notifications.tsx";
 
 
 const LessonView = () => {
@@ -33,12 +39,16 @@ const LessonView = () => {
     }, [id]);
 
     const handleDelete = () => {
-        setLoading(true);
+        setLoading(true)
+        deleteLoadingNotification();
         deleteLesson(id as string)
             .then(() => {
-                console.log("Lesson deleted successfully");
+                clearNotifications();
+                deleteSuccessNotification();
             })
             .catch((error) => {
+                clearNotifications();
+                deleteFailureNotification();
                 console.error("Error deleting lesson:", error);
                 setLoading(false);
             })

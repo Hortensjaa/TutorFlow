@@ -8,6 +8,12 @@ import LessonForm from "./LessonForm.tsx";
 import {useEffect, useState} from "react";
 import {Loader} from "@mantine/core";
 import {editLesson, getLesson} from "../../api/lessonApi.ts";
+import {
+    clearNotifications,
+    editFailureNotification,
+    editLoadingNotification,
+    editSuccessNotification
+} from "./notifications.tsx";
 
 const EditLesson = () => {
     const isMobile = useMediaQuery('(max-width: 768px)');
@@ -31,11 +37,15 @@ const EditLesson = () => {
     }, [id]);
 
     const handleEditLesson = async (values: any) => {
+        editLoadingNotification();
         editLesson(id as String, values)
             .then(() => {
-                console.log("Lesson edited successfully");
+                clearNotifications();
+                editSuccessNotification();
             })
             .catch((error) => {
+                clearNotifications();
+                editFailureNotification();
                 console.error("Error editing lesson:", error);
             })
             .finally(() => navigate(`/lesson/${id}`))
