@@ -55,7 +55,7 @@ export default function HomePage() {
                                 <Text
                                     span
                                     variant="gradient"
-                                    gradient={{ from: 'orange', to: 'var(--mantine-primary-color-7)', deg: 180 }}
+                                    gradient={{ from: 'deep-orange', to: 'var(--mantine-primary-color-7)', deg: 180 }}
                                     inherit>
                                     Tutor Flow
                                 </Text>
@@ -85,11 +85,10 @@ export default function HomePage() {
                         <Button
                             w="50vw"
                             radius={"100px"}
-                            variant={"gradient"}
                             leftSection={isMobile ? null : <IconArrowBigRight style={{margin: '0 10px'}}/>}
                             rightSection={isMobile ? null : <IconArrowBigRight style={{margin: '0 10px'}}/>}
-                            gradient={{ from: 'var(--mantine-primary-color-7)', to: 'var(--mantine-primary-color-9)', deg: 135 }}
                             onClick={isMobile ? () => navigate('/login') : toggle}
+                            bg="var(--mantine-primary-color-9)"
                         >
                             GET STARTED
                         </Button>
