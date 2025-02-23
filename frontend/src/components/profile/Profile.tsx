@@ -3,7 +3,7 @@ import {useContext, useEffect, useState} from "react";
 import {
     Box,
     Divider,
-    Loader, Table,
+    Loader,
     Text,
     Title
 } from "@mantine/core";
@@ -11,58 +11,48 @@ import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
-import { Student} from "../../models";
+import {Lesson, Student} from "../../models";
 import {getStudents} from "../../api/studentApi.ts";
-import {useNavigate} from "react-router-dom";
+import {StudentsTable} from "./studentsTable.tsx";
+import {getUpcomingLessons} from "../../api/lessonApi.ts";
+import {UpcomingTable} from "./upcomingLessonsTable.tsx";
 
 const Profile = () => {
-    const { state: thisUser, actions } = useContext(UserContext)
+    const { state: thisUser, _ } = useContext(UserContext)
     const isMobile = useMediaQuery('(max-width: 768px)');
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState({ students: true, lessons: true })
+
     const [students, setStudents] = useState<Student[]>([]);
-    const navigate = useNavigate();
+    const [lessons, setLessons] = useState<Lesson[]>([])
 
     useEffect(() => {
         getStudents()
-            .then(setStudents)
-            .then(() => setLoading(false))
+            .then((data) => {
+                setStudents(data);
+                setLoading((prevState) => ({ ...prevState, students: false }));
+            })
             .catch(console.error);
     }, []);
 
-    const NavLinkWrapper = ({ children, id }) => (
-        <Table.Td
-            style={{ cursor: id ? 'pointer' : 'default'}}
-            onClick={() => id ? navigate(`/lesson/${id}`) : {}}
-        >
-            {children}
-        </Table.Td>
-    )
+    useEffect(() => {
+        getUpcomingLessons()
+            .then((data) => {
+                setLessons(data);
+                setLoading((prevState) => ({ ...prevState, lessons: false }));
+            })
+            .catch(console.error);
+    }, []);
 
-    const studentRows = students ? students.map((element: Student) => (
-        <Table.Tr key={element.id}>
-            <Table.Td fw={500}>{element.name}</Table.Td>
-            <NavLinkWrapper id={element.last_lesson_id}>
-                {element.last_lesson ? new Date(element.last_lesson).toLocaleDateString(undefined, {
-                    year: 'numeric',
-                    month: 'numeric',
-                    day: 'numeric',
-                }) : null}
-            </NavLinkWrapper>
-            <NavLinkWrapper id={element.last_lesson_id}>
-                {element.last_topic}
-            </NavLinkWrapper>
-        </Table.Tr>
-    )) : null;
 
     return (
         <div className="container">
             {!isMobile ? <SideNavbar /> : <TopNavbar/>}
-            {loading && (
+            {loading["lessons"] || loading["students"] && (
                 <div className={"loading"}>
                     <Loader type="bars" />
                 </div>
             )}
-            {!loading && (
+            {!loading["lessons"] && !loading["students"] && (
                 <div className="content">
                     <Title order={1} className={styles.title}>Profile</Title>
 
@@ -87,22 +77,22 @@ const Profile = () => {
 
                     <Divider my="md" label="My students" labelPosition="center"/>
                     {students.length > 0 ? (
-                    <Table>
-                        <Table.Thead>
-                            <Table.Tr>
-                                <Table.Th className={styles.tableheader}>Name</Table.Th>
-                                <Table.Th className={styles.tableheader}>Last lesson date</Table.Th>
-                                <Table.Th className={styles.tableheader}>Last lesson topic</Table.Th>
-                            </Table.Tr>
-                        </Table.Thead>
-                        <Table.Tbody>
-                            {studentRows}
-                        </Table.Tbody>
-                    </Table>) : (
+                        <StudentsTable students={students}/>
+                    ) : (
                         <Text c="dimmed">
-                            Add your first student in settings
+                            Add your first student in settings.
                         </Text>
                     )}
+
+                    <Divider my="md" label="Upcoming lessons" labelPosition="center"/>
+                    {lessons.length > 0 ? (
+                        <UpcomingTable lessons={lessons}/>
+                    ) : (
+                        <Text c="dimmed">
+                            Choose "Add lesson" from menu to add plan some lesson.
+                        </Text>
+                    )}
+
                 </div>
             )}
         </div>

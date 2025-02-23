@@ -7,13 +7,14 @@ import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useDisclosure, useMediaQuery} from "@mantine/hooks";
 import styles from "./LessonView.module.css"
 import {trimPath} from "./utils.ts";
-import {deleteLesson, downloadFile, getLesson} from "../../api/lessonApi.ts";
+import {deleteLesson, getLesson} from "../../api/lessonApi.ts";
 import {
     clearNotifications,
     deleteFailureNotification,
     deleteLoadingNotification,
     deleteSuccessNotification
 } from "./notifications.tsx";
+import {downloadFile} from "../../api/filesApi.ts";
 
 
 const LessonView = () => {
@@ -116,9 +117,9 @@ const LessonView = () => {
                     <Rating value={lesson?.rate} readOnly />
                 </Group>
 
-                <Group mb="sm">
+                <Group mb="sm" align="flex-start" wrap="wrap">
                     <Text c="dimmed">Notes:</Text>
-                    <Text>{lesson?.description}</Text>
+                    <Text style={{ whiteSpace: 'pre-wrap' }}>{lesson?.description}</Text>
                 </Group>
 
                 <Group>

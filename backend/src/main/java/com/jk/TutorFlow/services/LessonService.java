@@ -101,6 +101,6 @@ public class LessonService {
     }
 
     public List<LessonModel> upcomingLessons(Long teacher_id) {
-        return lessonRepository.findLessonsForNextWeek(teacher_id).stream().map(lessonMapper::toModel).toList();
+        return lessonRepository.findUpcomingLessons(teacher_id).stream().map(lessonMapper::toModel).toList();
     }
 }

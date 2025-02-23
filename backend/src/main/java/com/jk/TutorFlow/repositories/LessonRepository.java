@@ -29,10 +29,14 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
             "LIMIT 1")
     Optional<Lesson> findMostRecentLessonByStudentId(@Param("studentId") Long studentId);
 
-    @Query(value = "SELECT * FROM lesson " +
-            "WHERE teacher.user_id = :teacherId AND date >= CURRENT_DATE " +
-            "AND date < CURRENT_DATE + INTERVAL 7 DAY " +
-            "ORDER BY date ASC",
-            nativeQuery = true)
-    List<Lesson> findLessonsForNextWeek(@Param("teacherId") Long teacherId);
+    @Query("SELECT l FROM Lesson l " +
+            "WHERE l.teacher.user_id = :teacherId " +
+            "AND l.date > CURRENT_DATE " +
+            "ORDER BY l.date ASC " +
+            "LIMIT 5")
+    List<Lesson> findUpcomingLessons(@Param("teacherId") Long teacherId);
+
+
+
+
 }
