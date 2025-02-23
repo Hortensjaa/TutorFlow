@@ -1,8 +1,8 @@
 package com.jk.TutorFlow.services;
 
-import com.jk.TutorFlow.entities.Lesson;
 import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
+import com.jk.TutorFlow.mappers.StudentMapper;
 import com.jk.TutorFlow.models.StudentModel;
 import com.jk.TutorFlow.repositories.LessonRepository;
 import com.jk.TutorFlow.repositories.StudentRepository;
@@ -10,8 +10,8 @@ import com.jk.TutorFlow.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class StudentService {
@@ -21,40 +21,31 @@ public class StudentService {
     private UserRepository userRepository;
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private StudentMapper studentMapper;
 
-    public StudentModel generateModel(Student entity) {
-        Optional<Lesson> lastLesson = lessonRepository.findMostRecentLessonByStudentId(entity.getStudent_id());
 
-        StudentModel model = new StudentModel();
-        model.setID(entity.getStudent_id());
-        model.setName(entity.getName());
-        if (lastLesson.isPresent()) {
-            model.setLastLesson(lastLesson.get().getDate().toLocalDate());
-            model.setLastTopic(lastLesson.get().getTopic());
-            model.setLastLessonId(lastLesson.get().getLesson_id());
-        }
-        model.setStudentModelClass("High School 1"); // todo: classes
-        return model;
+    public List<StudentModel> getStudents(Long teacherId) {
+        return studentRepository.findStudentsByTeacherId(teacherId)
+                .stream().map(e -> studentMapper.toModel(e,
+                        lessonRepository.findMostRecentLessonByStudentId(e.getStudent_id())))
+                .sorted(Comparator.comparing(StudentModel::getName)).toList();
     }
 
-    public Set<Student> getStudents(Long teacherId) {
-        return userRepository.findStudentsByTeacherId(teacherId);
-    }
-
-    public Student addStudent(Long teacherId, String studentName) {
+    public StudentModel addStudent(Long teacherId, String studentName) {
         User teacher = userRepository.findById(teacherId).orElseThrow(() -> new RuntimeException("Teacher not found"));
         Student student = new Student(studentName);
         student.setTeacher(teacher);
         studentRepository.save(student);
         userRepository.save(teacher);
-        return student;
+        return studentMapper.toModel(student, lessonRepository.findMostRecentLessonByStudentId(student.getStudent_id()));
     }
 
     public void deleteStudent(Long teacherId, Long studentId) {
         User teacher = userRepository.findById(teacherId).orElseThrow(() -> new RuntimeException("Teacher not found"));
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
         studentRepository.delete(student);
-        teacher.deleteStudent(student);
+        teacher.getStudents().remove(student);
         userRepository.save(teacher);
     }
 }

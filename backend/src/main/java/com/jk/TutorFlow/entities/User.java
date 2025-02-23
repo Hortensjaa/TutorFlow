@@ -1,13 +1,10 @@
 package com.jk.TutorFlow.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.jk.TutorFlow.models.UserModel;
-import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import jakarta.persistence.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,20 +33,5 @@ public class User {
     public User(String name, String email) {
         this.username = name;
         this.email = email;
-    }
-
-    public User(UserModel model) {
-        this.user_id = model.getID();
-        this.email = model.getEmail();
-        this.username = model.getUsername();
-    }
-
-    public void addStudent(Student student) {
-        this.students.add(student);
-        student.setTeacher(this);
-    }
-
-    public void deleteStudent(Student student) {
-        this.students.remove(student);
     }
 }

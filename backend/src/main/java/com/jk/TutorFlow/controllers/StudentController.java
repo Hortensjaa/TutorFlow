@@ -1,8 +1,8 @@
 package com.jk.TutorFlow.controllers;
 
-import com.jk.TutorFlow.entities.Student;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.StudentModel;
+import com.jk.TutorFlow.models.UserModel;
 import com.jk.TutorFlow.services.StudentService;
 import com.jk.TutorFlow.services.UserService;
 import com.jk.TutorFlow.utils.PrincipalExtractor;
@@ -18,52 +18,46 @@ import java.util.Map;
 
 
 @RestController
+@RequestMapping("/api/students/")
 public class StudentController {
 
     @Autowired
     private UserService userService;
     @Autowired
     private StudentService studentService;
-
     @Autowired
     private PrincipalExtractor PrincipalExtractor;
 
 
-    @GetMapping("/api/students/all/")
+    @GetMapping("all/")
     public ResponseEntity<List<StudentModel>> getStudents(@AuthenticationPrincipal OAuth2User principal) {
-        User userData = PrincipalExtractor.getUserFromPrincipal(principal);
-        User entity = userService.getUserByEmail(userData.getEmail());
-        List<StudentModel> students =  studentService.getStudents(entity.getUser_id()).stream().map(e -> studentService.generateModel(e)).toList();
-        return ResponseEntity.ok().body(students);
+        User user = PrincipalExtractor.getUserFromPrincipal(principal);
+        return ResponseEntity.ok().body(studentService.getStudents(user.getUser_id()));
     }
 
-    @PostMapping("/api/students/add/")
+    @PostMapping("add/")
     public ResponseEntity<Map<String, Object>> addStudentByTeacher(
             @AuthenticationPrincipal OAuth2User principal,
             @RequestBody Map<String, String> request
     ) {
         User userData = PrincipalExtractor.getUserFromPrincipal(principal);
-        User existingTeacher = userService.getUserByEmail(userData.getEmail());
+        UserModel existingTeacher = userService.getUserByEmail(userData.getEmail());
         String name = request.get("name");
         if (name == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("success", false, "message", "Name is required"));
         }
-
-        Student student = studentService.addStudent(existingTeacher.getUser_id(), name);
-        return ResponseEntity.ok(Map.of("success", true, "student", studentService.generateModel(student)));
+        return ResponseEntity.ok(Map.of("success", true, "student", studentService.addStudent(existingTeacher.getID(), name)));
     }
 
-    @DeleteMapping("/api/students/delete/")
+    @DeleteMapping("delete/")
     public void deleteStudentByTeacher(
             @AuthenticationPrincipal OAuth2User principal,
             @RequestBody StudentModel studentModel
     ) {
         User userData = PrincipalExtractor.getUserFromPrincipal(principal);
-        User existingTeacher = userService.getUserByEmail(userData.getEmail());
-        System.out.println(studentModel.getID());
-        System.out.println(studentModel.getName());
-        studentService.deleteStudent(existingTeacher.getUser_id(), studentModel.getID());
+        UserModel existingTeacher = userService.getUserByEmail(userData.getEmail());
+        studentService.deleteStudent(existingTeacher.getID(), studentModel.getID());
     }
 }
 

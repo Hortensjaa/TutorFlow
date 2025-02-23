@@ -1,6 +1,7 @@
 package com.jk.TutorFlow.utils;
 
 import com.jk.TutorFlow.entities.User;
+import com.jk.TutorFlow.models.UserModel;
 import com.jk.TutorFlow.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -36,7 +37,7 @@ public class PrincipalExtractor {
         if (user_email == null) {
             throw new AccessDeniedException("User not authenticated");
         }
-        User user = userService.getUserByEmail(user_email);
+        User user = userService.getEntityByEmail(user_email);
         if (user == null) {
             throw new AccessDeniedException("User not found");
         }

@@ -2,7 +2,6 @@ package com.jk.TutorFlow.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.jk.TutorFlow.models.LessonModel;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -45,15 +44,4 @@ public class Lesson {
     @Nullable
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Student student;
-
-    public Lesson(LessonModel model) {
-        this.topic = model.getTopic();
-        this.description = model.getDescription();
-        this.date = Date.valueOf(model.getDate());
-        this.rate = model.getRate();
-    }
-
-    public void addFiles(Set<File> newFiles) {
-        files.addAll(newFiles);
-    }
 }

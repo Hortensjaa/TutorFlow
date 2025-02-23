@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -23,7 +24,15 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
     @Query("SELECT l FROM Lesson l " +
             "WHERE l.student.student_id = :studentId " +
+            "AND l.date < CURRENT_DATE " +
             "ORDER BY l.date DESC " +
             "LIMIT 1")
     Optional<Lesson> findMostRecentLessonByStudentId(@Param("studentId") Long studentId);
+
+    @Query(value = "SELECT * FROM lesson " +
+            "WHERE teacher.user_id = :teacherId AND date >= CURRENT_DATE " +
+            "AND date < CURRENT_DATE + INTERVAL 7 DAY " +
+            "ORDER BY date ASC",
+            nativeQuery = true)
+    List<Lesson> findLessonsForNextWeek(@Param("teacherId") Long teacherId);
 }

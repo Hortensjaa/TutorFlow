@@ -13,17 +13,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @RestController
+@RequestMapping("/api/lessons/")
 public class LessonController {
     @Autowired
     private LessonService lessonService;
@@ -36,7 +39,7 @@ public class LessonController {
     @Autowired
     private PrincipalExtractor PrincipalExtractor;
 
-    @GetMapping("/api/lessons/all/")
+    @GetMapping("all/")
     public ResponseEntity<Page<LessonModel>> getAllLessons(
             @AuthenticationPrincipal OAuth2User principal,
             @RequestParam(defaultValue = "0") int page,
@@ -46,18 +49,17 @@ public class LessonController {
             @RequestParam(defaultValue = "") Long studentId) {
 
         User user = PrincipalExtractor.getUserFromPrincipal(principal);
-        Page<Lesson> lessons = lessonService.getLessonsByTeacherId(user.getUser_id(), studentId, page, size, sortBy, descending);
-        Page<LessonModel> models = lessons.map(lessonService::generateModel);
-        return ResponseEntity.ok().body(models);
+        return ResponseEntity.ok().body(lessonService
+                .getLessonsByTeacherId(user.getUser_id(), studentId, page, size, sortBy, descending));
     }
 
-    @PostMapping("api/lessons/add/")
+    @PostMapping("add/")
     public ResponseEntity<Lesson> addLesson(
             @AuthenticationPrincipal OAuth2User principal,
             @RequestPart("lesson") LessonModel model,
             @RequestPart(value = "files", required = false) MultipartFile[] files
     ) throws IOException {
-        Long teacher_id = userService.getUserByEmail(principal.getAttribute("email")).getUser_id();
+        Long teacher_id = userService.getUserByEmail(principal.getAttribute("email")).getID();
         Lesson lesson;
         if (files != null && files.length > 0) {
             String[] fileUrls = GCPService.uploadFiles(String.valueOf(teacher_id), files);
@@ -70,22 +72,14 @@ public class LessonController {
         return new ResponseEntity<>(lesson, HttpStatus.OK);
     }
 
-    @GetMapping("/api/lessons/{id}/")
+    @GetMapping("{id}/")
     public ResponseEntity<LessonModel> getLesson(
             @AuthenticationPrincipal OAuth2User principal, @PathVariable String id) {
-        Optional<Lesson> optionalLesson = lessonService.getLesson(Long.valueOf(id));
         User user = PrincipalExtractor.getUserFromPrincipal(principal);
-        if (optionalLesson.isEmpty()) {
-            throw new RuntimeException("Lesson not found with id: " + id);
-        }
-        Lesson lesson = optionalLesson.get();
-        if (!Objects.equals(user.getUser_id(), lesson.getTeacher().getUser_id())) {
-            throw new AccessDeniedException("User not authorized to update lesson");
-        }
-        return new ResponseEntity<>(lessonService.generateModel(lesson), HttpStatus.OK);
+        return new ResponseEntity<>(lessonService.getLessonModel(Long.valueOf(id), user.getUser_id()), HttpStatus.OK);
     }
 
-    @PutMapping("/api/lessons/{id}/edit/")
+    @PutMapping("{id}/edit/")
     public ResponseEntity<LessonModel> updateLesson(
             @AuthenticationPrincipal OAuth2User principal,
             @PathVariable String id,
@@ -93,14 +87,7 @@ public class LessonController {
             @RequestPart(value = "files", required = false) MultipartFile[] files
     ) throws IOException {
         User user = PrincipalExtractor.getUserFromPrincipal(principal);
-        Optional<Lesson> optionalLesson = lessonService.getLesson(Long.valueOf(id));
-        if (optionalLesson.isEmpty()) {
-            throw new RuntimeException("Lesson not found with id: " + id);
-        }
-        Lesson lesson = optionalLesson.get();
-        if (!Objects.equals(user.getUser_id(), lesson.getTeacher().getUser_id())) {
-            throw new AccessDeniedException("User not authorized to update lesson");
-        }
+        Lesson lesson = lessonService.getLesson(Long.valueOf(id), user.getUser_id());
 
         // delete removed files
         lesson.getFiles().forEach(file -> {
@@ -109,7 +96,7 @@ public class LessonController {
             }
         });
 
-        Lesson updatedLesson;
+        LessonModel updatedLesson;
 
         // upload new files
         if (files != null && files.length > 0) {
@@ -123,22 +110,21 @@ public class LessonController {
             updatedLesson = lessonService.updateLesson(model, lesson, new HashSet<>());
         }
 
-        return new ResponseEntity<>(lessonService.generateModel(updatedLesson), HttpStatus.OK);
+        return new ResponseEntity<>(updatedLesson, HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/lessons/{id}/delete/")
+    @DeleteMapping("{id}/delete/")
     public void deleteLesson(@AuthenticationPrincipal OAuth2User principal, @PathVariable String id) {
         User user = PrincipalExtractor.getUserFromPrincipal(principal);
-        Optional<Lesson> optionalLesson = lessonService.getLesson(Long.valueOf(id));
-        if (optionalLesson.isEmpty()) {
-            throw new RuntimeException("Lesson not found with id: " + id);
-        }
-
-        Lesson lesson = optionalLesson.get();
-        if (!Objects.equals(user.getUser_id(), lesson.getTeacher().getUser_id())) {
-            throw new AccessDeniedException("User not authorized to delete lesson");
-        }
+        Lesson lesson = lessonService.getLesson(Long.valueOf(id), user.getUser_id());
         lesson.getFiles().stream().map(File::getPath).forEach(GCPService::deleteFile);
         lessonService.deleteLesson(Long.valueOf(id));
+    }
+
+    @GetMapping("upcoming/")
+    public ResponseEntity<List<LessonModel>> upcomingLessons(@AuthenticationPrincipal OAuth2User principal) {
+        User user = PrincipalExtractor.getUserFromPrincipal(principal);
+        List<LessonModel> lessons = lessonService.upcomingLessons(user.getUser_id());
+        return ResponseEntity.ok().body(lessons);
     }
 }
