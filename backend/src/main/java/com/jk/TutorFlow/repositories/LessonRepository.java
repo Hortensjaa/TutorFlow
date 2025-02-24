@@ -31,7 +31,7 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
     @Query("SELECT l FROM Lesson l " +
             "WHERE l.teacher.user_id = :teacherId " +
-            "AND l.date > CURRENT_DATE " +
+            "AND l.date >= CURRENT_DATE " +
             "ORDER BY l.date ASC " +
             "LIMIT 5")
     List<Lesson> findUpcomingLessons(@Param("teacherId") Long teacherId);

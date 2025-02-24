@@ -89,7 +89,7 @@ const Profile = () => {
                         <UpcomingTable lessons={lessons}/>
                     ) : (
                         <Text c="dimmed">
-                            Choose "Add lesson" from menu to add plan some lesson.
+                            Choose "Add lesson" from menu to plan a new lesson.
                         </Text>
                     )}
 
