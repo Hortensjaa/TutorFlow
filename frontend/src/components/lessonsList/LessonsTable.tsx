@@ -5,7 +5,7 @@ import {
 } from '@tabler/icons-react';
 import {
     Center,
-    Group, Rating,
+    Group, Pill, PillGroup, Rating,
     Table,
     Text,
     UnstyledButton,
@@ -22,16 +22,18 @@ function Th({ children, reversed, sorted, onSort }) {
     const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
     return (
         <Table.Th className={styles.header}>
-            <UnstyledButton onClick={onSort}>
-                <Group justify="space-between">
-                    <Text fw={500} fz="sm">
-                        {children}
-                    </Text>
-                    <Center>
-                        <Icon size={16} stroke={1.5} />
-                    </Center>
-                </Group>
-            </UnstyledButton>
+                <UnstyledButton onClick={onSort}>
+                    <Group justify="space-between">
+                        <Text fw={500} fz="sm">
+                            {children}
+                        </Text>
+                        {onSort &&
+                            <Center>
+                                <Icon size={16} stroke={1.5} />
+                            </Center>
+                        }
+                    </Group>
+                </UnstyledButton>
         </Table.Th>
     );
 }
@@ -66,6 +68,18 @@ export default function LessonsTable({lessons, sortBy, setSortBy, reverseSortDir
             <Table.Td>{row.student}</Table.Td>
             {
                 !isMobile && <Table.Td><Rating value={row.rate} readOnly /></Table.Td>
+            }
+            {
+                !isMobile &&
+                <Table.Td>
+                    <PillGroup mb="sm">
+                        {row.tags.map((tag) => (
+                            <Pill key={tag.id} withRemoveButton={false}>
+                                {tag.name}
+                            </Pill>
+                        ))}
+                    </PillGroup>
+                </Table.Td>
             }
         </Table.Tr>
     ));
@@ -111,6 +125,12 @@ export default function LessonsTable({lessons, sortBy, setSortBy, reverseSortDir
                             }}
                         >
                             Overview
+                        </Th>
+                    }
+                    {
+                        !isMobile &&
+                        <Th>
+                            Tags
                         </Th>
                     }
                 </Table.Tr>

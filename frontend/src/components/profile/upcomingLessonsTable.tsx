@@ -17,12 +17,26 @@ const NavLinkWrapper = ({ children, id, bold }) => {
     )
 };
 
+const isToday = (date: Date) => {
+    const today = new Date();
+    return (
+        date.getFullYear() === today.getFullYear() &&
+        date.getMonth() === today.getMonth() &&
+        date.getDate() === today.getDate()
+    );
+};
+
+
 const lessonRows = (lessons: Lesson[]) => {
     if (!lessons || lessons.length === 0) {
         return <Table.Tr><Table.Td colSpan={3}>No students found</Table.Td></Table.Tr>;
     }
     return lessons.map((element: Lesson) => (
-        <Table.Tr key={element.id}>
+        <Table.Tr
+            key={element.id}
+            style={{ backgroundColor: element.date && isToday(new Date(element.date)) ? "var(--mantine-primary-color-2)" : null }}
+        >
+
             <NavLinkWrapper id={element.id}>
                 {element.date
                     ? new Date(element.date).toLocaleDateString(undefined, {

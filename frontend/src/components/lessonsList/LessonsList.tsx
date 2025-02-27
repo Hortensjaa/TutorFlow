@@ -5,7 +5,7 @@ import {
 } from '@tabler/icons-react';
 import {
     Button, Loader, Text,
-    ScrollArea, Select, useMantineTheme, TextInput,
+    ScrollArea, Select, useMantineTheme, TextInput, Checkbox, Box, Group,
 } from '@mantine/core';
 
 import {Lesson, Student} from "../../models";
@@ -29,6 +29,7 @@ export default function LessonsList() {
     const [allLessons, setAllLessons] = useState<Lesson[]>([]);
     const [totalPages, setTotalPages] = useState(1);
     const [search, setSearch] = useState("");
+    const [searchBy, setSearchBy] = useState({topic: true, tag: true, description: false});
 
     const [students, setStudents] = useState<{ value: string; label: string }[]>([]);
     const [studentId, setStudentId] = useState("");
@@ -64,8 +65,16 @@ export default function LessonsList() {
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setSearch(value);
+
+        if (value.trim() === "") {
+            setLessons(allLessons);
+            return;
+        }
+
         setLessons(allLessons.filter((lesson) =>
-            lesson.topic.toLowerCase().includes(value.toLowerCase())
+            (searchBy.topic && lesson.topic.toLowerCase().includes(value.toLowerCase()))
+            || (searchBy.tag && lesson.tags.some((tag) => tag.name.toLowerCase().includes(value.toLowerCase())))
+            || (searchBy.description && lesson.description.toLowerCase().includes(value.toLowerCase()))
         ));
     };
 
@@ -84,14 +93,36 @@ export default function LessonsList() {
                         {!isMobile ? null : <TopNavbar/>}
                         {size !== 0 ? (
                             <div>
-                                <TextInput
-                                    placeholder="Search this page by topic"
-                                    mb="md"
-                                    leftSection={<IconSearch/>}
-                                    value={search}
-                                    onChange={handleSearchChange}
-                                    className={styles.searchInput}
-                                />
+                                <Box style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap"}}>
+                                    <TextInput
+                                        placeholder="Search..."
+                                        mb="md"
+                                        leftSection={<IconSearch />}
+                                        value={search}
+                                        onChange={handleSearchChange}
+                                        className={styles.searchInput}
+                                        style={{ flex: 1 }}
+                                    />
+                                    <Group spacing="sm">
+                                        <Checkbox
+                                            label="Topic"
+                                            checked={searchBy.topic}
+                                            onChange={() => setSearchBy(prev => ({ ...prev, topic: !prev.topic }))}
+                                        />
+                                        <Checkbox
+                                            label="Tag"
+                                            checked={searchBy.tag}
+                                            onChange={() => setSearchBy(prev => ({ ...prev, tag: !prev.tag }))}
+                                        />
+                                        <Checkbox
+                                            label="Notes"
+                                            checked={searchBy.description}
+                                            onChange={() => setSearchBy(prev => ({ ...prev, description: !prev.description }))}
+                                        />
+                                    </Group>
+                                </Box>
+
+
                                 <Select
                                     data={students}
                                     placeholder={"Filter by student"}
