@@ -48,9 +48,10 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
     const addTag = (tag: string) => {
         setNewTag("")
         const response = addNewTag(tag);
-        response.then((data) => {
+        response.then((data: Tag) => {
             setTags([...tags, { value: data.id.toString(), label: data.name }]);
-            form.setFieldValue('lesson.tags', [...form.values.lesson.tags, data.id.toString()]);
+            form.setFieldValue('lesson.tags', [...form.values.lesson.tags, data]);
+            console.log(form.values.lesson)
         }).catch((error) => console.error('Error adding tag:', error));
     }
 
@@ -109,6 +110,7 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
                                 <Group spacing="xs" style={{ flexWrap: 'nowrap' }}>
                                     <MultiSelect
                                         data={tags}
+                                        value={form.values.lesson.tags.map(tag => tag.id.toString())}
                                         placeholder="Search..."
                                         searchable
                                         nothingFoundMessage="Nothing found..."
@@ -119,7 +121,7 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
                                                 return tagObject ? { id: Number(tagObject.value), name: tagObject.label } : null;
                                             }).filter(Boolean);
 
-                                            form.setFieldValue('lesson.tags', selectedTags); // 🔹 Set transformed tags
+                                            form.setFieldValue('lesson.tags', selectedTags);
                                         }}
                                     />
 

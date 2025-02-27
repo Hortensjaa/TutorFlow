@@ -12,6 +12,7 @@ import java.util.List;
 public interface TagRepository extends JpaRepository<Tag, Long> {
 
     @Query("SELECT tg FROM Tag tg " +
-            "WHERE tg.teacher.user_id = :teacherId")
+            "WHERE tg.teacher.user_id = :teacherId " +
+            "ORDER BY tg.name ASC")
     List<Tag> getTeachersTags(@Param("teacherId") Long teacherId);
 }

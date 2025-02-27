@@ -79,103 +79,101 @@ export default function LessonsList() {
     };
 
     return (
-        <ScrollArea>
-            <div className={styles.container}>
-                {!isMobile ? <SideNavbar/> : null}
-                {loading && (
-                    <div className={"loading"}>
-                        <Loader type="bars"/>
-                    </div>
-                )}
+        <div className={styles.container}>
+            {!isMobile ? <SideNavbar/> : null}
+            {loading && (
+                <div className={"loading"}>
+                    <Loader type="bars"/>
+                </div>
+            )}
 
-                {!loading && (
-                    <div className={styles.content}>
-                        {!isMobile ? null : <TopNavbar/>}
-                        {size !== 0 ? (
-                            <div>
-                                <Box style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap"}}>
-                                    <TextInput
-                                        placeholder="Search..."
-                                        mb="md"
-                                        leftSection={<IconSearch />}
-                                        value={search}
-                                        onChange={handleSearchChange}
-                                        className={styles.searchInput}
-                                        style={{ flex: 1 }}
+            {!loading && (
+                <div className={styles.content}>
+                    {!isMobile ? null : <TopNavbar/>}
+                    {size !== 0 ? (
+                        <div>
+                            <Box style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap"}}>
+                                <TextInput
+                                    placeholder="Search..."
+                                    mb="md"
+                                    leftSection={<IconSearch />}
+                                    value={search}
+                                    onChange={handleSearchChange}
+                                    className={styles.searchInput}
+                                    style={{ flex: 1 }}
+                                />
+                                <Group spacing="sm">
+                                    <Checkbox
+                                        label="Topic"
+                                        checked={searchBy.topic}
+                                        onChange={() => setSearchBy(prev => ({ ...prev, topic: !prev.topic }))}
                                     />
-                                    <Group spacing="sm">
-                                        <Checkbox
-                                            label="Topic"
-                                            checked={searchBy.topic}
-                                            onChange={() => setSearchBy(prev => ({ ...prev, topic: !prev.topic }))}
-                                        />
-                                        <Checkbox
-                                            label="Tag"
-                                            checked={searchBy.tag}
-                                            onChange={() => setSearchBy(prev => ({ ...prev, tag: !prev.tag }))}
-                                        />
-                                        <Checkbox
-                                            label="Notes"
-                                            checked={searchBy.description}
-                                            onChange={() => setSearchBy(prev => ({ ...prev, description: !prev.description }))}
-                                        />
-                                    </Group>
-                                </Box>
+                                    <Checkbox
+                                        label="Tag"
+                                        checked={searchBy.tag}
+                                        onChange={() => setSearchBy(prev => ({ ...prev, tag: !prev.tag }))}
+                                    />
+                                    <Checkbox
+                                        label="Notes"
+                                        checked={searchBy.description}
+                                        onChange={() => setSearchBy(prev => ({ ...prev, description: !prev.description }))}
+                                    />
+                                </Group>
+                            </Box>
 
 
-                                <Select
-                                    data={students}
-                                    placeholder={"Filter by student"}
-                                    onChange={(value) => setStudentId(value)}
-                                    value={studentId}
-                                    clearable
-                                    mb={10}
-                                />
-                                <LessonsTable
-                                    lessons={lessons}
-                                    sortBy={sortBy}
-                                    reverseSortDirection={reverseSortDirection}
-                                    setSortBy={setSortBy}
-                                    setReverseSortDirection={setReverseSortDirection}
-                                />
-                                <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
-                                    <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
-                                        <IconCaretLeftFilled
-                                            onClick={() => page > 0 ? setPage(page - 1) : null}
-                                            style={{color: page === 0 ? "gray" : theme.colors[theme.primaryColor][6]}}
-                                        />
-                                        <span> Page {page + 1} of {totalPages} </span>
-                                        <IconCaretRightFilled
-                                            onClick={() => page < totalPages - 1 ? setPage(page + 1) : null}
-                                            style={{color: page < totalPages - 1 ? theme.colors[theme.primaryColor][6] : "gray"}}
-                                        />
-                                    </div>
+                            <Select
+                                data={students}
+                                placeholder={"Filter by student"}
+                                onChange={(value) => setStudentId(value)}
+                                value={studentId}
+                                clearable
+                                mb={10}
+                            />
+                            <LessonsTable
+                                lessons={lessons}
+                                sortBy={sortBy}
+                                reverseSortDirection={reverseSortDirection}
+                                setSortBy={setSortBy}
+                                setReverseSortDirection={setReverseSortDirection}
+                            />
+                            <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
+                                <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
+                                    <IconCaretLeftFilled
+                                        onClick={() => page > 0 ? setPage(page - 1) : null}
+                                        style={{color: page === 0 ? "gray" : theme.colors[theme.primaryColor][6]}}
+                                    />
+                                    <span> Page {page + 1} of {totalPages} </span>
+                                    <IconCaretRightFilled
+                                        onClick={() => page < totalPages - 1 ? setPage(page + 1) : null}
+                                        style={{color: page < totalPages - 1 ? theme.colors[theme.primaryColor][6] : "gray"}}
+                                    />
+                                </div>
 
-                                    <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
-                                        <Text>Lessons per page:{' '}</Text>
-                                        <Select
-                                            data={["5", "10", "25", "50", "100"].map((value) => ({value: value, label: value}))}
-                                            onChange={(value) => {
-                                                setSize(value as number);
-                                                setPage(0);
-                                            }}
-                                            value={size}
-                                            w={75}
-                                        />
-                                    </div>
+                                <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
+                                    <Text>Lessons per page:{' '}</Text>
+                                    <Select
+                                        data={["5", "10", "25", "50", "100"].map((value) => ({value: value, label: value}))}
+                                        onChange={(value) => {
+                                            setSize(value as number);
+                                            setPage(0);
+                                        }}
+                                        value={size}
+                                        w={75}
+                                    />
                                 </div>
                             </div>
-                        ) : (
-                            <div className={styles.buttoncontainer}>
-                                <Button w={"50vw"} onClick={() => navigate("/lesson/add")}>
-                                    Add your first lesson!
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-                )}
-            </div>
-        </ScrollArea>
+                        </div>
+                    ) : (
+                        <div className={styles.buttoncontainer}>
+                            <Button w={"50vw"} onClick={() => navigate("/lesson/add")}>
+                                Add your first lesson!
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
     );
 }
 

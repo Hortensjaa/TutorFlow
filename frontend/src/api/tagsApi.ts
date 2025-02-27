@@ -25,3 +25,14 @@ export const addNewTag = async (name: String) => {
 
     return await response.json();
 };
+
+export const deleteTag = async (id: String) => {
+    const response = await fetch(`${backendUrl}/api/tags/delete/`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+    });
+    if (!response.ok) throw new Error("Failed to delete tag");
+    return id;
+};

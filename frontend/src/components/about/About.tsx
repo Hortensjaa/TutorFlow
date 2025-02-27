@@ -55,6 +55,9 @@ const About = () => {
                     <List.Item>
                         <ListItem text="From dashboard you can view, edit or delete your lessons." />
                     </List.Item>
+                    <List.Item>
+                        <ListItem text="Add tags to better organise your lessons. You can always delete unused tags at " linkText="Settings" linkPath="/profile/edit" />
+                    </List.Item>
                 </List>
 
                 <Divider m="xs" mt={"auto"}/>
