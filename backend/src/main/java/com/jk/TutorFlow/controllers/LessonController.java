@@ -4,10 +4,8 @@ import com.jk.TutorFlow.entities.File;
 import com.jk.TutorFlow.entities.Lesson;
 import com.jk.TutorFlow.entities.User;
 import com.jk.TutorFlow.models.LessonModel;
-import com.jk.TutorFlow.services.FileService;
-import com.jk.TutorFlow.services.GCPService;
-import com.jk.TutorFlow.services.LessonService;
-import com.jk.TutorFlow.services.UserService;
+import com.jk.TutorFlow.models.TagModel;
+import com.jk.TutorFlow.services.*;
 import com.jk.TutorFlow.utils.PrincipalExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -34,6 +33,8 @@ public class LessonController {
     private UserService userService;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private TagService tagService;
     @Autowired
     private GCPService GCPService;
     @Autowired
@@ -61,14 +62,19 @@ public class LessonController {
     ) throws IOException {
         Long teacher_id = userService.getUserByEmail(principal.getAttribute("email")).getID();
         Lesson lesson;
+        System.out.println(model);
         if (files != null && files.length > 0) {
             String[] fileUrls = GCPService.uploadFiles(String.valueOf(teacher_id), files);
             Set<File> filesObjects = fileService.addFiles(fileUrls);
             lesson = lessonService.addLesson(model, teacher_id, filesObjects);
             fileService.updateFiles(lesson, filesObjects);
+
         } else {
             lesson = lessonService.addLesson(model, teacher_id, new HashSet<>());
         }
+        tagService.addTagsToLesson(
+                Set.of(model.getTags()).stream().map(TagModel::getID).collect(Collectors.toSet()),
+                lesson.getLesson_id());
         return new ResponseEntity<>(lesson, HttpStatus.OK);
     }
 
@@ -109,6 +115,10 @@ public class LessonController {
         } else {
             updatedLesson = lessonService.updateLesson(model, lesson, new HashSet<>());
         }
+
+        tagService.addTagsToLesson(
+                Set.of(model.getTags()).stream().map(TagModel::getID).collect(Collectors.toSet()),
+                lesson.getLesson_id());
 
         return new ResponseEntity<>(updatedLesson, HttpStatus.OK);
     }

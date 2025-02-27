@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -44,4 +45,11 @@ public class Lesson {
     @Nullable
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Student student;
+
+    @ManyToMany
+    @JoinTable(
+            name = "lesson_tag",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    Set<Tag> tags = new HashSet<>();
 }

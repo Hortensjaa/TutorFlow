@@ -8,6 +8,15 @@
   "teacher": "Mr. Smith",
   "files": ["exercises.pdf", "path/assignment.docx"],
   "rate": 5,
-  "subject": "mathematics"
+  "tags": [
+    {
+      "id": 1,
+      "name": "math"
+    },
+    {
+      "id": 5,
+      "name": "excel"
+    }
+  ]
 }
 

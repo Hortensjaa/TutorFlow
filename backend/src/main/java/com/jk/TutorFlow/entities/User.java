@@ -1,5 +1,6 @@
 package com.jk.TutorFlow.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,6 +30,10 @@ public class User {
     @OneToMany(mappedBy = "teacher")
     @JsonManagedReference
     private Set<Student> students = new HashSet<>();
+
+    @OneToMany(mappedBy = "teacher")
+    @JsonBackReference
+    private Set<Tag> tags = new HashSet<>();
 
     public User(String name, String email) {
         this.username = name;

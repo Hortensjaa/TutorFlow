@@ -35,8 +35,4 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
             "ORDER BY l.date ASC " +
             "LIMIT 5")
     List<Lesson> findUpcomingLessons(@Param("teacherId") Long teacherId);
-
-
-
-
 }

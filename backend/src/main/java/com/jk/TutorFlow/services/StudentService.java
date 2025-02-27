@@ -34,7 +34,7 @@ public class StudentService {
 
     public StudentModel addStudent(Long teacherId, String studentName) {
         User teacher = userRepository.findById(teacherId).orElseThrow(() -> new RuntimeException("Teacher not found"));
-        Student student = new Student(studentName);
+        Student student = new Student(studentName.substring(0, 1).toUpperCase() + studentName.substring(1));
         student.setTeacher(teacher);
         studentRepository.save(student);
         userRepository.save(teacher);

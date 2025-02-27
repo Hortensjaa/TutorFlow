@@ -11,9 +11,11 @@ export const addLesson = async (values: any) => {
         rate: values.lesson.rate,
         student: '',
         student_id: parseInt(values.lesson.student, 10),
-        teacher: ''
+        teacher: '',
+        tags: values.lesson.tags,
     };
 
+    console.log(lesson)
     formData.append('lesson', new Blob([JSON.stringify(lesson)], { type: 'application/json' }));
 
     if (values.newFiles) {
@@ -42,6 +44,7 @@ export const editLesson = async (id: string, values: any) => {
         student: '',
         student_id: parseInt(values.lesson.student, 10),
         teacher: '',
+        tags: values.lesson.tags,
         files: values.lesson.files
     };
 

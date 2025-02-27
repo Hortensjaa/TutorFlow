@@ -3,6 +3,7 @@ package com.jk.TutorFlow.mappers;
 import com.jk.TutorFlow.entities.File;
 import com.jk.TutorFlow.entities.Lesson;
 import com.jk.TutorFlow.models.LessonModel;
+import com.jk.TutorFlow.models.TagModel;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
@@ -21,6 +22,15 @@ public class LessonMapper {
         model.setStudentID(entity.getStudent() != null ? entity.getStudent().getStudent_id() : -1);
         model.setTeacher(entity.getTeacher().getUsername());
         model.setFiles(entity.getFiles().stream().map(File::getPath).toArray(String[]::new));
+        model.setTags(entity.getTags().stream()
+                .map(tag -> {
+                    TagModel t = new TagModel();
+                    t.setID(tag.getTag_id());
+                    t.setName(tag.getName());
+                    return t;
+                })
+                .toArray(TagModel[]::new));
+
         return model;
     }
 

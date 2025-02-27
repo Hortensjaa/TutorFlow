@@ -14,11 +14,12 @@ public class LessonModel {
     private String topic;
     private LocalDate date;
     private String description;
-    private Integer rate;
     private String student;
     private long studentID;
     private String teacher;
     private String[] files;
+    private Integer rate;
+    private TagModel[] tags;
 
     @JsonProperty("id")
     public long getID() { return id; }
@@ -40,11 +41,6 @@ public class LessonModel {
     @JsonProperty("description")
     public void setDescription(String value) { this.description = value; }
 
-    @JsonProperty("rate")
-    public Integer getRate() { return rate; }
-    @JsonProperty("rate")
-    public void setRate(Integer value) { this.rate = value; }
-
     @JsonProperty("student")
     public String getStudent() { return student; }
     @JsonProperty("student")
@@ -64,4 +60,14 @@ public class LessonModel {
     public String[] getFiles() { return files; }
     @JsonProperty("files")
     public void setFiles(String[] value) { this.files = value; }
+
+    @JsonProperty("rate")
+    public Integer getRate() { return rate; }
+    @JsonProperty("rate")
+    public void setRate(Integer value) { this.rate = value; }
+
+    @JsonProperty("tags")
+    public TagModel[] getTags() { return tags; }
+    @JsonProperty("tags")
+    public void setTags(TagModel[] value) { this.tags = value; }
 }

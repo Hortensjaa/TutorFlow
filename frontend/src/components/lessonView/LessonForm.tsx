@@ -4,33 +4,55 @@ import {
     TextInput,
     Select,
     Textarea, Input,
-    Button, Title, Rating, Loader, InputBase, Pill
+    Button, Title, Rating, Loader, InputBase, Pill, MultiSelect, Group, Box, Divider, UnstyledButton
 } from '@mantine/core';
 import '@mantine/dates/styles.css';
 import { DateInput } from "@mantine/dates";
 import { FileInput } from '@mantine/core';
-import {Lesson, Student} from '../../models';
+import {Student, Tag} from '../../models';
 import styles from "./LessonView.module.css";
 import {trimPath} from "./utils.ts";
 import {getStudents} from "../../api/studentApi.ts";
 import {LessonFormProps} from "./props.ts";
+import {addNewTag, getUserTags} from "../../api/tagsApi.ts";
+import {IconPlus} from "@tabler/icons-react";
 
 
 const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
     const [students, setStudents] = useState<{ value: string; label: string }[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [tags, setTags] = useState<{ value: string; label: string }[]>([]);
+    const [newTag, setNewTag] = useState<string>("");
+    const [loading, setLoading] = useState({ students: true, tags: true })
 
 
     useEffect(() => {
-        setLoading(true);
         const response = getStudents();
         response.then((data) => {
             setStudents(data.map((student: Student) => ({
                 value: student.id.toString(), label: student.name }
             )))})
             .catch((error) => console.error('Error fetching students:', error))
-            .finally(() => setLoading(false));
+            .finally(() => setLoading((prevState) => ({ ...prevState, students: false })));
     }, []);
+
+    useEffect(() => {
+        const response = getUserTags();
+        response.then((data) => {
+            setTags(data.map((tag: Tag) => ({
+                    value: tag.id.toString(), label: tag.name }
+            )))})
+            .catch((error) => console.error('Error fetching tags:', error))
+            .finally(() => setLoading((prevState) => ({ ...prevState, tags: false })));
+    }, []);
+
+    const addTag = (tag: string) => {
+        setNewTag("")
+        const response = addNewTag(tag);
+        response.then((data) => {
+            setTags([...tags, { value: data.id.toString(), label: data.name }]);
+            form.setFieldValue('lesson.tags', [...form.values.lesson.tags, data.id.toString()]);
+        }).catch((error) => console.error('Error adding tag:', error));
+    }
 
     const form = useForm({
         initialValues: {
@@ -41,6 +63,7 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
                 description: initialValues?.lesson.description || '',
                 student: initialValues?.lesson.student_id?.toString() || '',
                 files: initialValues?.lesson.files || [],
+                tags: initialValues?.lesson.tags || [],
             },
             newFiles: [],
         },
@@ -65,84 +88,122 @@ const LessonForm = ({ initialValues, onSubmit, header }: LessonFormProps) => {
 
     return (
         <div className={"container"}>
-            {loading && (
+            {loading.tags || loading.students && (
                 <div className={"loading"}>
                     <Loader type="bars" />
                 </div>
             )}
-            {!loading && <div className="content">
-                <form onSubmit={form.onSubmit(onSubmit)} className={styles.formlesson}>
-                    <Title order={1} className={styles.title} mb={"md"}>{header}</Title>
+            {!loading.tags && !loading.students &&
+                (
+                    <div className="content">
+                        <form onSubmit={form.onSubmit(onSubmit)} className={styles.formlesson}>
+                            <Title order={1} className={styles.title} mb={"md"}>{header}</Title>
 
-                    <TextInput
-                        label="Topic"
-                        placeholder="Enter lesson topic"
-                        {...form.getInputProps('lesson.topic')}
-                    />
+                            <TextInput
+                                label="Topic"
+                                placeholder="Enter lesson topic"
+                                {...form.getInputProps('lesson.topic')}
+                            />
 
-                    <Input.Wrapper label="Overview">
-                        <Rating
-                            defaultValue={initialValues?.lesson.rate || 0}
-                            onChange={(value) => form.setFieldValue('lesson.rate', value)} />
-                    </Input.Wrapper>
+                            <Input.Wrapper label="Tags">
+                                <Group spacing="xs" style={{ flexWrap: 'nowrap' }}>
+                                    <MultiSelect
+                                        data={tags}
+                                        placeholder="Search..."
+                                        searchable
+                                        nothingFoundMessage="Nothing found..."
+                                        style={{ flex: 1, minWidth: 0 }}
+                                        onChange={(selectedTagIds) => {
+                                            const selectedTags = selectedTagIds.map(tagId => {
+                                                const tagObject = tags.find(tag => tag.value === tagId);
+                                                return tagObject ? { id: Number(tagObject.value), name: tagObject.label } : null;
+                                            }).filter(Boolean);
 
-                    <DateInput
-                        valueFormat="DD MMM YYYY"
-                        label="Date"
-                        placeholder="Select lesson date"
-                        {...form.getInputProps('lesson.date')}
-                    />
+                                            form.setFieldValue('lesson.tags', selectedTags); // 🔹 Set transformed tags
+                                        }}
+                                    />
 
-                    <Textarea
-                        label="Notes"
-                        placeholder="Done excercises, homework, problems, overall reflection and preparation for next lesson"
-                        {...form.getInputProps('lesson.description')}
-                    />
+                                    <Divider orientation="vertical" />
+                                    <TextInput
+                                        value={newTag}
+                                        onChange={(event) => setNewTag(event.currentTarget.value)}
+                                        placeholder="Enter new tag"
+                                        style={{ flex: 0.5, minWidth: 0 }}
+                                    />
+                                    <UnstyledButton
+                                        onClick={() => addTag(newTag)}
+                                        style={{flexShrink: 0, display: 'flex' }}
+                                    >
+                                        <IconPlus/>
+                                    </UnstyledButton>
 
-                    <Select
-                        label="Student"
-                        placeholder="Select a student"
-                        data={students}
-                        {...form.getInputProps('lesson.student')}
-                    />
+                                </Group>
+                            </Input.Wrapper>
 
-                    {
-                        form.values.lesson.files.length > 0 && (
-                            <InputBase component="div" label={"Previously uploaded files"} multiline>
-                                <Pill.Group>
-                                    {
-                                        form.values.lesson.files.map((file: String, index: number) => (
-                                            <Pill
-                                                key={index}
-                                                withRemoveButton
-                                                onRemove={() => form.setFieldValue('lesson.files',
-                                                    form.values.lesson.files.filter((_, i) => i !== index))}
-                                            >
-                                                {trimPath(file)}
-                                            </Pill>
-                                        ))
-                                    }
-                                </Pill.Group>
-                            </InputBase>
-                        )
-                    }
+                            <Input.Wrapper label="Overview">
+                                <Rating
+                                    defaultValue={initialValues?.lesson.rate || 0}
+                                    onChange={(value) => form.setFieldValue('lesson.rate', value)} />
+                            </Input.Wrapper>
+
+                            <DateInput
+                                valueFormat="DD MMM YYYY"
+                                label="Date"
+                                placeholder="Select lesson date"
+                                {...form.getInputProps('lesson.date')}
+                            />
+
+                            <Textarea
+                                label="Notes"
+                                placeholder="Done excercises, homework, problems, overall reflection and preparation for next lesson"
+                                {...form.getInputProps('lesson.description')}
+                            />
+
+                            <Select
+                                label="Student"
+                                placeholder="Select a student"
+                                data={students}
+                                {...form.getInputProps('lesson.student')}
+                            />
+
+                            {
+                                form.values.lesson.files.length > 0 && (
+                                    <InputBase component="div" label={"Previously uploaded files"} multiline>
+                                        <Pill.Group>
+                                            {
+                                                form.values.lesson.files.map((file: String, index: number) => (
+                                                    <Pill
+                                                        key={index}
+                                                        withRemoveButton
+                                                        onRemove={() => form.setFieldValue('lesson.files',
+                                                            form.values.lesson.files.filter((_, i) => i !== index))}
+                                                    >
+                                                        {trimPath(file)}
+                                                    </Pill>
+                                                ))
+                                            }
+                                        </Pill.Group>
+                                    </InputBase>
+                                )
+                            }
 
 
-                    <FileInput
-                        clearable
-                        label="Files"
-                        placeholder="Upload new files"
-                        multiple
-                        {...form.getInputProps('newFiles')}
-                    />
+                            <FileInput
+                                clearable
+                                label="Files"
+                                placeholder="Upload new files"
+                                multiple
+                                {...form.getInputProps('newFiles')}
+                            />
 
-                    <div className="buttonContainer">
-                        <Button type="submit" className="wideButton">
-                            {header}
-                        </Button>
+                            <div className="buttonContainer">
+                                <Button type="submit" className="wideButton">
+                                    {header}
+                                </Button>
+                            </div>
+                        </form>
                     </div>
-                </form>
-            </div>}
+                )}
         </div>
     );
 };

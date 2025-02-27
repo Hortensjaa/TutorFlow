@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {Lesson} from "../../models";
 import {useNavigate, useParams} from "react-router-dom";
-import {Button, Container, Dialog, Group, Loader, Pill, Rating, Text, Title} from "@mantine/core";
+import {Button, Container, Dialog, Group, Loader, Pill, PillGroup, Rating, Text, Title} from "@mantine/core";
 import {SideNavbar} from "../index.ts";
 import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useDisclosure, useMediaQuery} from "@mantine/hooks";
@@ -94,6 +94,14 @@ const LessonView = () => {
                 <Group mb="sm">
                     <Title order={2} className={styles.title}>{lesson?.topic}</Title>
                 </Group>
+
+                <PillGroup mb="sm">
+                    {lesson?.tags?.map((tag) => (
+                        <Pill key={tag.id} withRemoveButton={false}>
+                            {tag.name}
+                        </Pill>
+                    ))}
+                </PillGroup>
 
                 <Group mb="sm">
                     <Text c="dimmed">Student:</Text>
