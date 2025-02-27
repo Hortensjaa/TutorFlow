@@ -1,11 +1,17 @@
 .navbar {
-    height: 100vh;
     width: 300px;
-    padding: var(--mantine-spacing-md);
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
     display: flex;
     flex-direction: column;
+    padding: var(--mantine-spacing-md);
     border-right: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+    background-color: var(--mantine-color-white);
+    z-index: 10;
 }
+
 
 .navbarMain {
     flex: 1;

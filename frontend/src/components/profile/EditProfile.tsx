@@ -16,21 +16,25 @@ import {TopNavbar} from "../navBar/TopNavbar.tsx";
 import {useDisclosure, useMediaQuery} from "@mantine/hooks";
 import styles from './Profile.module.css';
 import {useNavigate} from "react-router-dom";
-import {Student} from "../../models";
+import {Student, Tag} from "../../models";
 import {IconX} from "@tabler/icons-react";
 import {addStudent, deleteStudent, getStudents} from "../../api/studentApi.ts";
+import {deleteTag, getUserTags} from "../../api/tagsApi.ts";
 
 
 const EditProfile = () => {
     const { state: thisUser, actions } = useContext(UserContext)
     const navigation = useNavigate();
     const isMobile = useMediaQuery('(max-width: 768px)');
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState({tags: true, students: true});
     const [username, setUsername] = useState<string>("");
+
     const [students, setStudents] = useState<Student[]>([]);
     const [newStudent, setNewStudent] = useState<string>("");
     const [opened, { toggle, close }] = useDisclosure(false);
     const [studentToDelete, setStudentToDelete] = useState<Student | null>(null);
+
+    const [tags, setTags] = useState<Tag[]>([]);
 
     useEffect(() => {
         if (thisUser) {
@@ -41,11 +45,18 @@ const EditProfile = () => {
     useEffect(() => {
         getStudents()
             .then(setStudents)
-            .then(() => setLoading(false))
+            .then(() => setLoading((ps) => ({...ps, students: false})))
             .catch(console.error);
     }, [])
 
-    const handleDelete = () => {
+    useEffect(() => {
+        getUserTags()
+            .then(setTags)
+            .then(() => setLoading((ps) => ({...ps, tags: false})))
+            .catch(console.error);
+    }, [])
+
+    const handleDeleteStudent = () => {
         if (studentToDelete) {
             deleteStudent(studentToDelete)
                 .then((id) => {
@@ -55,7 +66,7 @@ const EditProfile = () => {
         }
     };
 
-    const handleAdd = () => {
+    const handleAddStudent = () => {
         if (newStudent) {
             addStudent(newStudent)
                 .then((student) => setStudents([...students, student]))
@@ -81,6 +92,16 @@ const EditProfile = () => {
         </Table.Tr>
     )) : null;
 
+    const tagRows = tags ? tags.map((element: Tag) => (
+        <Table.Tr key={element.id}>
+            <Table.Td fw={500}>{element.name}</Table.Td>
+            <Table.Td onClick={(_) => {
+                deleteTag(element.id.toString())
+                    .then(() => setTags(tags.filter((tag) => tag.id !== element.id)))
+            }}> <IconX/> </Table.Td>
+        </Table.Tr>
+    )) : null;
+
     const saveUser = async () => {
         if (thisUser) {
             await actions.save({
@@ -96,12 +117,12 @@ const EditProfile = () => {
         <ScrollArea>
             <div className={"container"}>
                 {!isMobile ? <SideNavbar /> : <TopNavbar/>}
-                {loading && (
+                {loading.tags || loading.students && (
                     <div className={"loading"}>
                         <Loader type="bars" />
                     </div>
                 )}
-                {!loading && (
+                {!loading.tags && !loading.students && (
                     <div className={"content"}>
                         <Dialog opened={opened} withCloseButton onClose={close} size="lg" radius="md">
                             <Text size="sm" mb="xs" fw={500}>
@@ -111,7 +132,7 @@ const EditProfile = () => {
 
                             <Group align="flex-end">
                                 <Button onClick={(_) => {
-                                    handleDelete()
+                                    handleDeleteStudent()
                                     close()
                                 }}>Delete</Button>
                             </Group>
@@ -144,7 +165,7 @@ const EditProfile = () => {
                                 value={newStudent}
                                 onChange={(event) => setNewStudent(event.currentTarget.value)}
                             />
-                            <Button onClick={handleAdd}
+                            <Button onClick={handleAddStudent}
                                     flex={"0.26"}>
                                 Add student
                             </Button>
@@ -165,6 +186,19 @@ const EditProfile = () => {
                             <Text c="dimmed">
                                 Add your first student
                             </Text>
+                        )}
+                        {tags.length > 0 && (
+                            <Table>
+                                <Table.Thead>
+                                    <Table.Tr>
+                                        <Table.Th className={styles.tableheader}>Name</Table.Th>
+                                        <Table.Th className={styles.tableheader}>Delete</Table.Th>
+                                    </Table.Tr>
+                                </Table.Thead>
+                                <Table.Tbody>
+                                    {tagRows}
+                                </Table.Tbody>
+                            </Table>
                         )}
                         <div className="buttonContainer">
                             <Button onClick={saveUser} className="wideButton">
