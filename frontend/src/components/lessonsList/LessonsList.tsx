@@ -5,7 +5,7 @@ import {
 } from '@tabler/icons-react';
 import {
     Button, Loader, Text,
-    ScrollArea, Select, useMantineTheme, TextInput, Checkbox, Box, Group,
+    Select, useMantineTheme, TextInput, Checkbox, Box, Group,
 } from '@mantine/core';
 
 import {Lesson, Student} from "../../models";

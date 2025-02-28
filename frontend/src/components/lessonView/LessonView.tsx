@@ -73,7 +73,7 @@ const LessonView = () => {
                 </div>
             )}
             {!loading && (
-            <Container className={"content"}>
+            <div className={"content"}>
                 <Dialog opened={opened} withCloseButton onClose={close} size="lg" radius="md">
                     <Text size="sm" mb="xs" fw={500}>
                         Are you sure you want to delete this lesson? This action cannot be reverted.
@@ -159,7 +159,7 @@ const LessonView = () => {
                         Delete Lesson
                     </Button>
                 </div>
-            </Container>
+            </div>
             )}
         </div>
     );

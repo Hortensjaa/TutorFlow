@@ -10,24 +10,24 @@ const About = () => {
     const isMobile = useMediaQuery('(max-width: 768px)');
 
     return (
-        <div className={"container"}>
+        <div className="container">
             {!isMobile ? <SideNavbar /> : <TopNavbar/>}
-            <Container className={"content"}>
+            <div className="content">
                 <Title order={1} className={styles.title} mb="md" align="center">
                     About Tutor Flow
                 </Title>
 
-                <Code mb="md">
-                    <Group gap="md">
-                        <IconBrandGithub size={16} />
+                <Group mb="md">
+                    <IconBrandGithub size={16} />
+                    <Code>
                           <span>
                           See source code on{' '}
                           <Anchor href="https://github.com/Hortensjaa/TutorFlow" target="_blank">
                             GitHub
                           </Anchor>.
                         </span>
-                    </Group>
-                </Code>
+                    </Code>
+                </Group>
 
                 <Text>
                     Tutor Flow is a web application designed for tutors who want to efficiently track their lessons and
@@ -72,7 +72,7 @@ const About = () => {
                 </Text>
 
 
-            </Container>
+            </div>
         </div>
     );
 };

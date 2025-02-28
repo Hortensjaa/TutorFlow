@@ -8,7 +8,7 @@
 
 .content {
     flex-grow: 1;
-    margin-left: 300px;
+    margin-left: 250px;
     height: 100vh;
     overflow-y: auto;
     padding: 20px;

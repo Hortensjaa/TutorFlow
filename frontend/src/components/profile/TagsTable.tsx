@@ -67,9 +67,7 @@ export const TagsTable = () => {
             </Box>
 
             {loading ? (
-                <div className={"loading"}>
-                    <Text c="dimmed">Loading... </Text>
-                </div>
+                <Text c="dimmed">Loading... </Text>
             ) : (
                 tags.length > 0 ? (
                     <Table>

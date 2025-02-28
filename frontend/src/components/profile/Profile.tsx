@@ -75,15 +75,6 @@ const Profile = () => {
                         </Text>
                     </Box>
 
-                    <Divider my="md" label="My students" labelPosition="center"/>
-                    {students.length > 0 ? (
-                        <StudentsTable students={students}/>
-                    ) : (
-                        <Text c="dimmed">
-                            Add your first student in settings.
-                        </Text>
-                    )}
-
                     <Divider my="md" label="Upcoming lessons" labelPosition="center"/>
                     {lessons.length > 0 ? (
                         <UpcomingTable lessons={lessons}/>
@@ -93,6 +84,14 @@ const Profile = () => {
                         </Text>
                     )}
 
+                    <Divider my="md" label="My students" labelPosition="center"/>
+                    {students.length > 0 ? (
+                        <StudentsTable students={students}/>
+                    ) : (
+                        <Text c="dimmed">
+                            Add your first student in settings.
+                        </Text>
+                    )}
                 </div>
             )}
         </div>
